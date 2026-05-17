@@ -1,1 +1,537 @@
-const _0x3a7c4a=_0x13b8;(function(_0x44d1b2,_0x2e839a){const _0x3d6dba=_0x13b8,_0x4ea955=_0x44d1b2();while(!![]){try{const _0x453751=parseInt(_0x3d6dba(0x204))/0x1*(parseInt(_0x3d6dba(0x23e))/0x2)+parseInt(_0x3d6dba(0x19b))/0x3+-parseInt(_0x3d6dba(0x1e7))/0x4*(-parseInt(_0x3d6dba(0x1ab))/0x5)+parseInt(_0x3d6dba(0x1da))/0x6+parseInt(_0x3d6dba(0x196))/0x7*(-parseInt(_0x3d6dba(0x1c6))/0x8)+-parseInt(_0x3d6dba(0x245))/0x9*(-parseInt(_0x3d6dba(0x22a))/0xa)+-parseInt(_0x3d6dba(0x212))/0xb;if(_0x453751===_0x2e839a)break;else _0x4ea955['push'](_0x4ea955['shift']());}catch(_0x42b9ab){_0x4ea955['push'](_0x4ea955['shift']());}}}(_0x3585,0x6593c),document[_0x3a7c4a(0x208)](_0x3a7c4a(0x224),_0x4aeac7=>_0x4aeac7['preventDefault']()),document[_0x3a7c4a(0x208)](_0x3a7c4a(0x19d),_0x472120=>{const _0x53664a=_0x3a7c4a;(_0x472120['key']===_0x53664a(0x230)||_0x472120[_0x53664a(0x297)]&&_0x472120[_0x53664a(0x28a)]&&['I','J','C'][_0x53664a(0x266)](_0x472120['key'][_0x53664a(0x20b)]())||_0x472120['ctrlKey']&&_0x472120[_0x53664a(0x1c5)][_0x53664a(0x20b)]()==='U')&&_0x472120[_0x53664a(0x23f)]();}),setInterval(function(){const _0x442389=_0x3a7c4a,_0x1c6066=new Date()[_0x442389(0x235)]();debugger;const _0x285f0e=new Date()['getTime']();_0x285f0e-_0x1c6066>0x64&&(document[_0x442389(0x1b1)][_0x442389(0x240)]='<h1\x20style=\x27color:red;\x20text-align:center;\x20margin-top:20%;\x20font-family:sans-serif;\x27>🚨\x20PHÁT\x20HIỆN\x20HÀNH\x20VI\x20CAN\x20THIỆP\x20MÃ\x20NGUỒN\x20🚨</h1>',window['location'][_0x442389(0x295)]());},0x3e8));const SECURE_KEY=_0x3a7c4a(0x1e9),SECRET_SALT=_0x3a7c4a(0x264);function generateHash(_0x46e119){const _0x147a63=_0x3a7c4a;let _0x7c52bc=0x0;for(let _0x43929b=0x0;_0x43929b<_0x46e119[_0x147a63(0x243)];_0x43929b++){_0x7c52bc=(_0x7c52bc<<0x5)-_0x7c52bc+_0x46e119[_0x147a63(0x1d5)](_0x43929b),_0x7c52bc=_0x7c52bc&_0x7c52bc;}return _0x7c52bc[_0x147a63(0x1eb)](0x10);}let usersData={},currentUser=null,currentFileName='',studyMode=_0x3a7c4a(0x229),quizData=[],flaggedQuestions=new Set(),totalQuestions=0x0,isSubmitted=![],timerInterval,timeElapsed=0x0,fcDeckOriginal=[],fcCurrentDeck=[],fcNextRoundDeck=[],fcCurrentIndex=0x0,fcRound=0x1,fcStats={'firstTry':0x0,'struggled':new Set(),'totalMastered':0x0},creatorQuestionsCount=0x0;function _0x13b8(_0x41aae7,_0x2a7d7d){_0x41aae7=_0x41aae7-0x18b;const _0x3585c4=_0x3585();let _0x13b8f9=_0x3585c4[_0x41aae7];return _0x13b8f9;}const originalTitle=document['title'];try{localStorage['getItem'](_0x3a7c4a(0x202))&&localStorage[_0x3a7c4a(0x1c7)]('quizUsersData');const savedData=localStorage[_0x3a7c4a(0x20c)](SECURE_KEY);if(savedData){const parts=savedData['split']('|');if(parts[_0x3a7c4a(0x243)]===0x2){const dataBase64=parts[0x0],signature=parts[0x1];if(generateHash(dataBase64+SECRET_SALT)!==signature)throw new Error('Tampered');usersData=JSON[_0x3a7c4a(0x2bb)](decodeURIComponent(atob(dataBase64)));}else throw new Error(_0x3a7c4a(0x237));}}catch(_0x324b8a){usersData={},localStorage[_0x3a7c4a(0x1c7)](SECURE_KEY);}function saveDB(){const _0x226f49=_0x3a7c4a,_0x33ee5f=btoa(encodeURIComponent(JSON[_0x226f49(0x20e)](usersData))),_0x1b6b14=generateHash(_0x33ee5f+SECRET_SALT);localStorage['setItem'](SECURE_KEY,_0x33ee5f+'|'+_0x1b6b14);}function parseText(_0x36e07c){const _0x32b67d=_0x3a7c4a;if(!_0x36e07c)return'';return _0x36e07c=_0x36e07c['toString']()['replace'](/&/g,_0x32b67d(0x2b3))[_0x32b67d(0x205)](/</g,_0x32b67d(0x290))['replace'](/>/g,'&gt;')[_0x32b67d(0x205)](/\n/g,'<br>'),_0x36e07c[_0x32b67d(0x205)](/\[img\]([\s\S]*?)\[\/img\]/gi,(_0x336f42,_0x1f77fd)=>{const _0x2a0880=_0x32b67d;let _0x35a9e2=_0x1f77fd[_0x2a0880(0x27f)]()['replace'](/\s/g,'');if(_0x35a9e2[_0x2a0880(0x18f)](_0x2a0880(0x24a))||_0x35a9e2[_0x2a0880(0x18f)](_0x2a0880(0x1c1)))return _0x2a0880(0x1f3)+_0x35a9e2+'\x22\x20class=\x22rendered-img\x22>';return _0x2a0880(0x249);});}function shuffleArray(_0x2949f3){const _0x1eae81=_0x3a7c4a;for(let _0x3411a9=_0x2949f3[_0x1eae81(0x243)]-0x1;_0x3411a9>0x0;_0x3411a9--){const _0x2dd7ed=Math[_0x1eae81(0x2b7)](Math['random']()*(_0x3411a9+0x1));[_0x2949f3[_0x3411a9],_0x2949f3[_0x2dd7ed]]=[_0x2949f3[_0x2dd7ed],_0x2949f3[_0x3411a9]];}}function switchScreen(_0x5b305d){const _0xe7b808=_0x3a7c4a;document[_0xe7b808(0x241)](_0xe7b808(0x1bd))[_0xe7b808(0x1c4)](_0x30d0fd=>_0x30d0fd['classList'][_0xe7b808(0x225)](_0xe7b808(0x1e2)));const _0x19660a=document['getElementById'](_0x5b305d);if(_0x19660a)_0x19660a[_0xe7b808(0x18e)][_0xe7b808(0x1e3)]('active');const _0x5426b0=document['getElementById'](_0xe7b808(0x1cd)),_0x1744b7=document[_0xe7b808(0x2a7)]('top-bar');if(_0x5b305d===_0xe7b808(0x2a2)||_0x5b305d===_0xe7b808(0x218))_0x1744b7[_0xe7b808(0x1fa)][_0xe7b808(0x21e)]=_0xe7b808(0x2a6),_0x5426b0[_0xe7b808(0x1fa)][_0xe7b808(0x21e)]=_0xe7b808(0x2a6),document['getElementById'](_0xe7b808(0x1d4))[_0xe7b808(0x1b8)]=_0xe7b808(0x24b),_0x5426b0['onclick']=()=>showUploadScreen();else _0x5b305d===_0xe7b808(0x233)||_0x5b305d===_0xe7b808(0x1d9)?(_0x1744b7[_0xe7b808(0x1fa)][_0xe7b808(0x21e)]=_0xe7b808(0x2ab),_0x5426b0[_0xe7b808(0x1fa)]['display']=_0xe7b808(0x2a6),document['getElementById']('back-text')[_0xe7b808(0x1b8)]=_0xe7b808(0x28e),_0x5426b0[_0xe7b808(0x283)]=()=>showDashboard()):(_0x1744b7[_0xe7b808(0x1fa)][_0xe7b808(0x21e)]=_0xe7b808(0x2ab),_0x5426b0[_0xe7b808(0x1fa)][_0xe7b808(0x21e)]=_0xe7b808(0x2ab));}function initLogin(){const _0x264111=_0x3a7c4a,_0x2fa8c0=document[_0x264111(0x2a7)](_0x264111(0x234));_0x2fa8c0['innerHTML']='';const _0x2d9a63=Object[_0x264111(0x1ba)](usersData);_0x2d9a63[_0x264111(0x243)]===0x0&&(_0x2fa8c0['innerHTML']=_0x264111(0x1f4));_0x2d9a63['forEach'](_0x137b51=>{const _0x339cab=_0x264111,_0x475efc=usersData[_0x137b51];_0x475efc[_0x339cab(0x1ef)]=_0x475efc['diamonds']||0x0,_0x2fa8c0[_0x339cab(0x240)]+=_0x339cab(0x281)+_0x137b51+_0x339cab(0x213)+_0x137b51+'</span>\x20<span\x20style=\x22color:var(--primary);\x20font-size:0.85rem;\x22>LVL\x20'+_0x475efc[_0x339cab(0x222)]+_0x339cab(0x23a)+_0x475efc[_0x339cab(0x1ef)]+_0x339cab(0x26e)+_0x475efc[_0x339cab(0x298)]+_0x339cab(0x1af);});const _0x2aeafe=localStorage[_0x264111(0x20c)](_0x264111(0x279))||_0x264111(0x19a),_0x5ca33a=localStorage[_0x264111(0x20c)]('quizColor');if(_0x2aeafe==='custom'&&_0x5ca33a)setCustomTheme(_0x5ca33a);else setTheme(_0x2aeafe);switchScreen(_0x264111(0x22f));}function createNewUser(){const _0x2b6209=_0x3a7c4a,_0x4b7524=document[_0x2b6209(0x2a7)]('new-username')[_0x2b6209(0x28d)][_0x2b6209(0x27f)]();if(!_0x4b7524)return alert(_0x2b6209(0x18d));if(usersData[_0x4b7524])return alert(_0x2b6209(0x253));usersData[_0x4b7524]={'exp':0x0,'level':0x1,'streak':0x1,'diamonds':0x0,'lastLogin':new Date()[_0x2b6209(0x284)](),'history':[]},saveDB(),loginUser(_0x4b7524);}function loginUser(_0x59e1b4){const _0xeaf08f=_0x3a7c4a;currentUser=_0x59e1b4;let _0x5ef319=usersData[_0x59e1b4];const _0x382947=new Date()['toDateString']();if(_0x5ef319[_0xeaf08f(0x1ff)]!==_0x382947){const _0x3e9910=new Date();_0x3e9910[_0xeaf08f(0x242)](_0x3e9910[_0xeaf08f(0x214)]()-0x1);if(_0x5ef319[_0xeaf08f(0x1ff)]===_0x3e9910[_0xeaf08f(0x284)]())_0x5ef319[_0xeaf08f(0x298)]+=0x1;else _0x5ef319[_0xeaf08f(0x298)]=0x1;_0x5ef319[_0xeaf08f(0x1ff)]=_0x382947,saveDB();}showDashboard();}function logout(){currentUser=null,initLogin();}function deleteAccount(){const _0x566e2d=_0x3a7c4a;confirm(_0x566e2d(0x1c8)+currentUser+'\x27?')&&(delete usersData[currentUser],saveDB(),logout());}function clearCache(){const _0x42cb13=_0x3a7c4a;confirm('XÓA\x20TOÀN\x20BỘ\x20dữ\x20liệu\x20người\x20dùng?')&&(localStorage[_0x42cb13(0x27e)](),location['reload']());}function showDashboard(){const _0x37156d=_0x3a7c4a;switchScreen(_0x37156d(0x259));let _0x2474ff=usersData[currentUser];document[_0x37156d(0x2a7)]('avt-img')[_0x37156d(0x26f)]=_0x37156d(0x287)+currentUser+_0x37156d(0x21c),document[_0x37156d(0x2a7)](_0x37156d(0x1df))[_0x37156d(0x1b8)]=currentUser,document[_0x37156d(0x2a7)](_0x37156d(0x1d7))[_0x37156d(0x1b8)]=_0x37156d(0x1e0)+_0x2474ff[_0x37156d(0x222)],document[_0x37156d(0x2a7)]('prof-diamonds')[_0x37156d(0x1b8)]=_0x2474ff[_0x37156d(0x1ef)]||0x0,document['getElementById']('prof-streak')['innerText']=_0x2474ff[_0x37156d(0x298)];let _0x5bbd4e=_0x2474ff[_0x37156d(0x222)]>=0x64,_0x1e85cb=_0x5bbd4e?0x64:_0x2474ff[_0x37156d(0x228)]%0x64;document[_0x37156d(0x2a7)](_0x37156d(0x2bc))['innerText']=_0x1e85cb,document['getElementById'](_0x37156d(0x285))['innerText']=_0x5bbd4e?_0x37156d(0x19c):0x64,document[_0x37156d(0x2a7)](_0x37156d(0x1f6))[_0x37156d(0x1fa)]['width']=_0x1e85cb/0x64*0x64+'%';const _0x32fefe=document[_0x37156d(0x2a7)](_0x37156d(0x1a7));_0x32fefe[_0x37156d(0x240)]='';if(!_0x2474ff[_0x37156d(0x1ad)]||_0x2474ff['history'][_0x37156d(0x243)]===0x0)_0x32fefe[_0x37156d(0x240)]=_0x37156d(0x247);[..._0x2474ff[_0x37156d(0x1ad)]][_0x37156d(0x1a3)]()[_0x37156d(0x1b5)](0x0,0xa)['forEach'](_0x433405=>{const _0x136172=_0x37156d;let _0x6f84c3=_0x433405[_0x136172(0x215)]==='flashcard'?_0x136172(0x251):'📝\x20Quiz';_0x32fefe[_0x136172(0x240)]+=_0x136172(0x20f)+_0x433405['date']+_0x136172(0x2b6)+_0x6f84c3+'</td><td><b>'+_0x433405[_0x136172(0x209)]+_0x136172(0x2af)+_0x433405[_0x136172(0x1bf)]+_0x136172(0x22d)+_0x433405[_0x136172(0x2ba)]+_0x136172(0x1c9);});}function showUploadScreen(){const _0xb4fc80=_0x3a7c4a;switchScreen('upload-screen');if(window[_0xb4fc80(0x1de)])clearInterval(window[_0xb4fc80(0x1de)]);document[_0xb4fc80(0x2a7)]('excel-file')[_0xb4fc80(0x28d)]='';}function _0x3585(){const _0x319a9e=['level','onload','contextmenu','remove','prof-diamonds','clipboardData','exp','quiz','10gotHXy','textarea','</div>','</td><td\x20style=\x22color:var(--primary);\x20font-weight:700;\x22>+','\x22\x20value=\x22','login-screen','F12','quizColor','book_new','upload-screen','user-list-render','getTime','opts','Invalid','input[type=\x22radio\x22]:checked','<label\x20class=\x22option-item\x22\x20id=\x22opt-','\x20|\x20💎\x20','writeFile','result','has','2qqPlbW','preventDefault','innerHTML','querySelectorAll','setDate','length','btn-expl-','2332719oXKqWZ','\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-opt2-','<tr><td\x20colspan=\x225\x22\x20style=\x22text-align:center;\x20color:var(--text-muted);\x20padding:20px;\x22>Chưa\x20có\x20lịch\x20sử.</td></tr>','array','[Ảnh\x20không\x20an\x20toàn]','http','Về\x20cấu\x20hình','.cr-title','Vòng\x20','--primary','flipped','correct','📇\x20FC','round','Tên\x20tồn\x20tại.','showDashboard()','canvas','.\x20Nộp\x20luôn?','mode-btn','input[name=\x22q','dashboard-screen','drawImage','cr-ans-','removeProperty','gradeQuiz(false)','\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-expl-','width','score-board','\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-opt1-','BoDe_LMS_','\x22><div\x20class=\x22q-header\x22><div\x20class=\x22q-title-text\x22><span\x20class=\x22q-num\x22>Câu\x20','EdTech_LMS_2026_TopSecret_@!#','time-limit','includes','createElement','<div\x20class=\x22question-card\x22\x20id=\x22card-','correct-ans','shuffle-questions','\x22\x20rows=\x222\x22></textarea></div><div\x20class=\x22cr-grid\x22><div\x20class=\x22cr-field\x22><div\x20class=\x22cr-field-header\x22><label>A.\x20Đáp\x20án\x201</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-opt1-','\x22><input\x20type=\x22radio\x22\x20name=\x22q','\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-expl-','\x20|\x20🔥\x20','src','</span></label>','\x22><b>💡\x20Giải\x20thích:</b><br>','\x22\x20rows=\x222\x22></textarea></div></div>','excel-file','\x22\x20rows=\x221\x22></textarea></div></div><div\x20class=\x22cr-bottom-row\x22><div\x20class=\x22cr-correct-box\x22><label>✅\x20Đáp\x20án\x20đúng</label><select\x20id=\x22cr-ans-','\x22\x20class=\x22cr-select\x22><option\x20value=\x221\x22>1\x20(A)</option><option\x20value=\x222\x22>2\x20(B)</option><option\x20value=\x223\x22>3\x20(C)</option><option\x20value=\x224\x22>4\x20(D)</option></select></div><div\x20class=\x22cr-field\x22\x20style=\x22flex:\x201;\x20margin:\x200;\x22><div\x20class=\x22cr-field-header\x22><label>💡\x20Giải\x20thích\x20chi\x20tiết</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-expl-','nav-item\x20correct','Sheets','btn-submit','quizTheme','fc-result-modal','target','\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-opt1-','questions-container','clear','trim','padStart','<div\x20class=\x22user-card\x22\x20onclick=\x22loginUser(\x27','cr-opt2-','onclick','toDateString','prof-next-exp','\x20(+','https://api.dicebear.com/7.x/adventurer/svg?seed=','setAttribute','querySelector','shiftKey','\x22\x20onclick=\x22window.scrollTo({top:\x20document.getElementById(\x27card-','📌\x20Câu\x20hỏi\x20','value','Trang\x20chủ','Đáp\x20án\x203','&lt;','Thuộc:\x20','fc-round-text','\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-opt2-','substring','reload','files','ctrlKey','streak','nav-grid','\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-opt1-','.xlsx','<button\x20class=\x22btn-expl-toggle\x22\x20id=\x22btn-expl-','items','documentElement','\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-q-','\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-q-','cr-card-','quiz-app','getMonth','\x22\x20onclick=\x22document.getElementById(\x27expl-','struggled','flex','getElementById','sheet_to_json','block','fc-first-try','none','\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-opt4-','expl','\x22\x20onclick=\x22toggleQuizFlag(','</b></td><td\x20style=\x22color:var(--result-correct);\x20font-weight:700;\x22>','firstTry','className','\x22\x20rows=\x221\x22></textarea></div><div\x20class=\x22cr-field\x22><div\x20class=\x22cr-field-header\x22><label>B.\x20Đáp\x20án\x202</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-opt2-','&amp;','progress-text','NỘP\x20BÀI\x20KẾT\x20THÚC','</td><td\x20style=\x22font-size:0.85rem;\x20font-weight:700;\x20color:var(--text-muted);\x22>','floor','kind','\x20EXP\x20|\x20+1\x20💎)','expGained','parse','prof-exp','--bg-color','</button>','Nhập\x20tên!','classList','startsWith','\x22]:checked','getContext','VỀ\x20DASHBOARD','NganHangCauHoi','shuffle-options','mode-btn\x20active','1183AOvUwp','toDataURL','btn-mode-quiz','opt-','light','573708tOUhfy','MAX','keydown','utils','[/img]','height','\x22\x20rows=\x221\x22></textarea></div><div\x20class=\x22cr-field\x22><div\x20class=\x22cr-field-header\x22><label>C.\x20Đáp\x20án\x203</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-opt3-','front','reverse','getMinutes','config-fc','fc-front-text','history-tbody','\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-q-','Mở\x20Hộp\x20','creator-card','115EAUgeS','fc-card','history','btn-mode-fc','</span></div>','cr-opt3-','body','\x20(Đang\x20học\x20','disabled','timer-display','slice','config-quiz','push','innerText',')\x22><div\x20class=\x22radio-custom\x22></div><span\x20class=\x22option-text\x22\x20style=\x22flex:1;\x22><b>','keys','toggle','progress-bar','.app-screen','\x22\x20onchange=\x22updateQuizUI(','score','findIndex','data:image','wrong-ans','</div><button\x20class=\x22flag-btn\x22\x20id=\x22flag-','forEach','key','14296uiLlzn','removeItem','Xóa\x20tài\x20khoản\x20\x27','</td></tr>','done','nav-','nav-item','btn-back','Giải\x20thích','<br><br><span\x20style=\x22font-size:0.9rem;\x20color:var(--primary);\x22>💡\x20Giải\x20thích:\x20','Thiếu\x20kim\x20cương!\x20Cần\x20','checked','totalMastered',':</span>\x20','back-text','charCodeAt','readAsDataURL','prof-level','SheetNames','creator-screen','3394890mgdTaf','Đã\x20nộp\x20bài','shop-modal','Thuộc:\x200\x20/\x20','timerInterval','prof-name','LVL\x20','data-theme','active','add','setItem','Đáp\x20án\x20đúng','\x27).style.display=\x27block\x27;\x20this.style.display=\x27none\x27\x22>💡\x20Xem\x20giải\x20thích</button><div\x20class=\x22expl-box\x22\x20id=\x22expl-','100528suMYjy','Đáp\x20án\x201','EdTech_SecureDB','.</b>\x20','toString','cr-opt4-','title','\x20💎\x20thành\x20công.','diamonds','scrollTo','originalEvent','⏱\x20Thời\x20gian:\x20','<img\x20src=\x22','<div\x20style=\x22color:var(--text-muted);\x20font-size:0.95rem;\x20padding:\x2015px;\x22>Chưa\x20có\x20dữ\x20liệu.</div>','time-up-modal','exp-bar','div','getHours','[img]','style','\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-opt4-','avg-time-board','min','\x20/\x20','lastLogin','now','read','quizUsersData','name','28814mzSyVd','replace','shop-diamonds','\x27).offsetTop\x20-\x2080,\x20behavior:\x27smooth\x27})\x22>','addEventListener','file','</span>','toUpperCase','getItem','image/jpeg','stringify','<tr><td>','\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-opt2-','Làm\x20','9955319GfczvI','\x27)\x22><span>👤\x20','getDate','mode','toFixed','custom','flashcard-app','fc-shuffle','cr-opt1-','<div\x20class=\x22cr-header\x22><div\x20class=\x22cr-title\x22>📌\x20Câu\x20hỏi</div><button\x20class=\x22btn-danger\x22\x20style=\x22width:\x20auto;\x20padding:\x208px\x2016px;\x20font-size:\x200.85rem;\x22\x20onclick=\x22deleteCreatorQuestion(\x27','&backgroundColor=transparent','.creator-card','display','Trống!','readAsArrayBuffer','fc-total-mastered'];_0x3585=function(){return _0x319a9e;};return _0x3585();}function selectMode(_0x4aeae5){const _0x22fb57=_0x3a7c4a;studyMode=_0x4aeae5,document[_0x22fb57(0x2a7)](_0x22fb57(0x198))[_0x22fb57(0x2b1)]=_0x4aeae5===_0x22fb57(0x229)?_0x22fb57(0x195):_0x22fb57(0x257),document[_0x22fb57(0x2a7)](_0x22fb57(0x1ae))['className']=_0x4aeae5==='flashcard'?_0x22fb57(0x195):_0x22fb57(0x257),document[_0x22fb57(0x2a7)](_0x22fb57(0x1b6))[_0x22fb57(0x1fa)]['display']=_0x4aeae5===_0x22fb57(0x229)?'flex':_0x22fb57(0x2ab),document[_0x22fb57(0x2a7)](_0x22fb57(0x1a5))[_0x22fb57(0x1fa)]['display']=_0x4aeae5==='flashcard'?_0x22fb57(0x2a6):'none';}function setTheme(_0x4dd95b){const _0x274e85=_0x3a7c4a;document['documentElement']['setAttribute'](_0x274e85(0x1e1),_0x4dd95b),document[_0x274e85(0x29e)][_0x274e85(0x1fa)][_0x274e85(0x25c)](_0x274e85(0x24e)),document[_0x274e85(0x29e)][_0x274e85(0x1fa)][_0x274e85(0x25c)]('--bg-color'),localStorage[_0x274e85(0x1e4)]('quizTheme',_0x4dd95b);}function setCustomTheme(_0x19ea1b){const _0x1e3302=_0x3a7c4a;document[_0x1e3302(0x29e)][_0x1e3302(0x288)]('data-theme',_0x1e3302(0x217)),document[_0x1e3302(0x29e)][_0x1e3302(0x1fa)]['setProperty']('--primary',_0x19ea1b),document[_0x1e3302(0x29e)][_0x1e3302(0x1fa)]['setProperty'](_0x1e3302(0x18b),_0x19ea1b+'11'),localStorage[_0x1e3302(0x1e4)](_0x1e3302(0x279),'custom'),localStorage[_0x1e3302(0x1e4)](_0x1e3302(0x231),_0x19ea1b);}function openShop(){const _0x3d1c5b=_0x3a7c4a;document[_0x3d1c5b(0x2a7)](_0x3d1c5b(0x206))[_0x3d1c5b(0x1b8)]=usersData[currentUser][_0x3d1c5b(0x1ef)]||0x0,document['getElementById'](_0x3d1c5b(0x1dc))['style']['display']=_0x3d1c5b(0x2a6);}function closeShop(){const _0x181bcd=_0x3a7c4a;document[_0x181bcd(0x2a7)](_0x181bcd(0x1dc))[_0x181bcd(0x1fa)][_0x181bcd(0x21e)]=_0x181bcd(0x2ab),showDashboard();}function buyBox(_0x54fcc2){const _0x312dc5=_0x3a7c4a;let _0x5e71cf=usersData[currentUser];if(_0x5e71cf['diamonds']>=_0x54fcc2)_0x5e71cf[_0x312dc5(0x1ef)]-=_0x54fcc2,saveDB(),document[_0x312dc5(0x2a7)](_0x312dc5(0x206))[_0x312dc5(0x1b8)]=_0x5e71cf[_0x312dc5(0x1ef)],document[_0x312dc5(0x2a7)](_0x312dc5(0x226))[_0x312dc5(0x1b8)]=_0x5e71cf['diamonds'],alert(_0x312dc5(0x1a9)+_0x54fcc2+_0x312dc5(0x1ee));else alert(_0x312dc5(0x1d0)+_0x54fcc2+'\x20💎.');}document[_0x3a7c4a(0x2a7)](_0x3a7c4a(0x273))[_0x3a7c4a(0x208)]('change',function(_0x36be36){const _0x5f2a06=_0x3a7c4a,_0x5d7c6d=_0x36be36[_0x5f2a06(0x27b)][_0x5f2a06(0x296)][0x0];if(!_0x5d7c6d)return;currentFileName=_0x5d7c6d[_0x5f2a06(0x203)];const _0x43cfc8=new FileReader();_0x43cfc8[_0x5f2a06(0x223)]=function(_0x2e88f9){const _0x424228=_0x5f2a06,_0x2c71dc=new Uint8Array(_0x2e88f9['target']['result']),_0x156888=XLSX['utils'][_0x424228(0x2a8)](XLSX[_0x424228(0x201)](_0x2c71dc,{'type':_0x424228(0x248)})[_0x424228(0x277)][XLSX[_0x424228(0x201)](_0x2c71dc,{'type':_0x424228(0x248)})[_0x424228(0x1d8)][0x0]],{'header':0x1});studyMode===_0x424228(0x229)?startQuizMode(_0x156888):startFlashcardMode(_0x156888);},_0x43cfc8[_0x5f2a06(0x220)](_0x5d7c6d);});function startQuizMode(_0x6b7549){const _0x31fc00=_0x3a7c4a,_0x3a1329=document[_0x31fc00(0x2a7)](_0x31fc00(0x26a))['checked'],_0x577b44=document[_0x31fc00(0x2a7)](_0x31fc00(0x194))['checked'],_0x5445a4=parseInt(document['getElementById'](_0x31fc00(0x265))[_0x31fc00(0x28d)]);quizData=[];for(let _0xd377ff=0x1;_0xd377ff<_0x6b7549[_0x31fc00(0x243)];_0xd377ff++){const _0x52cecb=_0x6b7549[_0xd377ff];if(!_0x52cecb[0x0])continue;const _0x153381=(parseInt(_0x52cecb[0x5])||0x1)-0x1;let _0x10c144=[];[_0x52cecb[0x1],_0x52cecb[0x2],_0x52cecb[0x3],_0x52cecb[0x4]]['forEach']((_0x33209f,_0x30fa9b)=>{if(_0x33209f)_0x10c144['push']({'t':_0x33209f,'i':_0x30fa9b===_0x153381});});if(_0x577b44)shuffleArray(_0x10c144);quizData[_0x31fc00(0x1b7)]({'q':_0x52cecb[0x0],'opts':_0x10c144['map'](_0x2953b2=>_0x2953b2['t']),'correct':_0x10c144[_0x31fc00(0x1c0)](_0xbe9232=>_0xbe9232['i']),'expl':_0x52cecb[0x6]||''});}if(_0x3a1329)shuffleArray(quizData);isSubmitted=![],flaggedQuestions['clear'](),timeElapsed=0x0,switchScreen(_0x31fc00(0x2a2)),document[_0x31fc00(0x2a7)]('quiz-title')[_0x31fc00(0x1b8)]=currentFileName,document[_0x31fc00(0x2a7)](_0x31fc00(0x260))[_0x31fc00(0x1fa)][_0x31fc00(0x21e)]=_0x31fc00(0x2ab),document[_0x31fc00(0x2a7)]('avg-time-board')[_0x31fc00(0x1fa)][_0x31fc00(0x21e)]=_0x31fc00(0x2ab),document[_0x31fc00(0x2a7)](_0x31fc00(0x278))[_0x31fc00(0x1b8)]=_0x31fc00(0x2b5),document[_0x31fc00(0x2a7)](_0x31fc00(0x278))[_0x31fc00(0x288)]('onclick',_0x31fc00(0x25d)),renderQuizUI();if(window['timerInterval'])clearInterval(window['timerInterval']);let _0x35f919=isNaN(_0x5445a4)||_0x5445a4<=0x0?-0x1:_0x5445a4*0x3c;window['timerInterval']=setInterval(()=>{const _0x4dc2b1=_0x31fc00;if(isSubmitted)return;timeElapsed++;if(_0x35f919>0x0){let _0x11eb4a=_0x35f919-timeElapsed;document[_0x4dc2b1(0x2a7)](_0x4dc2b1(0x1b4))[_0x4dc2b1(0x1b8)]='⏱\x20'+Math[_0x4dc2b1(0x2b7)](_0x11eb4a/0x3c)[_0x4dc2b1(0x1eb)]()['padStart'](0x2,'0')+':'+(_0x11eb4a%0x3c)[_0x4dc2b1(0x1eb)]()[_0x4dc2b1(0x280)](0x2,'0');if(_0x11eb4a<=0x0)gradeQuiz(!![]);}else document[_0x4dc2b1(0x2a7)](_0x4dc2b1(0x1b4))[_0x4dc2b1(0x1b8)]='⏱\x20'+Math[_0x4dc2b1(0x2b7)](timeElapsed/0x3c)[_0x4dc2b1(0x1eb)]()[_0x4dc2b1(0x280)](0x2,'0')+':'+(timeElapsed%0x3c)['toString']()[_0x4dc2b1(0x280)](0x2,'0');},0x3e8);}function renderQuizUI(){const _0x4d082a=_0x3a7c4a,_0x39aea7=document['getElementById'](_0x4d082a(0x27d)),_0xca0813=document[_0x4d082a(0x2a7)](_0x4d082a(0x299));totalQuestions=quizData[_0x4d082a(0x243)],_0x39aea7[_0x4d082a(0x240)]='',_0xca0813[_0x4d082a(0x240)]='';const _0x2892f9=['A','B','C','D','E'];quizData[_0x4d082a(0x1c4)]((_0x2e085d,_0x1a534a)=>{const _0x504ca3=_0x4d082a;let _0x6cea2f='';_0x2e085d[_0x504ca3(0x236)][_0x504ca3(0x1c4)]((_0x3435f5,_0x189eac)=>{const _0x3dae2c=_0x504ca3;_0x6cea2f+=_0x3dae2c(0x239)+_0x1a534a+'-'+_0x189eac+_0x3dae2c(0x26c)+_0x1a534a+_0x3dae2c(0x22e)+_0x189eac+_0x3dae2c(0x1be)+_0x1a534a+_0x3dae2c(0x1b9)+_0x2892f9[_0x189eac]+_0x3dae2c(0x1ea)+parseText(_0x3435f5)+_0x3dae2c(0x270);});let _0x149ed7=_0x2e085d[_0x504ca3(0x2ad)]?_0x504ca3(0x29c)+_0x1a534a+_0x504ca3(0x2a4)+_0x1a534a+_0x504ca3(0x1e6)+_0x1a534a+_0x504ca3(0x271)+parseText(_0x2e085d[_0x504ca3(0x2ad)])+_0x504ca3(0x22c):'';_0x39aea7['innerHTML']+=_0x504ca3(0x268)+_0x1a534a+_0x504ca3(0x263)+(_0x1a534a+0x1)+_0x504ca3(0x1d3)+parseText(_0x2e085d['q'])+_0x504ca3(0x1c3)+_0x1a534a+_0x504ca3(0x2ae)+_0x1a534a+')\x22>🚩\x20Đánh\x20dấu</button></div><div\x20class=\x22options-list\x22>'+_0x6cea2f+_0x504ca3(0x22c)+_0x149ed7+_0x504ca3(0x22c),_0xca0813[_0x504ca3(0x240)]+='<button\x20class=\x22nav-item\x22\x20id=\x22nav-'+_0x1a534a+_0x504ca3(0x28b)+_0x1a534a+_0x504ca3(0x207)+(_0x1a534a+0x1)+_0x504ca3(0x18c);}),updateQuizUI(-0x1);}function toggleQuizFlag(_0x560cdb){const _0x44af5f=_0x3a7c4a;if(isSubmitted)return;flaggedQuestions['has'](_0x560cdb)?flaggedQuestions['delete'](_0x560cdb):flaggedQuestions[_0x44af5f(0x1e3)](_0x560cdb),updateQuizUI(_0x560cdb);}function updateQuizUI(_0x9579a5){const _0x9c7fe6=_0x3a7c4a;if(isSubmitted)return;if(_0x9579a5!==-0x1){const _0x502021=document[_0x9c7fe6(0x2a7)](_0x9c7fe6(0x1cb)+_0x9579a5);_0x502021['className']=_0x9c7fe6(0x1cc);if(flaggedQuestions[_0x9c7fe6(0x23d)](_0x9579a5))_0x502021[_0x9c7fe6(0x18e)][_0x9c7fe6(0x1e3)]('flagged');else{if(document[_0x9c7fe6(0x289)](_0x9c7fe6(0x258)+_0x9579a5+_0x9c7fe6(0x190)))_0x502021[_0x9c7fe6(0x18e)][_0x9c7fe6(0x1e3)](_0x9c7fe6(0x1ca));}}const _0x30d85a=document[_0x9c7fe6(0x241)](_0x9c7fe6(0x238))[_0x9c7fe6(0x243)];document[_0x9c7fe6(0x2a7)](_0x9c7fe6(0x1bc))[_0x9c7fe6(0x1fa)][_0x9c7fe6(0x25f)]=_0x30d85a/totalQuestions*0x64+'%',document['getElementById']('progress-text')[_0x9c7fe6(0x1b8)]=_0x30d85a+_0x9c7fe6(0x1fe)+totalQuestions;}function gradeQuiz(_0x1aa44e){const _0x13d7d4=_0x3a7c4a;if(isSubmitted)return;const _0x4ccf96=document['querySelectorAll'](_0x13d7d4(0x238))['length'];if(!_0x1aa44e&&_0x4ccf96<totalQuestions&&!confirm(_0x13d7d4(0x211)+_0x4ccf96+'/'+totalQuestions+_0x13d7d4(0x256)))return;isSubmitted=!![],clearInterval(window['timerInterval']),document[_0x13d7d4(0x1ed)]=originalTitle,document[_0x13d7d4(0x2a7)](_0x13d7d4(0x1b4))['innerText']=_0x13d7d4(0x1db);let _0x242e3c=0x0;quizData[_0x13d7d4(0x1c4)]((_0x2db8da,_0x136664)=>{const _0x353c46=_0x13d7d4;document['getElementsByName']('q'+_0x136664)[_0x353c46(0x1c4)](_0x608de6=>_0x608de6[_0x353c46(0x1b3)]=!![]);const _0x311330=document[_0x353c46(0x289)](_0x353c46(0x258)+_0x136664+_0x353c46(0x190)),_0x3f3c5e=_0x311330?parseInt(_0x311330['value']):-0x1,_0x568202=document[_0x353c46(0x2a7)](_0x353c46(0x1cb)+_0x136664),_0x27f9fc=document[_0x353c46(0x2a7)]('expl-'+_0x136664),_0x2d6677=document[_0x353c46(0x2a7)](_0x353c46(0x244)+_0x136664);if(_0x3f3c5e===_0x2db8da[_0x353c46(0x250)]){_0x242e3c++,_0x568202[_0x353c46(0x2b1)]=_0x353c46(0x276);if(_0x311330)document[_0x353c46(0x2a7)](_0x353c46(0x199)+_0x136664+'-'+_0x3f3c5e)['classList'][_0x353c46(0x1e3)](_0x353c46(0x269));if(_0x2d6677)_0x2d6677[_0x353c46(0x1fa)]['display']='block';}else{_0x568202[_0x353c46(0x2b1)]='nav-item\x20wrong';if(_0x311330)document[_0x353c46(0x2a7)](_0x353c46(0x199)+_0x136664+'-'+_0x3f3c5e)[_0x353c46(0x18e)][_0x353c46(0x1e3)](_0x353c46(0x1c2));document[_0x353c46(0x2a7)](_0x353c46(0x199)+_0x136664+'-'+_0x2db8da[_0x353c46(0x250)])[_0x353c46(0x18e)]['add'](_0x353c46(0x269));if(_0x27f9fc){_0x27f9fc[_0x353c46(0x1fa)][_0x353c46(0x21e)]='block';if(_0x2d6677)_0x2d6677['style'][_0x353c46(0x21e)]=_0x353c46(0x2ab);}}});const _0x2b6071=_0x242e3c*0xa;let _0x489d33=usersData[currentUser];_0x489d33[_0x13d7d4(0x222)]<0x64&&(_0x489d33[_0x13d7d4(0x228)]+=_0x2b6071,_0x489d33[_0x13d7d4(0x222)]=Math['min'](0x64,Math[_0x13d7d4(0x2b7)](_0x489d33[_0x13d7d4(0x228)]/0x64)+0x1));_0x489d33[_0x13d7d4(0x1ef)]+=0x1;if(!_0x489d33['history'])_0x489d33[_0x13d7d4(0x1ad)]=[];let _0x1001f6=new Date();_0x489d33[_0x13d7d4(0x1ad)][_0x13d7d4(0x1b7)]({'date':_0x1001f6[_0x13d7d4(0x214)]()+'/'+(_0x1001f6[_0x13d7d4(0x2a3)]()+0x1)+'\x20'+_0x1001f6[_0x13d7d4(0x1f8)]()+':'+_0x1001f6['getMinutes'](),'mode':_0x13d7d4(0x229),'file':currentFileName,'score':_0x242e3c+'/'+totalQuestions,'expGained':_0x2b6071,'avgTime':totalQuestions>0x0?(timeElapsed/totalQuestions)[_0x13d7d4(0x216)](0x1):0x0}),saveDB(),document[_0x13d7d4(0x2a7)](_0x13d7d4(0x260))[_0x13d7d4(0x1fa)][_0x13d7d4(0x21e)]=_0x13d7d4(0x2a9),document[_0x13d7d4(0x2a7)](_0x13d7d4(0x260))[_0x13d7d4(0x1b8)]='Kết\x20quả:\x20'+_0x242e3c+'/'+totalQuestions+_0x13d7d4(0x286)+_0x2b6071+_0x13d7d4(0x2b9),document[_0x13d7d4(0x2a7)](_0x13d7d4(0x1fc))['style'][_0x13d7d4(0x21e)]=_0x13d7d4(0x2a9),document[_0x13d7d4(0x2a7)](_0x13d7d4(0x1fc))['innerText']=_0x13d7d4(0x1f2)+Math[_0x13d7d4(0x2b7)](timeElapsed/0x3c)+'m\x20'+timeElapsed%0x3c+'s',document[_0x13d7d4(0x2a7)](_0x13d7d4(0x278))[_0x13d7d4(0x1b8)]=_0x13d7d4(0x192),document[_0x13d7d4(0x2a7)](_0x13d7d4(0x278))[_0x13d7d4(0x288)](_0x13d7d4(0x283),_0x13d7d4(0x254));if(_0x1aa44e)document[_0x13d7d4(0x2a7)](_0x13d7d4(0x1f5))[_0x13d7d4(0x1fa)]['display']=_0x13d7d4(0x2a6);else window[_0x13d7d4(0x1f0)]({'top':0x0,'behavior':'smooth'});}function startFlashcardMode(_0x5e3b02){const _0x1f5e53=_0x3a7c4a,_0x44b1b0=document[_0x1f5e53(0x2a7)](_0x1f5e53(0x219))[_0x1f5e53(0x1d1)];fcDeckOriginal=[];for(let _0x51607c=0x1;_0x51607c<_0x5e3b02[_0x1f5e53(0x243)];_0x51607c++){const _0x7dd13d=_0x5e3b02[_0x51607c];if(!_0x7dd13d[0x0])continue;let _0x36f902=_0x7dd13d[0x0],_0x354654='';if(_0x7dd13d['length']>=0x6&&!isNaN(parseInt(_0x7dd13d[0x5]))){const _0x5dfcb9=parseInt(_0x7dd13d[0x5]);_0x354654=_0x7dd13d[_0x5dfcb9];if(_0x7dd13d[0x6])_0x354654+=_0x1f5e53(0x1cf)+_0x7dd13d[0x6]+_0x1f5e53(0x20a);}else _0x354654=_0x7dd13d[0x1]||'';fcDeckOriginal[_0x1f5e53(0x1b7)]({'id':_0x51607c,'front':_0x36f902,'back':_0x354654});}if(fcDeckOriginal[_0x1f5e53(0x243)]===0x0)return alert('Không\x20có\x20thẻ!');if(_0x44b1b0)shuffleArray(fcDeckOriginal);fcCurrentDeck=[...fcDeckOriginal],fcNextRoundDeck=[],fcCurrentIndex=0x0,fcRound=0x1,fcStats={'firstTry':0x0,'struggled':new Set(),'totalMastered':0x0},timeElapsed=0x0,switchScreen(_0x1f5e53(0x218)),document[_0x1f5e53(0x2a7)](_0x1f5e53(0x1bc))[_0x1f5e53(0x1fa)][_0x1f5e53(0x25f)]='0%',document[_0x1f5e53(0x2a7)](_0x1f5e53(0x2b4))[_0x1f5e53(0x1b8)]=_0x1f5e53(0x1dd)+fcDeckOriginal[_0x1f5e53(0x243)];if(window[_0x1f5e53(0x1de)])clearInterval(window[_0x1f5e53(0x1de)]);window['timerInterval']=setInterval(()=>{const _0x2e36eb=_0x1f5e53;timeElapsed++,document[_0x2e36eb(0x2a7)](_0x2e36eb(0x1b4))[_0x2e36eb(0x1b8)]='⏱\x20'+Math['floor'](timeElapsed/0x3c)[_0x2e36eb(0x1eb)]()[_0x2e36eb(0x280)](0x2,'0')+':'+(timeElapsed%0x3c)[_0x2e36eb(0x1eb)]()[_0x2e36eb(0x280)](0x2,'0');},0x3e8),renderFcCard();}function renderFcCard(){const _0x1d3005=_0x3a7c4a;if(fcCurrentIndex>=fcCurrentDeck[_0x1d3005(0x243)]){if(fcNextRoundDeck[_0x1d3005(0x243)]>0x0)fcCurrentDeck=[...fcNextRoundDeck],shuffleArray(fcCurrentDeck),fcNextRoundDeck=[],fcCurrentIndex=0x0,fcRound++;else return finishFlashcardMode();}let _0x505b33=fcCurrentDeck[fcCurrentIndex];document['getElementById'](_0x1d3005(0x1ac))[_0x1d3005(0x18e)][_0x1d3005(0x225)]('flipped'),setTimeout(()=>{const _0x450d53=_0x1d3005;document['getElementById'](_0x450d53(0x1a6))[_0x450d53(0x240)]=parseText(_0x505b33[_0x450d53(0x1a2)]),document[_0x450d53(0x2a7)]('fc-back-text')[_0x450d53(0x240)]=parseText(_0x505b33['back']),document[_0x450d53(0x2a7)](_0x450d53(0x292))[_0x450d53(0x1b8)]=_0x450d53(0x24d)+fcRound+_0x450d53(0x1b2)+(fcCurrentIndex+0x1)+_0x450d53(0x1fe)+fcCurrentDeck['length']+')';},0x96);}function flipCard(){const _0x36458c=_0x3a7c4a;document[_0x36458c(0x2a7)](_0x36458c(0x1ac))[_0x36458c(0x18e)][_0x36458c(0x1bb)](_0x36458c(0x24f));}function markFlashcard(_0x21ec56){const _0x58d596=_0x3a7c4a;let _0x591420=fcCurrentDeck[fcCurrentIndex];if(_0x21ec56){fcStats['totalMastered']++;if(!fcStats[_0x58d596(0x2a5)][_0x58d596(0x23d)](_0x591420['id']))fcStats[_0x58d596(0x2b0)]++;}else fcStats[_0x58d596(0x2a5)][_0x58d596(0x1e3)](_0x591420['id']),fcNextRoundDeck[_0x58d596(0x1b7)](_0x591420);document[_0x58d596(0x2a7)]('progress-bar')['style'][_0x58d596(0x25f)]=fcStats['totalMastered']/fcDeckOriginal['length']*0x64+'%',document[_0x58d596(0x2a7)]('progress-text')[_0x58d596(0x1b8)]=_0x58d596(0x291)+fcStats['totalMastered']+_0x58d596(0x1fe)+fcDeckOriginal[_0x58d596(0x243)],fcCurrentIndex++,renderFcCard();}function finishFlashcardMode(){const _0x36e37a=_0x3a7c4a;clearInterval(window[_0x36e37a(0x1de)]);const _0x23ee96=fcDeckOriginal[_0x36e37a(0x243)]*0xa;let _0x25aa26=usersData[currentUser];_0x25aa26[_0x36e37a(0x222)]<0x64&&(_0x25aa26[_0x36e37a(0x228)]+=_0x23ee96,_0x25aa26[_0x36e37a(0x222)]=Math[_0x36e37a(0x1fd)](0x64,Math[_0x36e37a(0x2b7)](_0x25aa26[_0x36e37a(0x228)]/0x64)+0x1));_0x25aa26[_0x36e37a(0x1ef)]+=0x1;if(!_0x25aa26[_0x36e37a(0x1ad)])_0x25aa26['history']=[];let _0x1fea4e=new Date();_0x25aa26[_0x36e37a(0x1ad)][_0x36e37a(0x1b7)]({'date':_0x1fea4e['getDate']()+'/'+(_0x1fea4e[_0x36e37a(0x2a3)]()+0x1)+'\x20'+_0x1fea4e['getHours']()+':'+_0x1fea4e[_0x36e37a(0x1a4)](),'mode':'flashcard','file':currentFileName,'score':fcStats[_0x36e37a(0x2b0)]+'\x20Nhớ\x20ngay','expGained':_0x23ee96,'avgTime':'-'}),saveDB(),document[_0x36e37a(0x2a7)](_0x36e37a(0x221))[_0x36e37a(0x1b8)]=fcStats[_0x36e37a(0x1d2)],document[_0x36e37a(0x2a7)](_0x36e37a(0x2aa))[_0x36e37a(0x1b8)]=fcStats['firstTry'],document['getElementById']('fc-exp-gained')[_0x36e37a(0x1b8)]=_0x23ee96,document['getElementById'](_0x36e37a(0x27a))[_0x36e37a(0x1fa)][_0x36e37a(0x21e)]=_0x36e37a(0x2a6);}function closeFcModal(){const _0xb053e5=_0x3a7c4a;document[_0xb053e5(0x2a7)](_0xb053e5(0x27a))[_0xb053e5(0x1fa)][_0xb053e5(0x21e)]='none',showDashboard();}function showCreatorScreen(){const _0x61e54f=_0x3a7c4a;switchScreen(_0x61e54f(0x1d9)),creatorQuestionsCount===0x0&&addCreatorQuestion();}function updateQuestionNumbers(){const _0x32e4c5=_0x3a7c4a;document['querySelectorAll']('.creator-card')[_0x32e4c5(0x1c4)]((_0x3c0396,_0x5955ce)=>{const _0x56bca8=_0x32e4c5,_0x386fdc=_0x3c0396[_0x56bca8(0x289)](_0x56bca8(0x24c));if(_0x386fdc)_0x386fdc[_0x56bca8(0x1b8)]=_0x56bca8(0x28c)+(_0x5955ce+0x1);});}function deleteCreatorQuestion(_0x11b607){const _0x290c56=_0x3a7c4a,_0x25983e=document['getElementById'](_0x290c56(0x2a1)+_0x11b607);_0x25983e&&(_0x25983e[_0x290c56(0x225)](),updateQuestionNumbers());}function addCreatorQuestion(){const _0x520e6=_0x3a7c4a;creatorQuestionsCount++;const _0x4cef01=Date[_0x520e6(0x200)]()[_0x520e6(0x1eb)]()+Math[_0x520e6(0x2b7)](Math['random']()*0x3e8),_0x53329b=document[_0x520e6(0x267)](_0x520e6(0x1f7));_0x53329b[_0x520e6(0x2b1)]=_0x520e6(0x1aa),_0x53329b['id']=_0x520e6(0x2a1)+_0x4cef01,_0x53329b['innerHTML']=_0x520e6(0x21b)+_0x4cef01+'\x27)\x22>🗑️\x20Xóa</button></div><div\x20class=\x22cr-field\x22><div\x20class=\x22cr-field-header\x22><label>Câu\x20hỏi</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-q-'+_0x4cef01+_0x520e6(0x2a0)+_0x4cef01+_0x520e6(0x29f)+_0x4cef01+_0x520e6(0x1a8)+_0x4cef01+_0x520e6(0x26b)+_0x4cef01+_0x520e6(0x27c)+_0x4cef01+_0x520e6(0x261)+_0x4cef01+_0x520e6(0x29a)+_0x4cef01+_0x520e6(0x2b2)+_0x4cef01+_0x520e6(0x293)+_0x4cef01+_0x520e6(0x210)+_0x4cef01+_0x520e6(0x246)+_0x4cef01+_0x520e6(0x1a1)+_0x4cef01+'\x27).click()\x22>🖼️\x20Tải\x20ảnh</button><input\x20type=\x22file\x22\x20id=\x22file-opt3-'+_0x4cef01+'\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-opt3-'+_0x4cef01+'\x27)\x22></div><textarea\x20class=\x22cr-textarea\x22\x20id=\x22cr-opt3-'+_0x4cef01+'\x22\x20rows=\x221\x22></textarea></div><div\x20class=\x22cr-field\x22><div\x20class=\x22cr-field-header\x22><label>D.\x20Đáp\x20án\x204</label><button\x20class=\x22btn-sm-upload\x22\x20onclick=\x22document.getElementById(\x27file-opt4-'+_0x4cef01+_0x520e6(0x2ac)+_0x4cef01+'\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-opt4-'+_0x4cef01+_0x520e6(0x1fb)+_0x4cef01+_0x520e6(0x274)+_0x4cef01+_0x520e6(0x275)+_0x4cef01+_0x520e6(0x26d)+_0x4cef01+'\x22\x20hidden\x20accept=\x22image/*\x22\x20onchange=\x22handleFileUpload(event,\x20\x27cr-expl-'+_0x4cef01+_0x520e6(0x25e)+_0x4cef01+_0x520e6(0x272),document[_0x520e6(0x2a7)]('creator-questions-container')['appendChild'](_0x53329b),updateQuestionNumbers(),_0x53329b['querySelectorAll'](_0x520e6(0x22b))[_0x520e6(0x1c4)](_0x404736=>_0x404736[_0x520e6(0x208)]('paste',handleImagePaste));}function processAndInsertImage(_0x15a326,_0x5c769c,_0x3ee05b=null){const _0x42aad9=_0x3a7c4a,_0x4ff1af=new FileReader();_0x4ff1af[_0x42aad9(0x223)]=function(_0x36f036){const _0xf730d2=_0x42aad9,_0x1759aa=new Image();_0x1759aa[_0xf730d2(0x26f)]=_0x36f036[_0xf730d2(0x27b)][_0xf730d2(0x23c)],_0x1759aa[_0xf730d2(0x223)]=function(){const _0x3daa9e=_0xf730d2,_0x39a82f=document[_0x3daa9e(0x267)](_0x3daa9e(0x255)),_0xc2a7=0x190;let _0x15f003=_0x1759aa[_0x3daa9e(0x25f)],_0x4fb7b4=_0x1759aa[_0x3daa9e(0x1a0)];_0x15f003>_0xc2a7&&(_0x4fb7b4=Math[_0x3daa9e(0x252)](_0x4fb7b4*_0xc2a7/_0x15f003),_0x15f003=_0xc2a7);_0x39a82f[_0x3daa9e(0x25f)]=_0x15f003,_0x39a82f[_0x3daa9e(0x1a0)]=_0x4fb7b4;const _0x29d89d=_0x39a82f[_0x3daa9e(0x191)]('2d');_0x29d89d[_0x3daa9e(0x25a)](_0x1759aa,0x0,0x0,_0x15f003,_0x4fb7b4);const _0x553b98=_0x39a82f[_0x3daa9e(0x197)](_0x3daa9e(0x20d),0.7),_0x369795=_0x3daa9e(0x1f9)+_0x553b98+_0x3daa9e(0x19f),_0x5d8851=_0x3ee05b||document['getElementById'](_0x5c769c),_0x3d8f01=_0x5d8851['selectionStart'],_0x9ab48a=_0x5d8851['selectionEnd'];_0x5d8851[_0x3daa9e(0x28d)]=_0x5d8851[_0x3daa9e(0x28d)][_0x3daa9e(0x294)](0x0,_0x3d8f01)+_0x369795+_0x5d8851[_0x3daa9e(0x28d)][_0x3daa9e(0x294)](_0x9ab48a,_0x5d8851[_0x3daa9e(0x28d)][_0x3daa9e(0x243)]);};},_0x4ff1af[_0x42aad9(0x1d6)](_0x15a326);}function handleFileUpload(_0x1174c2,_0x3671f3){const _0x120c98=_0x3a7c4a,_0x3490e5=_0x1174c2[_0x120c98(0x27b)]['files'][0x0];if(!_0x3490e5)return;processAndInsertImage(_0x3490e5,_0x3671f3),_0x1174c2['target'][_0x120c98(0x28d)]='';}function handleImagePaste(_0x2f454d){const _0x19c925=_0x3a7c4a,_0x2db40f=(_0x2f454d[_0x19c925(0x227)]||_0x2f454d[_0x19c925(0x1f1)][_0x19c925(0x227)])[_0x19c925(0x29d)];for(let _0x1a7900 in _0x2db40f){const _0x29b9cf=_0x2db40f[_0x1a7900];_0x29b9cf[_0x19c925(0x2b8)]==='file'&&(processAndInsertImage(_0x29b9cf['getAsFile'](),null,_0x2f454d[_0x19c925(0x27b)]),_0x2f454d[_0x19c925(0x23f)]());}}function exportCreatorToExcel(){const _0x79cea0=_0x3a7c4a,_0x1f1aa2=document[_0x79cea0(0x241)](_0x79cea0(0x21d));if(_0x1f1aa2['length']===0x0)return alert(_0x79cea0(0x21f));let _0x608a6b=[['Câu\x20hỏi',_0x79cea0(0x1e8),'Đáp\x20án\x202',_0x79cea0(0x28f),'Đáp\x20án\x204',_0x79cea0(0x1e5),_0x79cea0(0x1ce)]];_0x1f1aa2[_0x79cea0(0x1c4)](_0x2a0310=>{const _0x29b1ae=_0x79cea0,_0x5a9c19=_0x2a0310['id']['replace']('cr-card-',''),_0xa46e1b=document[_0x29b1ae(0x2a7)]('cr-q-'+_0x5a9c19)[_0x29b1ae(0x28d)][_0x29b1ae(0x27f)](),_0x58c9dd=document[_0x29b1ae(0x2a7)](_0x29b1ae(0x21a)+_0x5a9c19)[_0x29b1ae(0x28d)]['trim'](),_0x306392=document[_0x29b1ae(0x2a7)](_0x29b1ae(0x282)+_0x5a9c19)[_0x29b1ae(0x28d)][_0x29b1ae(0x27f)](),_0x2b6845=document[_0x29b1ae(0x2a7)](_0x29b1ae(0x1b0)+_0x5a9c19)[_0x29b1ae(0x28d)]['trim'](),_0x5a9ec0=document[_0x29b1ae(0x2a7)](_0x29b1ae(0x1ec)+_0x5a9c19)[_0x29b1ae(0x28d)][_0x29b1ae(0x27f)](),_0x46b937=document[_0x29b1ae(0x2a7)](_0x29b1ae(0x25b)+_0x5a9c19)[_0x29b1ae(0x28d)],_0x54a07f=document[_0x29b1ae(0x2a7)]('cr-expl-'+_0x5a9c19)[_0x29b1ae(0x28d)][_0x29b1ae(0x27f)]();_0xa46e1b&&_0x608a6b[_0x29b1ae(0x1b7)]([_0xa46e1b,_0x58c9dd,_0x306392,_0x2b6845,_0x5a9ec0,_0x46b937,_0x54a07f]);});if(_0x608a6b[_0x79cea0(0x243)]===0x1)return alert('Vui\x20lòng\x20điền\x20nội\x20dung!');const _0x1cef44=XLSX['utils']['aoa_to_sheet'](_0x608a6b),_0x2b8f93=XLSX[_0x79cea0(0x19e)][_0x79cea0(0x232)]();XLSX[_0x79cea0(0x19e)]['book_append_sheet'](_0x2b8f93,_0x1cef44,_0x79cea0(0x193));const _0x265fae=new Date();XLSX[_0x79cea0(0x23b)](_0x2b8f93,_0x79cea0(0x262)+_0x265fae['getDate']()+'_'+(_0x265fae[_0x79cea0(0x2a3)]()+0x1)+'_'+_0x265fae['getHours']()+_0x265fae['getMinutes']()+_0x79cea0(0x29b));}initLogin();
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) || (e.ctrlKey && e.key.toUpperCase() === 'U')) e.preventDefault(); });
+setInterval(function() { const b = new Date().getTime(); debugger; const a = new Date().getTime(); if (a - b > 100) { document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:20%;font-family:sans-serif;'>🚨 PHÁT HIỆN CAN THIỆP MÃ NGUỒN 🚨</h1>"; window.location.reload(); } }, 1000);
+
+const SECURE_KEY = 'EdTech_SecureDB'; const SECRET_SALT = 'EdTech_LMS_2026_TopSecret_@!#';
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+    if (type === 'click') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    } else if (type === 'success') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'error') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if(e.target.tagName === 'BUTTON' || e.target.closest('.btn-main, .btn-outline, .btn-danger, .theme-btn, .nav-item, .option-item, .cr-correct-box, .btn-action')) { playSound('click'); }
+});
+
+function generateHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h = h & h; } return h.toString(16); }
+
+let usersData = {}; let currentUser = null; let currentFileName = ""; let studyMode = 'quiz';
+let quizData = []; let flaggedQuestions = new Set(); let totalQuestions = 0; let isSubmitted = false; let timerInterval; let timeElapsed = 0;
+let fcDeckOriginal = []; let fcCurrentDeck = []; let fcNextRoundDeck = []; let fcCurrentIndex = 0; let fcRound = 1; let fcStats = { firstTry: 0, struggled: new Set(), totalMastered: 0 };
+let creatorQuestionsCount = 0; const originalTitle = document.title;
+let currentCreatorMode = 'quiz'; let tempLoginUser = "";
+
+// CÁC BIẾN CHỨA FILE ĐÍNH KÈM CHO AI (DÙNG VAR ĐỂ TRÁNH LỖI SCOPE)
+var aiAttachedFile = null; 
+var summarizerAttachedFile = null; 
+var essayAttachedFile = null; 
+let currentEssayGeneratedQuestions = "";
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('edtech_unlocked') !== 'true') {
+        document.getElementById('master-key-overlay').style.display = 'flex';
+        setTimeout(()=> document.getElementById('master-key-input').focus(), 100);
+    }
+
+    const k = localStorage.getItem('ai_api_key'); const m = localStorage.getItem('ai_model');
+    if (k) document.getElementById('ai-api-key').value = k;
+    if (m) document.getElementById('ai-model').value = m;
+    const savedBgUrl = localStorage.getItem('quizBgUrl');
+    if (savedBgUrl) { setBackground(savedBgUrl); const inputBg = document.getElementById('custom-bg-url'); if (inputBg) inputBg.value = savedBgUrl; }
+    const isGlass = localStorage.getItem('quizGlass') === 'true';
+    if (isGlass) { document.documentElement.setAttribute('data-glass', 'true'); const glassToggle = document.getElementById('glass-toggle'); if (glassToggle) glassToggle.checked = true; }
+    const savedGlassBlur = localStorage.getItem('quizGlassBlur') || '20';
+    document.documentElement.style.setProperty('--glass-blur', savedGlassBlur + 'px');
+    const sliderGlass = document.getElementById('glass-blur-slider'); if(sliderGlass) sliderGlass.value = savedGlassBlur;
+    const savedBgBlur = localStorage.getItem('quizBgBlur') || '15';
+    document.documentElement.style.setProperty('--bg-blur', savedBgBlur + 'px');
+    const sliderBg = document.getElementById('bg-blur-slider'); if(sliderBg) sliderBg.value = savedBgBlur;
+    const savedTextColor = localStorage.getItem('quizTextColor');
+    if(savedTextColor) { document.documentElement.style.setProperty('--text-main', savedTextColor); const tColorPicker = document.getElementById('text-color-picker'); if(tColorPicker) tColorPicker.value = savedTextColor; }
+});
+
+function verifyMasterKey() {
+    const val = document.getElementById('master-key-input').value; let s = "";
+    for(let i=0; i<val.length; i++) s += String.fromCharCode(val.charCodeAt(i) + 5);
+    if (s === "JiYjhmKwjj") { 
+        playSound('success'); localStorage.setItem('edtech_unlocked', 'true'); document.getElementById('master-key-overlay').style.display = 'none';
+    } else { playSound('error'); alert("❌ Mã Khởi Động không chính xác!"); }
+}
+
+function openSettings() { document.getElementById('settings-modal').style.display = 'flex'; }
+function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; showDashboard(); }
+function openGuide() { document.getElementById('guide-modal').style.display = 'flex'; }
+function closeGuide() { document.getElementById('guide-modal').style.display = 'none'; showDashboard(); }
+function openCreatorGuide() { document.getElementById('creator-guide-modal').style.display = 'flex'; }
+function closeCreatorGuide() { document.getElementById('creator-guide-modal').style.display = 'none'; }
+function applyBackground() { const url = document.getElementById('custom-bg-url').value.trim(); if (!url) return alert("Vui lòng nhập link ảnh/GIF hợp lệ!"); setBackground(url); localStorage.setItem('quizBgUrl', url); }
+function clearBackground() { document.getElementById('custom-bg-url').value = ''; const bgDiv = document.getElementById('app-bg'); if(bgDiv) { bgDiv.classList.remove('active'); bgDiv.style.backgroundImage = ''; } document.body.classList.remove('has-bg'); localStorage.removeItem('quizBgUrl'); }
+function setBackground(url) { const bgDiv = document.getElementById('app-bg'); if(bgDiv) { bgDiv.style.backgroundImage = `url('${url}')`; bgDiv.classList.add('active'); document.body.classList.add('has-bg'); } }
+function toggleGlassMode() { const toggle = document.getElementById('glass-toggle'); if (toggle && toggle.checked) { document.documentElement.setAttribute('data-glass', 'true'); localStorage.setItem('quizGlass', 'true'); } else { document.documentElement.removeAttribute('data-glass'); localStorage.setItem('quizGlass', 'false'); } }
+function updateGlassBlur(val) { document.documentElement.style.setProperty('--glass-blur', val + 'px'); localStorage.setItem('quizGlassBlur', val); }
+function updateBgBlur(val) { document.documentElement.style.setProperty('--bg-blur', val + 'px'); localStorage.setItem('quizBgBlur', val); }
+function setTextColor(c) { document.documentElement.style.setProperty('--text-main', c); localStorage.setItem('quizTextColor', c); }
+
+function setTheme(t) { document.documentElement.setAttribute('data-theme', t); document.documentElement.style.removeProperty('--primary'); document.documentElement.style.removeProperty('--bg-color'); localStorage.setItem('quizTheme', t); }
+function setCustomTheme(c) { document.documentElement.setAttribute('data-theme', 'custom'); document.documentElement.style.setProperty('--primary', c); document.documentElement.style.setProperty('--bg-color', c + '11'); localStorage.setItem('quizTheme', 'custom'); localStorage.setItem('quizColor', c); }
+
+try {
+    if (localStorage.getItem('quizUsersData')) localStorage.removeItem('quizUsersData');
+    const savedData = localStorage.getItem(SECURE_KEY);
+    if (savedData) {
+        const parts = savedData.split('|');
+        if (parts.length === 2) {
+            const dataBase64 = parts[0]; const signature = parts[1];
+            if (generateHash(dataBase64 + SECRET_SALT) !== signature) throw new Error("Tampered");
+            usersData = JSON.parse(decodeURIComponent(atob(dataBase64)));
+        } else throw new Error("Invalid");
+    }
+} catch (e) { usersData = {}; localStorage.removeItem(SECURE_KEY); }
+
+function saveDB() { const db64 = btoa(encodeURIComponent(JSON.stringify(usersData))); localStorage.setItem(SECURE_KEY, db64 + "|" + generateHash(db64 + SECRET_SALT)); }
+
+function parseText(t) {
+    if (!t) return ""; t = t.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>'); t = t.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+    return t.replace(/\[img\]([\s\S]*?)\[\/img\]/gi, (m, u) => { let c = u.trim().replace(/\s/g, ''); if (c.startsWith('http') || c.startsWith('data:image')) return `<img src="${c}" class="rendered-img">`; return '[Ảnh không an toàn]'; });
+}
+
+function shuffleArray(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } }
+
+function switchScreen(id) {
+    document.querySelectorAll('.app-screen').forEach(el => el.classList.remove('active'));
+    const t = document.getElementById(id); if (t) t.classList.add('active');
+    const btn = document.getElementById('btn-back'); const top = document.getElementById('top-bar');
+    if (id === 'quiz-app' || id === 'flashcard-app') { top.style.display = 'flex'; btn.style.display = 'flex'; document.getElementById('back-text').innerText = "Về cấu hình"; btn.onclick = () => showUploadScreen(); } 
+    else if (id === 'upload-screen' || id === 'creator-screen' || id === 'summarizer-screen' || id === 'essay-screen') { top.style.display = 'none'; btn.style.display = 'flex'; document.getElementById('back-text').innerText = "Trang chủ"; btn.onclick = () => showDashboard(); } 
+    else { top.style.display = 'none'; btn.style.display = 'none'; }
+}
+
+function initLogin() {
+    const list = document.getElementById('user-list-render'); list.innerHTML = ''; const names = Object.keys(usersData);
+    if (names.length === 0) list.innerHTML = '<div style="color:var(--text-muted); font-size:0.95rem; padding: 15px;">Chưa có dữ liệu.</div>';
+    names.forEach(n => { const u = usersData[n]; list.innerHTML += `<div class="user-card" onclick="loginUser('${n}')"><span>👤 ${n}</span> <span style="color:var(--primary); font-size:0.85rem;">LVL ${u.level} | 🔥 ${u.streak}</span></div>`; });
+    const th = localStorage.getItem('quizTheme') || 'light'; const c = localStorage.getItem('quizColor');
+    if (th === 'custom' && c) setCustomTheme(c); else setTheme(th);
+    switchScreen('login-screen');
+}
+
+function createNewUser() { 
+    const n = document.getElementById('new-username').value.trim(); const p = document.getElementById('new-password').value;
+    if (!n) return alert("Vui lòng nhập Tên tài khoản!"); if (!p) return alert("Vui lòng thiết lập Mật khẩu!"); 
+    if (usersData[n]) { playSound('error'); return alert("Tên tài khoản đã tồn tại, vui lòng chọn tên khác."); }
+    playSound('success'); usersData[n] = { passwordHash: generateHash(p), exp: 0, level: 1, streak: 1, lastLogin: new Date().toDateString(), history: [] }; 
+    saveDB(); document.getElementById('new-password').value = ""; directLogin(n); 
+}
+
+function loginUser(n) { 
+    tempLoginUser = n;
+    if (!usersData[n].passwordHash) { directLogin(n); return; }
+    document.getElementById('login-username-display').innerText = n; document.getElementById('login-password-input').value = ""; document.getElementById('user-login-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('login-password-input').focus(), 100);
+}
+
+function confirmUserLogin() {
+    const p = document.getElementById('login-password-input').value; const expectedHash = usersData[tempLoginUser].passwordHash;
+    if (generateHash(p) === expectedHash) { playSound('success'); document.getElementById('user-login-modal').style.display = 'none'; directLogin(tempLoginUser); } 
+    else { playSound('error'); alert("❌ Mật khẩu không chính xác!"); }
+}
+
+function directLogin(n) {
+    currentUser = n; let u = usersData[n]; const today = new Date().toDateString(); 
+    if (u.lastLogin !== today) { const y = new Date(); y.setDate(y.getDate() - 1); if (u.lastLogin === y.toDateString()) u.streak += 1; else u.streak = 1; u.lastLogin = today; saveDB(); } 
+    showDashboard();
+}
+
+function logout() { currentUser = null; initLogin(); }
+function deleteAccount() { if (confirm(`Xóa tài khoản '${currentUser}'?`)) { delete usersData[currentUser]; saveDB(); logout(); } }
+function clearCache() { if (confirm("XÓA TOÀN BỘ dữ liệu người dùng? (Bao gồm cả cài đặt)")) { localStorage.clear(); location.reload(); } }
+
+function showDashboard() {
+    switchScreen('dashboard-screen'); let u = usersData[currentUser];
+    document.getElementById('avt-img').src = `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUser}&backgroundColor=transparent`;
+    document.getElementById('prof-name').innerText = currentUser; document.getElementById('prof-level').innerText = `LVL ${u.level}`; document.getElementById('prof-streak').innerText = u.streak;
+    let isMax = u.level >= 100; let cExp = isMax ? 100 : (u.exp % 100); document.getElementById('prof-exp').innerText = cExp; document.getElementById('prof-next-exp').innerText = isMax ? "MAX" : 100; document.getElementById('exp-bar').style.width = `${(cExp / 100) * 100}%`;
+    const tbody = document.getElementById('history-tbody'); tbody.innerHTML = '';
+    if (!u.history || u.history.length === 0) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Chưa có lịch sử.</td></tr>';
+    [...u.history].reverse().slice(0, 10).forEach(h => { let m = h.mode === 'flashcard' ? '📇 FC' : '📝 Quiz'; tbody.innerHTML += `<tr><td>${h.date}</td><td style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">${m}</td><td><b>${h.file}</b></td><td style="color:var(--result-correct); font-weight:700;">${h.score}</td><td style="color:var(--primary); font-weight:700;">+${h.expGained}</td></tr>`; });
+}
+
+function showUploadScreen() { switchScreen('upload-screen'); if (window.timerInterval) clearInterval(window.timerInterval); document.getElementById('excel-file').value = ""; }
+function selectMode(m) { studyMode = m; document.getElementById('btn-mode-quiz').className = m === 'quiz' ? 'mode-btn active' : 'mode-btn'; document.getElementById('btn-mode-fc').className = m === 'flashcard' ? 'mode-btn active' : 'mode-btn'; document.getElementById('config-quiz').style.display = m === 'quiz' ? 'flex' : 'none'; document.getElementById('config-fc').style.display = m === 'flashcard' ? 'flex' : 'none'; }
+
+document.getElementById('excel-file').addEventListener('change', function(e) {
+    const f = e.target.files[0]; if (!f) return; currentFileName = f.name;
+    const r = new FileReader(); r.onload = function(ev) { const d = new Uint8Array(ev.target.result); const j = XLSX.utils.sheet_to_json(XLSX.read(d, { type: 'array' }).Sheets[XLSX.read(d, { type: 'array' }).SheetNames[0]], { header: 1 }); studyMode === 'quiz' ? startQuizMode(j) : startFlashcardMode(j); }; r.readAsArrayBuffer(f);
+});
+
+function startQuizMode(d) {
+    const sQ = document.getElementById('shuffle-questions').checked; const sO = document.getElementById('shuffle-options').checked; const tL = parseInt(document.getElementById('time-limit').value); quizData = [];
+    for (let i = 1; i < d.length; i++) { const r = d[i]; if (!r[0]) continue; const oC = (parseInt(r[5]) || 1) - 1; let o = []; [r[1], r[2], r[3], r[4]].forEach((t, x) => { if (t) o.push({ t: t, i: x === oC }); }); if (sO) shuffleArray(o); quizData.push({ q: r[0], opts: o.map(x => x.t), correct: o.findIndex(x => x.i), expl: r[6] || "" }); }
+    if (sQ) shuffleArray(quizData); isSubmitted = false; flaggedQuestions.clear(); timeElapsed = 0; switchScreen('quiz-app');
+    document.getElementById('quiz-title').innerText = currentFileName; document.getElementById('score-board').style.display = 'none'; document.getElementById('avg-time-board').style.display = 'none'; document.getElementById('btn-submit').innerText = "NỘP BÀI KẾT THÚC"; document.getElementById('btn-submit').setAttribute('onclick', 'gradeQuiz(false)');
+    renderQuizUI();
+    if (window.timerInterval) clearInterval(window.timerInterval); let lS = (isNaN(tL) || tL <= 0) ? -1 : tL * 60;
+    window.timerInterval = setInterval(() => {
+        if (isSubmitted) return; timeElapsed++;
+        if (lS > 0) { let rm = lS - timeElapsed; document.getElementById('timer-display').innerText = `⏱ ${Math.floor(rm / 60).toString().padStart(2, '0')}:${(rm % 60).toString().padStart(2, '0')}`; if (rm <= 0) gradeQuiz(true); } 
+        else document.getElementById('timer-display').innerText = `⏱ ${Math.floor(timeElapsed / 60).toString().padStart(2, '0')}:${(timeElapsed % 60).toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+function renderQuizUI() {
+    const c = document.getElementById('questions-container'); const n = document.getElementById('nav-grid'); totalQuestions = quizData.length; c.innerHTML = ''; n.innerHTML = ''; const a = ['A', 'B', 'C', 'D', 'E'];
+    quizData.forEach((i, x) => {
+        let ho = ''; i.opts.forEach((o, y) => { ho += `<label class="option-item" id="opt-${x}-${y}"><input type="radio" name="q${x}" value="${y}" onchange="updateQuizUI(${x})"><div class="radio-custom"></div><span class="option-text" style="flex:1;"><b>${a[y]}.</b> ${parseText(o)}</span></label>`; });
+        let he = i.expl ? `<button class="btn-expl-toggle" id="btn-expl-${x}" onclick="document.getElementById('expl-${x}').style.display='block'; this.style.display='none'">💡 Xem giải thích</button><div class="expl-box" id="expl-${x}"><b>💡 Giải thích:</b><br>${parseText(i.expl)}</div>` : '';
+        c.innerHTML += `<div class="question-card" id="card-${x}"><div class="q-header"><div class="q-title-text"><span class="q-num">Câu ${x + 1}:</span> ${parseText(i.q)}</div><button class="flag-btn" id="flag-${x}" onclick="toggleQuizFlag(${x})">🚩 Đánh dấu</button></div><div class="options-list">${ho}</div>${he}</div>`;
+        n.innerHTML += `<button class="nav-item" id="nav-${x}" onclick="window.scrollTo({top: document.getElementById('card-${x}').offsetTop - 80, behavior:'smooth'})">${x + 1}</button>`;
+    }); updateQuizUI(-1); if (window.MathJax) MathJax.typesetPromise().catch(err => console.log(err));
+}
+
+function toggleQuizFlag(i) { if (isSubmitted) return; flaggedQuestions.has(i) ? flaggedQuestions.delete(i) : flaggedQuestions.add(i); updateQuizUI(i); }
+function updateQuizUI(i) {
+    if (isSubmitted) return;
+    if (i !== -1) { const n = document.getElementById(`nav-${i}`); n.className = 'nav-item'; if (flaggedQuestions.has(i)) n.classList.add('flagged'); else if (document.querySelector(`input[name="q${i}"]:checked`)) n.classList.add('done'); }
+    const a = document.querySelectorAll('input[type="radio"]:checked').length; document.getElementById('progress-bar').style.width = `${(a / totalQuestions) * 100}%`; document.getElementById('progress-text').innerText = `${a} / ${totalQuestions}`;
+}
+
+function gradeQuiz(f) {
+    if (isSubmitted) return; const a = document.querySelectorAll('input[type="radio"]:checked').length; if (!f && a < totalQuestions && !confirm(`Làm ${a}/${totalQuestions}. Nộp luôn?`)) return;
+    isSubmitted = true; clearInterval(window.timerInterval); document.title = originalTitle; document.getElementById('timer-display').innerText = "Đã nộp bài"; let s = 0; playSound('success');
+    quizData.forEach((q, i) => {
+        document.getElementsByName(`q${i}`).forEach(r => r.disabled = true); const sl = document.querySelector(`input[name="q${i}"]:checked`); const uA = sl ? parseInt(sl.value) : -1;
+        const n = document.getElementById(`nav-${i}`); const eb = document.getElementById(`expl-${i}`); const ebn = document.getElementById(`btn-expl-${i}`);
+        if (uA === q.correct) { s++; n.className = 'nav-item correct'; if (sl) document.getElementById(`opt-${i}-${uA}`).classList.add('correct-ans'); if (ebn) ebn.style.display = 'block'; } 
+        else { n.className = 'nav-item wrong'; if (sl) document.getElementById(`opt-${i}-${uA}`).classList.add('wrong-ans'); document.getElementById(`opt-${i}-${q.correct}`).classList.add('correct-ans'); if (eb) { eb.style.display = 'block'; if (ebn) ebn.style.display = 'none'; } }
+    });
+    const eg = s * 10; let u = usersData[currentUser]; if (u.level < 100) { u.exp += eg; u.level = Math.min(100, Math.floor(u.exp / 100) + 1); } 
+    if (!u.history) u.history = []; let d = new Date(); u.history.push({ date: `${d.getDate()}/${d.getMonth() + 1} ${d.getHours()}:${d.getMinutes()}`, mode: 'quiz', file: currentFileName, score: `${s}/${totalQuestions}`, expGained: eg, avgTime: totalQuestions > 0 ? (timeElapsed / totalQuestions).toFixed(1) : 0 }); saveDB();
+    document.getElementById('score-board').style.display = 'block'; document.getElementById('score-board').innerText = `Kết quả: ${s}/${totalQuestions} (+${eg} EXP)`; document.getElementById('avg-time-board').style.display = 'block'; document.getElementById('avg-time-board').innerText = `⏱ Thời gian: ${Math.floor(timeElapsed / 60)}m ${timeElapsed % 60}s`; document.getElementById('btn-submit').innerText = "VỀ DASHBOARD"; document.getElementById('btn-submit').setAttribute('onclick', 'showDashboard()');
+    if (f) document.getElementById('time-up-modal').style.display = 'flex'; else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// BỘ TẨY RỬA LỖI FLASHCARD HTML CŨ
+function startFlashcardMode(d) {
+    const sF = document.getElementById('fc-shuffle').checked; fcDeckOriginal = [];
+    for (let i = 1; i < d.length; i++) {
+        const r = d[i]; if (!r[0]) continue; let f = r[0]; let b = ""; let e = ""; let ansIdx = parseInt(r[5]);
+        if (!isNaN(ansIdx) && ansIdx >= 1 && ansIdx <= 4) { b = r[ansIdx] || ""; } else { b = r[1] || ""; }
+        b = b.toString().replace(/<br><br><span.*?>💡 Giải thích:.*?<\/span>/g, '');
+        b = b.toString().replace(/&lt;br&gt;&lt;br&gt;&lt;span.*?>💡 Giải thích:.*?&lt;\/span&gt;/g, '');
+        if (r[6]) e = r[6]; fcDeckOriginal.push({ id: i, front: f, back: b, expl: e });
+    }
+    if (fcDeckOriginal.length === 0) return alert("Không có thẻ!"); if (sF) shuffleArray(fcDeckOriginal);
+    fcCurrentDeck = [...fcDeckOriginal]; fcNextRoundDeck = []; fcCurrentIndex = 0; fcRound = 1; fcStats = { firstTry: 0, struggled: new Set(), totalMastered: 0 }; timeElapsed = 0;
+    switchScreen('flashcard-app'); document.getElementById('progress-bar').style.width = '0%'; document.getElementById('progress-text').innerText = `Thuộc: 0 / ${fcDeckOriginal.length}`;
+    if (window.timerInterval) clearInterval(window.timerInterval); window.timerInterval = setInterval(() => { timeElapsed++; document.getElementById('timer-display').innerText = `⏱ ${Math.floor(timeElapsed / 60).toString().padStart(2, '0')}:${(timeElapsed % 60).toString().padStart(2, '0')}`; }, 1000); renderFcCard();
+}
+
+function renderFcCard() {
+    if (fcCurrentIndex >= fcCurrentDeck.length) { if (fcNextRoundDeck.length > 0) { fcCurrentDeck = [...fcNextRoundDeck]; shuffleArray(fcCurrentDeck); fcNextRoundDeck = []; fcCurrentIndex = 0; fcRound++; } else return finishFlashcardMode(); }
+    let c = fcCurrentDeck[fcCurrentIndex]; document.getElementById('fc-card').classList.remove('flipped');
+    setTimeout(() => { 
+        document.getElementById('fc-front-text').innerHTML = parseText(c.front); 
+        let backHtml = `<div style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px;">${parseText(c.back)}</div>`;
+        if(c.expl) { backHtml += `<div class="fc-expl-box"><b style="color: var(--primary);">💡 Giải thích:</b><br>${parseText(c.expl)}</div>`; }
+        document.getElementById('fc-back-text').innerHTML = backHtml; document.getElementById('fc-round-text').innerText = `Vòng ${fcRound} (Đang học ${fcCurrentIndex + 1} / ${fcCurrentDeck.length})`; 
+        if (window.MathJax) MathJax.typesetPromise().catch(err => console.log(err));
+    }, 150);
+}
+
+function flipCard() { document.getElementById('fc-card').classList.toggle('flipped'); }
+function markFlashcard(isM) { 
+    if(isM) playSound('success'); 
+    let c = fcCurrentDeck[fcCurrentIndex]; if (isM) { fcStats.totalMastered++; if (!fcStats.struggled.has(c.id)) fcStats.firstTry++; } else { fcStats.struggled.add(c.id); fcNextRoundDeck.push(c); } 
+    document.getElementById('progress-bar').style.width = `${(fcStats.totalMastered / fcDeckOriginal.length) * 100}%`; document.getElementById('progress-text').innerText = `Thuộc: ${fcStats.totalMastered} / ${fcDeckOriginal.length}`; fcCurrentIndex++; renderFcCard(); 
+}
+function finishFlashcardMode() { playSound('success'); clearInterval(window.timerInterval); const eg = fcDeckOriginal.length * 10; let u = usersData[currentUser]; if (u.level < 100) { u.exp += eg; u.level = Math.min(100, Math.floor(u.exp / 100) + 1); } if (!u.history) u.history = []; let d = new Date(); u.history.push({ date: `${d.getDate()}/${d.getMonth() + 1} ${d.getHours()}:${d.getMinutes()}`, mode: 'flashcard', file: currentFileName, score: `${fcStats.firstTry} Nhớ ngay`, expGained: eg, avgTime: '-' }); saveDB(); document.getElementById('fc-total-mastered').innerText = fcStats.totalMastered; document.getElementById('fc-first-try').innerText = fcStats.firstTry; document.getElementById('fc-exp-gained').innerText = eg; document.getElementById('fc-result-modal').style.display = 'flex'; }
+function closeFcModal() { document.getElementById('fc-result-modal').style.display = 'none'; showDashboard(); }
+
+// -----------------------------------------------------
+// AI & API QUẢN LÝ (VỚI COOLDOWN CHỐNG SPAM)
+// -----------------------------------------------------
+function ensureApiKey() {
+    const k = document.getElementById('ai-api-key').value.trim();
+    if (!k) { playSound('error'); alert("⚠️ Bạn chưa cài đặt API Key Gemini!\nHệ thống sẽ tự động mở trang lấy Key. Vui lòng copy Key và dán vào mục [Tùy chỉnh] hoặc khung soạn thảo."); window.open("https://aistudio.google.com/app/apikey?hl=vi", "_blank"); openSettings(); return false; }
+    return k;
+}
+
+function handleAIError(e, loadingElementId, buttonElementId) {
+    console.error(e); playSound('error');
+    if (loadingElementId) document.getElementById(loadingElementId).style.display = 'none';
+    if (buttonElementId) {
+        const btn = document.getElementById(buttonElementId); btn.disabled = false;
+        if(btn.dataset.originalText) btn.innerText = btn.dataset.originalText;
+    }
+    if (e.message && (e.message.toLowerCase().includes('not found') || e.message.toLowerCase().includes('deprecated'))) { 
+        alert("⚠️ Model AI này hiện tại đã bị Google xóa hoặc ngừng hỗ trợ.\nVui lòng vào phần [Tùy chỉnh] để chọn Model khác (Khuyên dùng: Gemini 2.5 Flash)."); 
+    } 
+    else { alert(`❌ Lỗi phát sinh: ${e.message}\n(Gợi ý: Thử lại 1 lần nữa hoặc kiểm tra mạng)`); }
+}
+
+async function saveAndTestApiKey() {
+    const k = document.getElementById('ai-api-key').value.trim(); const m = document.getElementById('ai-model').value; 
+    if (!k) return alert("Vui lòng nhập API Key!"); 
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: "Hi" }] }] }) });
+        if (!res.ok) { const errData = await res.json().catch(()=>({})); throw new Error(errData.error ? errData.error.message : "Key Gemini sai hoặc lỗi mạng."); }
+        localStorage.setItem('ai_api_key', k); localStorage.setItem('ai_model', m); playSound('success'); alert("✅ KẾT NỐI THÀNH CÔNG! Đã lưu Key.");
+    } catch (e) { handleAIError(e, null, null); }
+}
+
+function processAIAttachment(e, loadingId, statusId, contextId, targetType) {
+    const f = e.target.files[0]; if (!f) return; const ext = f.name.split('.').pop().toLowerCase(); 
+    const ld = document.getElementById(loadingId); const statusBox = document.getElementById(statusId);
+    ld.style.display = 'block'; ld.innerText = "🔄 Đang trích xuất dữ liệu từ file...";
+    
+    if (['png', 'jpg', 'jpeg', 'pdf'].includes(ext)) {
+        const r = new FileReader();
+        r.onload = ev => { 
+            const base64 = ev.target.result.split(',')[1]; 
+            const fileObj = { inlineData: { data: base64, mimeType: f.type } };
+            if(targetType === 'ai') aiAttachedFile = fileObj;
+            else if(targetType === 'sum') summarizerAttachedFile = fileObj;
+            else if(targetType === 'essay') essayAttachedFile = fileObj;
+            statusBox.innerText = `📎 Đã đính kèm: ${f.name} (Sẵn sàng quét AI OCR)`; 
+            statusBox.style.display = 'block'; 
+            document.getElementById(contextId).placeholder = "Đã nạp file đính kèm. Bạn có thể gõ thêm chỉ dẫn hoặc để trống..."; 
+            ld.style.display = 'none'; 
+        }; 
+        r.readAsDataURL(f);
+    } else if (ext === 'txt') { const r = new FileReader(); r.onload = ev => { document.getElementById(contextId).value = ev.target.result; ld.style.display = 'none'; }; r.readAsText(f); } 
+    else if (ext === 'docx') { const r = new FileReader(); r.onload = ev => { mammoth.extractRawText({ arrayBuffer: ev.target.result }).then(res => { document.getElementById(contextId).value = res.value; ld.style.display = 'none'; }).catch(err => { alert("Lỗi: " + err.message); ld.style.display = 'none'; }); }; r.readAsArrayBuffer(f); } 
+    else { alert("Chỉ hỗ trợ .txt, .docx, .pdf hoặc file ảnh"); ld.style.display = 'none'; } e.target.value = "";
+}
+
+function startCooldown(btnId, seconds, originalText) {
+    const btn = document.getElementById(btnId); if (!btn) return;
+    btn.dataset.originalText = originalText; btn.disabled = true; let timeLeft = seconds; btn.innerText = `⏳ Chờ ${timeLeft}s...`;
+    const timer = setInterval(() => { timeLeft--; if (timeLeft <= 0) { clearInterval(timer); btn.disabled = false; btn.innerText = originalText; } else { btn.innerText = `⏳ Chờ ${timeLeft}s...`; } }, 1000);
+}
+
+// -----------------------------------------------------
+// BỘ PARSER VĂN BẢN TỪ AI (KHÔI PHỤC)
+// -----------------------------------------------------
+function parseCustomTextFormat(text) {
+    const results = []; const blocks = text.split('===');
+    for (let block of blocks) {
+        block = block.trim(); if (!block) continue;
+        const getTagContent = (currentTag, nextTag) => {
+            const start = block.indexOf(`[${currentTag}]`); if (start === -1) return "";
+            const startPos = start + `[${currentTag}]`.length;
+            if (!nextTag) return block.substring(startPos).trim();
+            const end = block.indexOf(`[${nextTag}]`, startPos);
+            if (end === -1) return block.substring(startPos).trim();
+            return block.substring(startPos, end).trim();
+        };
+        const q = getTagContent('Q', 'O1');
+        if (q) {
+            results.push({
+                q: q, o1: getTagContent('O1', 'O2'), o2: getTagContent('O2', 'O3'),
+                o3: getTagContent('O3', 'O4'), o4: getTagContent('O4', 'A'),
+                a: parseInt(getTagContent('A', 'E')) || 1, e: getTagContent('E', null)
+            });
+        }
+    }
+    return results;
+}
+
+// -----------------------------------------------------
+// CREATOR TOOL (SOẠN ĐỀ)
+// -----------------------------------------------------
+function showCreatorScreen() { switchScreen('creator-screen'); if (creatorQuestionsCount === 0) { addCreatorQuestion(); } }
+function updateQuestionNumbers() { document.querySelectorAll('.creator-card').forEach((c, i) => { const t = c.querySelector('.q-number-text'); if (t) t.innerText = `📌 Câu hỏi ${i + 1}`; }); }
+function deleteCreatorQuestion(id) { const c = document.getElementById(`cr-card-${id}`); if (c) { c.remove(); updateQuestionNumbers(); } }
+function clearAllCreatorQuestions() { if(creatorQuestionsCount === 0) return alert("Danh sách đang trống!"); if(confirm("Bạn có chắc chắn muốn xóa sạch toàn bộ câu hỏi đang soạn không?")) { document.getElementById('creator-questions-container').innerHTML = ''; creatorQuestionsCount = 0; } }
+
+function setCreatorMode(m) {
+    currentCreatorMode = m; document.getElementById('btn-cr-quiz').className = m === 'quiz' ? 'mode-btn active' : 'mode-btn'; document.getElementById('btn-cr-fc').className = m === 'flashcard' ? 'mode-btn active' : 'mode-btn';
+    const container = document.getElementById('creator-questions-container'); if(m === 'flashcard') { container.classList.add('fc-mode-active'); } else { container.classList.remove('fc-mode-active'); }
+}
+
+function handleAIFileUpload(e) { processAIAttachment(e, 'ai-loading', 'ai-file-status', 'ai-context', 'ai'); }
+
+function addCreatorQuestionWithReturn(isAI = false) {
+    creatorQuestionsCount++; const id = Date.now().toString() + Math.floor(Math.random() * 1000); const c = document.createElement('div'); c.className = 'creator-card'; c.id = `cr-card-${id}`;
+    const badgeHtml = isAI ? `<span style="font-size:0.75rem; background:rgba(139,92,246,0.15); color:var(--primary); padding:4px 10px; border-radius:12px; margin-left:10px; border: 1px solid var(--primary); vertical-align: middle;">✨ AI Khởi tạo</span>` : `<span style="font-size:0.75rem; background:rgba(16,185,129,0.15); color:#10b981; padding:4px 10px; border-radius:12px; margin-left:10px; border: 1px solid #10b981; vertical-align: middle;">✍️ Soạn thủ công</span>`;
+    c.innerHTML = `
+        <div class="cr-header"><div class="cr-title"><span class="q-number-text">📌 Câu hỏi ${creatorQuestionsCount}</span> ${badgeHtml}</div><button class="btn-danger" style="width: auto; padding: 8px 16px; font-size: 0.85rem;" onclick="deleteCreatorQuestion('${id}')">🗑️ Xóa</button></div>
+        <div class="cr-field"><div class="cr-field-header"><label class="lbl-q">Câu hỏi / Nội dung (Dùng $ để gõ Toán)</label><button class="btn-sm-upload" onclick="document.getElementById('file-q-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-q-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-q-${id}')"></div><textarea class="cr-textarea" id="cr-q-${id}" rows="2"></textarea></div>
+        <div class="cr-grid">
+            <div class="cr-field"><div class="cr-field-header"><label class="lbl-opt1">A. Đáp án 1</label><button class="btn-sm-upload" onclick="document.getElementById('file-opt1-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-opt1-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-opt1-${id}')"></div><textarea class="cr-textarea" id="cr-opt1-${id}" rows="1"></textarea></div>
+            <div class="cr-field fc-hide"><div class="cr-field-header"><label>B. Đáp án 2</label><button class="btn-sm-upload" onclick="document.getElementById('file-opt2-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-opt2-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-opt2-${id}')"></div><textarea class="cr-textarea" id="cr-opt2-${id}" rows="1"></textarea></div>
+            <div class="cr-field fc-hide"><div class="cr-field-header"><label>C. Đáp án 3</label><button class="btn-sm-upload" onclick="document.getElementById('file-opt3-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-opt3-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-opt3-${id}')"></div><textarea class="cr-textarea" id="cr-opt3-${id}" rows="1"></textarea></div>
+            <div class="cr-field fc-hide"><div class="cr-field-header"><label>D. Đáp án 4</label><button class="btn-sm-upload" onclick="document.getElementById('file-opt4-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-opt4-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-opt4-${id}')"></div><textarea class="cr-textarea" id="cr-opt4-${id}" rows="1"></textarea></div>
+        </div>
+        <div class="cr-bottom-row"><div class="cr-correct-box fc-hide"><label>✅ Đáp án đúng</label><select id="cr-ans-${id}" class="cr-select"><option value="1">1 (A)</option><option value="2">2 (B)</option><option value="3">3 (C)</option><option value="4">4 (D)</option></select></div><div class="cr-field" style="flex: 1; margin: 0;"><div class="cr-field-header"><label>💡 Giải thích chi tiết</label><button class="btn-sm-upload" onclick="document.getElementById('file-expl-${id}').click()">🖼️ Tải ảnh</button><input type="file" id="file-expl-${id}" hidden accept="image/*" onchange="handleFileUpload(event, 'cr-expl-${id}')"></div><textarea class="cr-textarea" id="cr-expl-${id}" rows="2"></textarea></div></div>`;
+    document.getElementById('creator-questions-container').appendChild(c); updateQuestionNumbers(); c.querySelectorAll('textarea').forEach(t => t.addEventListener('paste', handleImagePaste)); return id;
+}
+function addCreatorQuestion() { addCreatorQuestionWithReturn(false); }
+
+function processAndInsertImage(f, tId, tgt = null) {
+    const r = new FileReader();
+    r.onload = function(ev) { const i = new Image(); i.src = ev.target.result; i.onload = function() { const c = document.createElement('canvas'); const MAX_W = 400; let w = i.width; let h = i.height; if (w > MAX_W) { h = Math.round((h * MAX_W) / w); w = MAX_W; } c.width = w; c.height = h; const ctx = c.getContext('2d'); ctx.drawImage(i, 0, 0, w, h); const b64 = c.toDataURL('image/jpeg', 0.7); const tag = `[img]${b64}[/img]`; const t = tgt || document.getElementById(tId); const sP = t.selectionStart; const eP = t.selectionEnd; t.value = t.value.substring(0, sP) + tag + t.value.substring(eP, t.value.length); } }; r.readAsDataURL(f);
+}
+function handleFileUpload(e, id) { const f = e.target.files[0]; if (!f) return; processAndInsertImage(f, id); e.target.value = ""; }
+function handleImagePaste(e) { const i = (e.clipboardData || e.originalEvent.clipboardData).items; for (let x in i) { const item = i[x]; if (item.kind === 'file') { processAndInsertImage(item.getAsFile(), null, e.target); e.preventDefault(); } } }
+
+function exportCreatorToExcel() {
+    const cs = document.querySelectorAll('.creator-card'); if (cs.length === 0) return alert("Trống!");
+    let w_d = [["Câu hỏi", "Đáp án 1", "Đáp án 2", "Đáp án 3", "Đáp án 4", "Đáp án đúng", "Giải thích"]];
+    cs.forEach(c => { const id = c.id.replace('cr-card-', ''); const q = document.getElementById(`cr-q-${id}`).value.trim(); const o1 = document.getElementById(`cr-opt1-${id}`).value.trim(); const o2 = currentCreatorMode === 'flashcard' ? "" : document.getElementById(`cr-opt2-${id}`).value.trim(); const o3 = currentCreatorMode === 'flashcard' ? "" : document.getElementById(`cr-opt3-${id}`).value.trim(); const o4 = currentCreatorMode === 'flashcard' ? "" : document.getElementById(`cr-opt4-${id}`).value.trim(); const a = currentCreatorMode === 'flashcard' ? "1" : document.getElementById(`cr-ans-${id}`).value; const e = document.getElementById(`cr-expl-${id}`).value.trim(); if (q) w_d.push([q, o1, o2, o3, o4, a, e]); });
+    if (w_d.length === 1) return alert("Vui lòng điền nội dung!");
+    const ws = XLSX.utils.aoa_to_sheet(w_d); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "NganHangCauHoi"); XLSX.writeFile(wb, `BoDe_LMS_${new Date().getTime()}.xlsx`);
+}
+
+async function generateWithAI() {
+    const k = ensureApiKey(); if (!k) return;
+    const m = document.getElementById('ai-model').value; const t = document.getElementById('ai-context').value.trim(); const md = document.getElementById('ai-mode').value; const customInstruction = document.getElementById('ai-custom-prompt').value.trim(); const btn = document.getElementById('btn-ai-generate'); const ld = document.getElementById('ai-loading');
+    if (!t && !aiAttachedFile) return alert("Vui lòng dán văn bản, hoặc đính kèm một file Ảnh/PDF!");
+    document.getElementById('creator-questions-container').innerHTML = ''; creatorQuestionsCount = 0; setCreatorMode(md);
+
+    const sys = `Bạn là chuyên gia tạo đề trắc nghiệm và thẻ nhớ. Phân tích văn bản (hoặc hình ảnh đính kèm) và tạo bộ câu hỏi.
+TUYỆT ĐỐI KHÔNG SỬ DỤNG JSON. Trả về kết quả bằng văn bản thuần túy theo ĐÚNG CẤU TRÚC 1-SHOT DƯỚI ĐÂY.
+Mỗi câu hỏi ngăn cách nhau bằng đúng 3 dấu bằng: ===
+
+[CẤU TRÚC MẪU BẮT BUỘC]
+[Q] Quốc gia nào có diện tích lớn nhất thế giới?
+[O1] Mỹ
+[O2] Nga
+[O3] Trung Quốc
+[O4] Việt Nam
+[A] 2
+[E] Liên bang Nga là quốc gia lớn nhất thế giới về diện tích.
+===
+[Q] Câu hỏi số 2...
+
+LƯU Ý QUAN TRỌNG: 
+- Nếu người dùng yêu cầu Flashcard: Bỏ trống hoàn toàn [O2], [O3], [O4]. Ghi đáp án (mặt sau thẻ) thẳng vào [O1], và [A] luôn luôn là 1.
+- Công thức toán học BẮT BUỘC bọc trong cặp dấu $ (VD: $\\int x^2 dx$).`;
+
+    let usr = `CHẾ ĐỘ YÊU CẦU: ${md.toUpperCase()}`; if (t) usr += `\nNỘI DUNG CẦN PHÂN TÍCH:\n${t}`; if (customInstruction) usr += `\n\n--- YÊU CẦU ĐẶC BIỆT TỪ NGƯỜI DÙNG ---\n${customInstruction}`;
+    const promptParts = [{ text: usr }]; if (aiAttachedFile) promptParts.push(aiAttachedFile);
+
+    btn.disabled = true; ld.style.display = 'block';
+    
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: sys }] }, contents: [{ parts: promptParts }], generationConfig: { temperature: 0.3 } }) });
+        if (!res.ok) { const errData = await res.json().catch(()=>({})); throw new Error(errData.error ? errData.error.message : "Lỗi kết nối Gemini."); }
+        const data = await res.json(); const txt = data.candidates[0].content.parts[0].text;
+        const arr = parseCustomTextFormat(txt);
+        if(arr.length === 0) throw new Error("AI trả về kết quả rỗng hoặc vi phạm cấu trúc.");
+
+        arr.forEach(i => {
+            const id = addCreatorQuestionWithReturn(true);
+            document.getElementById(`cr-q-${id}`).value = i.q || ""; document.getElementById(`cr-opt1-${id}`).value = i.o1 || ""; document.getElementById(`cr-opt2-${id}`).value = i.o2 || ""; document.getElementById(`cr-opt3-${id}`).value = i.o3 || ""; document.getElementById(`cr-opt4-${id}`).value = i.o4 || ""; document.getElementById(`cr-ans-${id}`).value = i.a || 1; document.getElementById(`cr-expl-${id}`).value = i.e || "";
+        });
+        playSound('success'); alert(`Tạo thành công ${arr.length} câu hỏi mới!`); 
+        document.getElementById('ai-context').value = ""; document.getElementById('ai-context').placeholder = "AI sẽ đọc nội dung ở đây..."; document.getElementById('ai-custom-prompt').value = ""; aiAttachedFile = null; document.getElementById('ai-file-status').style.display = 'none';
+
+    } catch (e) { handleAIError(e, 'ai-loading', 'btn-ai-generate'); } 
+    finally { document.getElementById('ai-loading').style.display = 'none'; startCooldown('btn-ai-generate', 10, '🚀 BẮT ĐẦU TẠO BẰNG AI'); }
+}
+
+function handleSumFileUpload(e) { processAIAttachment(e, 'sum-loading', 'sum-file-status', 'sum-context', 'sum'); }
+async function generateSummary() {
+    const k = ensureApiKey(); if (!k) return;
+    const m = document.getElementById('ai-model').value; const t = document.getElementById('sum-context').value.trim(); const customPrompt = document.getElementById('sum-custom-prompt').value.trim(); const btn = document.getElementById('btn-sum-generate'); const ld = document.getElementById('sum-loading'); const resultBox = document.getElementById('sum-result-box'); const resultContent = document.getElementById('sum-result-content');
+    if (!t && !summarizerAttachedFile) return alert("Vui lòng dán văn bản hoặc nạp tài liệu để AI tóm tắt!");
+
+    const sys = `Bạn là một Giáo sư Học thuật chuyên nghiệp. Nhiệm vụ của bạn là đọc hiểu và tóm tắt tài liệu một cách súc tích, dễ hiểu, nhắm đúng trọng tâm để học sinh ôn thi.
+- Dùng thẻ Markdown (**chữ đậm**) để nhấn mạnh các từ khóa.
+- Trình bày rõ ràng bằng các gạch đầu dòng (bullet points).
+- Công thức toán học BẮT BUỘC bọc trong cặp dấu $ (VD: $\\int x^2 dx$).`;
+
+    let usr = "HÃY TÓM TẮT TÀI LIỆU SAU ĐÂY:\n"; if(t) usr += t; if(customPrompt) usr += `\n\n--- LƯU Ý ĐẶC BIỆT ---\n${customPrompt}`;
+    const promptParts = [{ text: usr }]; if (summarizerAttachedFile) promptParts.push(summarizerAttachedFile);
+
+    btn.disabled = true; ld.style.display = 'block'; resultBox.style.display = 'none';
+
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: sys }] }, contents: [{ parts: promptParts }], generationConfig: { temperature: 0.2 } }) });
+        if (!res.ok) { const errData = await res.json().catch(()=>({})); throw new Error(errData.error ? errData.error.message : "Lỗi kết nối Gemini."); }
+        const data = await res.json(); 
+        playSound('success'); resultContent.innerHTML = parseText(data.candidates[0].content.parts[0].text); resultBox.style.display = 'block';
+        if (window.MathJax) MathJax.typesetPromise().catch(err => console.log(err));
+    } catch (e) { handleAIError(e, 'sum-loading', 'btn-sum-generate'); } 
+    finally { document.getElementById('sum-loading').style.display = 'none'; startCooldown('btn-sum-generate', 10, '🚀 BẮT ĐẦU TÓM TẮT MỌI THỨ'); }
+}
+
+function handleEssayFileUpload(e) { processAIAttachment(e, 'essay-loading-1', 'essay-file-status', 'essay-context', 'essay'); }
+async function generateEssayQuestions() {
+    const k = ensureApiKey(); if (!k) return;
+    const m = document.getElementById('ai-model').value; const t = document.getElementById('essay-context').value.trim(); const diff = document.getElementById('essay-difficulty').value; const btn = document.getElementById('btn-essay-generate'); const ld = document.getElementById('essay-loading-1');
+    if (!t && !essayAttachedFile) return alert("Vui lòng dán văn bản hoặc nạp tài liệu để AI tạo câu hỏi!");
+
+    const sys = `Đóng vai Giáo viên ra đề thi Tự luận (Short Answer/Essay). Dựa trên tài liệu được cung cấp, hãy tạo ra 1 đến 3 câu hỏi tự luận theo yêu cầu độ khó của người dùng.
+- Trả về câu hỏi trực tiếp, KHÔNG kèm theo đáp án.
+- Câu hỏi phải rõ ràng, kích thích tư duy người học.
+- Nếu có công thức toán, bọc trong cặp dấu $...$`;
+
+    let usr = `MỨC ĐỘ YÊU CẦU: ${diff.toUpperCase()}\nTÀI LIỆU:\n`; if(t) usr += t;
+    const promptParts = [{ text: usr }]; if (essayAttachedFile) promptParts.push(essayAttachedFile);
+
+    btn.disabled = true; ld.style.display = 'block';
+
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: sys }] }, contents: [{ parts: promptParts }], generationConfig: { temperature: 0.5 } }) });
+        if (!res.ok) { const errData = await res.json().catch(()=>({})); throw new Error(errData.error ? errData.error.message : "Lỗi kết nối Gemini."); }
+        const data = await res.json(); currentEssayGeneratedQuestions = data.candidates[0].content.parts[0].text;
+        playSound('success'); document.getElementById('essay-step-1').style.display = 'none'; document.getElementById('essay-step-2').style.display = 'block'; document.getElementById('essay-question-display').innerHTML = parseText(currentEssayGeneratedQuestions); document.getElementById('essay-user-answer').value = "";
+        if (window.MathJax) MathJax.typesetPromise().catch(err => console.log(err));
+    } catch (e) { handleAIError(e, 'essay-loading-1', 'btn-essay-generate'); } 
+    finally { document.getElementById('essay-loading-1').style.display = 'none'; startCooldown('btn-essay-generate', 5, '🚀 TẠO CÂU HỎI TỰ LUẬN'); }
+}
+
+async function gradeEssay() {
+    const k = ensureApiKey(); if (!k) return;
+    const m = document.getElementById('ai-model').value; const t = document.getElementById('essay-context').value.trim(); const userAnswer = document.getElementById('essay-user-answer').value.trim(); const btn = document.getElementById('btn-essay-grade'); const ld = document.getElementById('essay-loading-2');
+    if (!userAnswer) return alert("Bạn chưa nhập câu trả lời nào cả!");
+
+    const sys = `Đóng vai Giáo viên chấm thi Tự luận chuyên nghiệp, khắt khe nhưng tận tâm.
+Nhiệm vụ: Dựa vào TÀI LIỆU GỐC, CÂU HỎI ĐÃ RA và CÂU TRẢ LỜI CỦA HỌC SINH. Hãy đánh giá bài làm theo cấu trúc:
+1. ĐIỂM SỐ: Chấm theo thang điểm 10 (Ví dụ: 8/10).
+2. NHẬN XÉT: Nêu rõ ưu điểm, khuyết điểm hoặc những ý học sinh trả lời sai/thiếu.
+3. ĐÁP ÁN CHUẨN: Đưa ra câu trả lời mẫu hoàn hảo và xúc tích nhất.
+Dùng thẻ Markdown (**chữ đậm**) để làm nổi bật. Công thức toán bọc trong $...$`;
+
+    let usr = `--- CÂU HỎI TỪ GIÁO VIÊN ---\n${currentEssayGeneratedQuestions}\n\n--- CÂU TRẢ LỜI CỦA HỌC SINH ---\n${userAnswer}`; if (t) usr = `--- TÀI LIỆU GỐC ---\n${t}\n\n` + usr;
+    const promptParts = [{ text: usr }]; if (essayAttachedFile) promptParts.push(essayAttachedFile);
+
+    btn.disabled = true; ld.style.display = 'block';
+
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: sys }] }, contents: [{ parts: promptParts }], generationConfig: { temperature: 0.3 } }) });
+        if (!res.ok) { const errData = await res.json().catch(()=>({})); throw new Error(errData.error ? errData.error.message : "Lỗi kết nối Gemini."); }
+        const data = await res.json(); 
+        playSound('success'); document.getElementById('essay-step-2').style.display = 'none'; document.getElementById('essay-step-3').style.display = 'block'; document.getElementById('essay-grading-result').innerHTML = parseText(data.candidates[0].content.parts[0].text);
+        let u = usersData[currentUser]; if (u.level < 100) { u.exp += 15; u.level = Math.min(100, Math.floor(u.exp / 100) + 1); saveDB(); }
+        if (window.MathJax) MathJax.typesetPromise().catch(err => console.log(err));
+    } catch (e) { handleAIError(e, 'essay-loading-2', 'btn-essay-grade'); } 
+    finally { document.getElementById('essay-loading-2').style.display = 'none'; startCooldown('btn-essay-grade', 10, 'NỘP BÀI CHẤM ĐIỂM'); }
+}
+
+function resetEssay() {
+    document.getElementById('essay-step-3').style.display = 'none'; document.getElementById('essay-step-2').style.display = 'none'; document.getElementById('essay-step-1').style.display = 'block';
+    essayAttachedFile = null; document.getElementById('essay-file-status').style.display = 'none'; document.getElementById('essay-context').value = ""; document.getElementById('essay-context').placeholder = "Dán tài liệu học tập vào đây...";
+}
+
+initLogin();

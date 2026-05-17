@@ -3,28 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Sinh Thái E-Learning</title>
+    <title>EdTech LMS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }, svg: { scale: 1.1, fontCache: 'global' } };</script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div id="app-bg"></div>
+
+    <div class="modal-overlay" id="master-key-overlay" style="display: none; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 10000;">
+        <div class="modal-box" style="border: 2px solid var(--primary); box-shadow: 0 0 50px rgba(99, 102, 241, 0.3);">
+            <div style="font-size: 4rem; margin-bottom: 10px;">🔒</div>
+            <h2 style="color: var(--primary);">Hệ Thống Phân Quyền</h2>
+            <p style="color: var(--text-muted); margin: 15px 0 25px;">Vui lòng nhập Mã Khởi Động để truy cập vào hệ thống EdTech LMS.</p>
+            <input type="password" id="master-key-input" class="input-text" style="text-align: center; font-size: 1.2rem; letter-spacing: 2px;" placeholder="Nhập Master Key..." onkeydown="if(event.key === 'Enter') verifyMasterKey()">
+            <button class="btn-main" style="margin-top: 15px;" onclick="verifyMasterKey()">MỞ KHÓA HỆ THỐNG</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="user-login-modal">
+        <div class="modal-box" style="max-width: 400px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">👤</div>
+            <h2 style="color: var(--primary);">Đăng nhập</h2>
+            <p style="margin: 15px 0;">Chào mừng trở lại, <b id="login-username-display" style="color: var(--primary);"></b>!</p>
+            <input type="password" id="login-password-input" class="input-text" placeholder="Nhập mật khẩu của bạn..." onkeydown="if(event.key === 'Enter') confirmUserLogin()">
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn-outline" onclick="document.getElementById('user-login-modal').style.display='none'">Hủy</button>
+                <button class="btn-main" onclick="confirmUserLogin()">Đăng nhập</button>
+            </div>
+        </div>
+    </div>
+
     <div class="app-screen" id="login-screen">
         <div class="login-box">
             <h1 style="color: var(--primary); font-size: 2.2rem; margin-bottom: 5px;">EdTech LMS</h1>
             <p style="color: var(--text-muted); margin-bottom: 30px;">Học tập không giới hạn</p>
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-weight: 700; font-size: 0.95rem;">Tạo tài khoản mới</label>
-                <div style="display: flex; gap: 10px; margin-top: 8px;">
-                    <input type="text" id="new-username" class="input-text" placeholder="Nhập tên của bạn...">
-                    <button class="btn-main" style="width: auto;" onclick="createNewUser()">Tạo</button>
+            
+            <div style="text-align: left; margin-bottom: 20px; background: var(--bg-color); padding: 20px; border-radius: 16px; border: 1px solid var(--border-light);">
+                <label style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">✨ TẠO TÀI KHOẢN MỚI</label>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                    <input type="text" id="new-username" class="input-text" placeholder="Nhập tên đăng nhập...">
+                    <input type="password" id="new-password" class="input-text" placeholder="Tạo mật khẩu an toàn..." onkeydown="if(event.key === 'Enter') createNewUser()">
+                    <button class="btn-main" onclick="createNewUser()">Đăng Ký & Vào Học</button>
                 </div>
             </div>
+
             <div style="text-align: left;">
-                <label style="font-weight: 700; font-size: 0.95rem;">Hoặc chọn tài khoản đã có</label>
+                <label style="font-weight: 700; font-size: 0.95rem; display: block; padding-left: 5px;">Hoặc chọn tài khoản đã có:</label>
                 <div class="user-list" id="user-list-render"></div>
             </div>
-            <button class="clear-cache-btn" onclick="clearCache()">⚠️ Xóa toàn bộ dữ liệu</button>
+            <button class="clear-cache-btn" onclick="clearCache()">⚠️ Khôi phục cài đặt gốc (Xóa toàn bộ)</button>
         </div>
     </div>
 
@@ -34,7 +65,6 @@
             <h2 id="prof-name" style="text-align: center; font-size: 1.8rem;"></h2>
             <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
                 <div class="badge-pill level-badge" id="prof-level"></div>
-                <div class="badge-pill diamond-badge">💎 <span id="prof-diamonds"></span></div>
                 <div class="badge-pill streak-fire">🔥 <span id="prof-streak"></span></div>
             </div>
             <div style="margin-top: 30px;">
@@ -44,25 +74,21 @@
                 </div>
                 <div class="exp-bar-bg"><div class="exp-bar-fill" id="exp-bar"></div></div>
             </div>
-            <hr style="border: none; border-top: 1px solid var(--border-light); margin: 30px 0;">
-            <div style="text-align: center; font-weight: 700; margin-bottom: 15px; font-size: 0.9rem; color: var(--text-muted);">🎨 GIAO DIỆN TÙY CHỌN</div>
-            <div class="theme-picker">
-                <div class="theme-btn" style="background: #f8fafc;" onclick="setTheme('light')"></div>
-                <div class="theme-btn" style="background: #0f172a;" onclick="setTheme('dark')"></div>
-                <div class="theme-btn" style="background: #fdf2f8; border-color: #ec4899;" onclick="setTheme('pink')"></div>
-                <div class="theme-btn" style="background: #fffbeb; border-color: #eab308;" onclick="setTheme('yellow')"></div>
-                <div style="position: relative; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-light); cursor: pointer;">
-                    <input type="color" id="custom-color" value="#6366f1" style="position: absolute; top: -10px; left: -10px; width: 50px; height: 50px; cursor: pointer;" onchange="setCustomTheme(this.value)">
+            <hr style="border: none; border-top: 1px solid var(--border-light); margin: 30px 0 15px;">
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+                <button class="btn-main" style="background: #0ea5e9; padding: 16px; font-size: 1.1rem; margin-bottom: 5px;" onclick="showUploadScreen()">🚀 LUYỆN TRẮC NGHIỆM / FLASHCARD</button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <button class="btn-action btn-purple" onclick="showCreatorScreen()">🛠️ Soạn Đề</button>
+                    <button class="btn-action btn-yellow" onclick="switchScreen('summarizer-screen')">📑 Tóm tắt</button>
+                    <button class="btn-action btn-pink" onclick="switchScreen('essay-screen')">✍️ Tự luận</button>
+                    <button class="btn-action btn-blue" onclick="openSettings()">⚙️ Tùy chỉnh</button>
+                    <button class="btn-action btn-green" onclick="openGuide()">📖 HD Học</button>
+                    <button class="btn-action btn-red" onclick="deleteAccount()">🗑️ Xóa TK</button>
                 </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding-top: 30px;">
-                <button class="btn-outline" style="border-color: var(--primary); color: var(--primary);" onclick="showCreatorScreen()">🛠️ Công cụ Soạn Đề</button>
-                <button class="btn-main" style="background: #0ea5e9;" onclick="openShop()">🛒 Cửa hàng Blind Box</button>
-                <button class="btn-main" onclick="showUploadScreen()">BẮT ĐẦU HỌC TẬP</button>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button class="btn-outline" style="font-size: 0.9rem; padding: 10px;" onclick="logout()">Đăng xuất</button>
-                    <button class="btn-danger" style="font-size: 0.9rem; padding: 10px;" onclick="deleteAccount()">Xóa TK</button>
-                </div>
+
+                <button class="btn-outline" style="font-size: 0.9rem; padding: 12px; margin-top: 5px;" onclick="logout()">Đăng xuất</button>
             </div>
         </div>
         <div class="history-card">
@@ -77,21 +103,145 @@
         </div>
     </div>
 
+    <div class="app-screen" id="summarizer-screen">
+        <div style="max-width: 900px; margin: 80px auto; padding: 0 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1 style="color: #eab308; font-size: 2rem;">📑 Tóm Tắt Đề Cương</h1>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Rút trích ý chính từ tài liệu, PDF, hoặc hình ảnh bằng AI</p>
+                </div>
+            </div>
+            
+            <div class="ai-assistant-card" style="border-color: #fef08a; background: rgba(254, 240, 138, 0.1);">
+                <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-outline" style="padding: 8px 15px; font-size: 0.85rem; border-color: #d97706; color: #d97706;" onclick="document.getElementById('sum-file-upload').click()">📂 Nạp Ảnh/PDF/Word/TXT</button>
+                    <input type="file" id="sum-file-upload" hidden accept=".txt,.docx,.pdf,image/png,image/jpeg,image/jpg" onchange="handleSumFileUpload(event)">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Hỗ trợ quét ảnh siêu tốc!</span>
+                </div>
+                
+                <div id="sum-file-status" style="display: none; padding: 10px; background: #dcfce7; border: 1px dashed #22c55e; color: #15803d; font-weight: bold; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem;"></div>
+
+                <textarea class="cr-textarea" id="sum-context" rows="4" placeholder="Dán văn bản cần tóm tắt vào đây (Hoặc bỏ qua nếu đã nạp file)..."></textarea>
+                
+                <div style="margin-top: 10px;">
+                    <input type="text" id="sum-custom-prompt" class="input-text" style="border-color: #fde047;" placeholder="💡 Tùy chỉnh (VD: Tóm tắt siêu ngắn trong 3 gạch đầu dòng, Liệt kê các công thức...)">
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center;">
+                    <button class="btn-main" id="btn-sum-generate" style="background: #d97706;" onclick="generateSummary()">🚀 BẮT ĐẦU TÓM TẮT MỌI THỨ</button>
+                </div>
+                <div id="sum-loading" style="display: none; color: #d97706; font-weight: 700; margin-top: 10px; text-align: center;">⏳ AI đang cày cuốc đọc tài liệu... Vui lòng đợi!</div>
+            </div>
+
+            <div id="sum-result-box" class="ai-result-box" style="display:none;">
+                <h3 style="color: #d97706; margin-bottom: 15px; border-bottom: 2px solid #fef08a; padding-bottom: 10px;">✨ Kết quả Tóm tắt</h3>
+                <div id="sum-result-content" style="line-height: 1.6; font-size: 1.05rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-screen" id="essay-screen">
+        <div style="max-width: 900px; margin: 80px auto; padding: 0 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h1 style="color: #ec4899; font-size: 2rem;">✍️ Luyện Thi Tự Luận</h1>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">AI đóng vai Giáo viên ra đề và Chấm điểm bài làm của bạn</p>
+                </div>
+            </div>
+            
+            <div class="ai-assistant-card" id="essay-step-1" style="border-color: #fbcfe8; background: rgba(253, 242, 248, 0.5);">
+                <h3 style="color: #db2777; margin-bottom: 15px;">Bước 1: Nạp tài liệu & Chọn độ khó</h3>
+                <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-outline" style="padding: 8px 15px; font-size: 0.85rem; border-color: #db2777; color: #db2777;" onclick="document.getElementById('essay-file-upload').click()">📂 Nạp Ảnh/PDF/Word/TXT</button>
+                    <input type="file" id="essay-file-upload" hidden accept=".txt,.docx,.pdf,image/png,image/jpeg,image/jpg" onchange="handleEssayFileUpload(event)">
+                </div>
+                <div id="essay-file-status" style="display: none; padding: 10px; background: #dcfce7; border: 1px dashed #22c55e; color: #15803d; font-weight: bold; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem;"></div>
+                <textarea class="cr-textarea" id="essay-context" rows="3" placeholder="Dán tài liệu học tập vào đây..."></textarea>
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
+                    <select id="essay-difficulty" class="cr-select" style="padding: 10px; flex: 1; min-width: 200px; color: #db2777;">
+                        <option value="cơ bản">Mức độ Cơ Bản (Kiểm tra trí nhớ)</option>
+                        <option value="nâng cao">Mức độ Nâng Cao (Phân tích, Tư duy)</option>
+                        <option value="trộn lẫn">Hỏi Full (Tổng hợp mọi mức độ)</option>
+                    </select>
+                    <button class="btn-main" id="btn-essay-generate" style="flex: 2; background: #db2777; min-width: 200px;" onclick="generateEssayQuestions()">🚀 TẠO CÂU HỎI TỰ LUẬN</button>
+                </div>
+                <div id="essay-loading-1" style="display: none; color: #db2777; font-weight: 700; margin-top: 10px; text-align: center;">⏳ AI đang suy nghĩ để "hành" bạn...</div>
+            </div>
+
+            <div id="essay-step-2" style="display:none; background: var(--card-bg); padding: 25px; border-radius: 20px; border: 2px solid #db2777; margin-bottom: 25px;">
+                <h3 style="color: #db2777; margin-bottom: 15px;">Bước 2: Câu hỏi dành cho bạn</h3>
+                <div id="essay-question-display" style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px; font-weight: 600;"></div>
+                <textarea class="cr-textarea" id="essay-user-answer" rows="6" placeholder="Gõ câu trả lời của bạn vào đây..." style="border-color: #fbcfe8;"></textarea>
+                <button class="btn-main" id="btn-essay-grade" style="background: #10b981; margin-top: 15px;" onclick="gradeEssay()">NỘP BÀI CHẤM ĐIỂM</button>
+                <div id="essay-loading-2" style="display: none; color: #10b981; font-weight: 700; margin-top: 10px; text-align: center;">⏳ Giáo viên AI đang chấm bài cẩn thận...</div>
+            </div>
+
+            <div id="essay-step-3" class="ai-result-box" style="display:none; border-color: #10b981; background: rgba(16, 185, 129, 0.05);">
+                <h3 style="color: #059669; margin-bottom: 15px; border-bottom: 2px solid #6ee7b7; padding-bottom: 10px;">📋 Kết Quả Đánh Giá</h3>
+                <div id="essay-grading-result" style="line-height: 1.6; font-size: 1.05rem;"></div>
+                <button class="btn-outline" style="margin-top: 20px; border-color: #db2777; color: #db2777;" onclick="resetEssay()">Làm bài khác</button>
+            </div>
+        </div>
+    </div>
+
     <div class="app-screen" id="creator-screen">
         <div style="max-width: 900px; margin: 80px auto; padding: 0 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <div>
                     <h1 style="color: var(--primary); font-size: 2rem;">🛠️ Soạn Đề Mới</h1>
-                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Hệ thống tự động lưu ảnh dạng mã hóa</p>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">Tự động lưu ảnh mã hóa & Hỗ trợ AI</p>
                 </div>
-                <button class="btn-main" style="width: auto; background: #10b981;" onclick="exportCreatorToExcel()">💾 Xuất file Excel</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-outline" style="width: auto; padding: 12px 20px; border-radius: 14px; border-color: #f59e0b; color: #d97706;" onclick="openCreatorGuide()">💡 Tips Soạn</button>
+                    <button class="btn-danger" style="width: auto; padding: 12px 20px; border-radius: 14px;" onclick="clearAllCreatorQuestions()">🗑️ Xóa hết</button>
+                    <button class="btn-main" style="width: auto; background: #10b981;" onclick="exportCreatorToExcel()">💾 Xuất Excel</button>
+                </div>
             </div>
+
+            <div style="background: var(--card-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--border-light); margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                <div style="font-weight: bold; font-size: 1.1rem; color: var(--text-main);">Chế độ Khung soạn thảo:</div>
+                <div class="mode-selector" style="margin: 0; width: 300px; padding: 5px;">
+                    <button class="mode-btn active" id="btn-cr-quiz" onclick="setCreatorMode('quiz')" style="padding: 8px;">📝 Quiz</button>
+                    <button class="mode-btn" id="btn-cr-fc" onclick="setCreatorMode('flashcard')" style="padding: 8px;">📇 Flashcard</button>
+                </div>
+            </div>
+            
+            <div class="ai-assistant-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="color: #8b5cf6; margin: 0;">✨ AI Tự Động Tạo Đề (Hỗ trợ OCR)</h3>
+                </div>
+
+                <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                    <button class="btn-outline" style="padding: 8px 15px; font-size: 0.85rem; border-color: #8b5cf6; color: #8b5cf6;" onclick="document.getElementById('ai-file-upload').click()">📂 Nạp Ảnh/PDF/Word/TXT</button>
+                    <input type="file" id="ai-file-upload" hidden accept=".txt,.docx,.pdf,image/png,image/jpeg,image/jpg" onchange="handleAIFileUpload(event)">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Hỗ trợ quét ảnh siêu tốc!</span>
+                </div>
+                
+                <div id="ai-file-status" style="display: none; padding: 10px; background: #dcfce7; border: 1px dashed #22c55e; color: #15803d; font-weight: bold; border-radius: 10px; margin-bottom: 10px; font-size: 0.85rem;"></div>
+
+                <textarea class="cr-textarea" id="ai-context" rows="4" placeholder="AI sẽ đọc nội dung ở đây... (Bạn có thể bỏ qua ô này nếu đã nạp Ảnh/PDF)"></textarea>
+                
+                <div style="margin-top: 10px;">
+                    <input type="text" id="ai-custom-prompt" class="input-text" style="border-color: #ddd6fe;" placeholder="💡 Yêu cầu thêm (VD: Hãy giải mấy câu trong ảnh, mức độ khó, cho 10 câu...)">
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
+                    <select id="ai-mode" class="cr-select" style="padding: 10px; flex: 1; min-width: 200px;">
+                        <option value="quiz">📝 AI Tạo Trắc nghiệm (4 Đáp án)</option>
+                        <option value="flashcard">📇 AI Tạo Flashcard</option>
+                    </select>
+                    <button class="btn-main" id="btn-ai-generate" style="flex: 2; background: #8b5cf6; min-width: 200px;" onclick="generateWithAI()">🚀 BẮT ĐẦU TẠO BẰNG AI</button>
+                </div>
+                <div id="ai-loading" style="display: none; color: #8b5cf6; font-weight: 700; margin-top: 10px; text-align: center;">⏳ AI đang vận công... Vui lòng đợi khoảng 10-20 giây!</div>
+            </div>
+
             <div style="background: var(--bg-color); border: 1px dashed var(--primary); padding: 18px; border-radius: 16px; margin-bottom: 30px; font-size: 0.95rem; display: flex; gap: 10px; align-items: center;">
                 <span style="font-size: 1.5rem;">💡</span>
-                <span><b>Mẹo Slay:</b> Đặt chuột vào ô nhập liệu và bấm <b>Ctrl + V</b> để dán trực tiếp hình ảnh.</span>
+                <span><b>Mẹo Slay:</b> Dùng <b>Ctrl + V</b> để dán ảnh. Gõ công thức Toán bằng thẻ <b>$</b> (VD: $x^2$).</span>
             </div>
             <div id="creator-questions-container"></div>
-            <button class="btn-add-creator" onclick="addCreatorQuestion()">+ Thêm Câu Hỏi Mới</button>
+            <button class="btn-add-creator" onclick="addCreatorQuestion()">+ Thêm Cấu Trúc Trống</button>
         </div>
     </div>
 
@@ -153,29 +303,115 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="guide-modal">
+        <div class="modal-box" style="max-width: 700px; text-align: left; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--primary); margin: 0;">📖 Hướng dẫn Học tập</h2>
+                <button class="btn-danger" style="width: auto; padding: 5px 15px;" onclick="closeGuide()">Đóng</button>
+            </div>
+            <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px; line-height: 1.6;">
+                <h4 style="color: #0ea5e9; margin-bottom: 5px;">1. Cách nạp đề thi</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Tại màn hình chính, bấm <b>Bắt đầu học tập</b>. Chọn Trắc nghiệm hoặc Flashcard. Nạp file <b>.xlsx</b> (Tạo bằng Công cụ Soạn đề) để bắt đầu. Hệ thống sẽ tự chấm điểm và cộng EXP cho bạn.</p>
+                <h4 style="color: #8b5cf6; margin-bottom: 5px;">2. Cơ chế Flashcard</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Hệ thống sẽ lặp đi lặp lại những thẻ bạn bấm "Chưa thuộc" vào các vòng sau, cho đến khi bạn thuộc 100% bộ bài.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="creator-guide-modal">
+        <div class="modal-box" style="max-width: 700px; text-align: left; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--primary); margin: 0;">💡 Mẹo Soạn Đề Tốc Độ</h2>
+                <button class="btn-danger" style="width: auto; padding: 5px 15px;" onclick="closeCreatorGuide()">Đã hiểu</button>
+            </div>
+            <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px; line-height: 1.6;">
+                <h4 style="color: #ef4444; margin-bottom: 5px;">1. "Tự vận động" chèn ảnh (QUAN TRỌNG)</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">AI <b>không thể</b> tự động cắt dán hình ảnh từ file gốc vào web. Nếu câu hỏi có hình vẽ, đồ thị: Hãy dùng công cụ chụp ảnh màn hình (Snipping Tool), nhấp chuột vào ô Câu hỏi hoặc Đáp án và bấm <b>Ctrl + V</b>. Nó sẽ tạo ra 1 đoạn mã <code>[img]...[/img]</code>, lúc thi nó sẽ tự động biến thành ảnh thật.</p>
+                <h4 style="color: #8b5cf6; margin-bottom: 5px;">2. Công thức Toán (LaTeX)</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Bất cứ khi nào bạn viết câu hỏi hay đáp án có chứa toán, hãy bọc nó trong 2 dấu <b>$</b>. Ví dụ: <code>Nghiệm của $\sqrt{x} = 2$ là gì?</code>. Web sẽ tự động render mượt mà bằng MathJax Vector.</p>
+                <h4 style="color: #f59e0b; margin-bottom: 5px;">3. Chế độ Flashcard</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Nếu bạn gạt sang chế độ <b>Soạn Flashcard</b>, web sẽ tự giấu đi các Đáp án thừa. Khi đó: <br>• <b>Câu hỏi</b> = Mặt trước thẻ<br>• <b>Đáp án 1 (A)</b> = Mặt sau thẻ<br>Hệ thống sẽ tự động gán Đáp án đúng là 1 khi xuất Excel.</p>
+                <h4 style="color: #10b981; margin-bottom: 5px;">4. Khai thác sức mạnh AI OCR</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Nạp thẳng file PDF đề thi hoặc Ảnh chụp bài tập mờ tịt lên. Bạn có thể gõ thêm vào ô "Yêu cầu thêm" để bắt AI giải thích chi tiết từng câu, hoặc tăng độ khó của bộ đề!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-box" style="max-width: 500px; text-align: left; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-light); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--primary); margin: 0;">⚙️ Tùy chỉnh Hệ thống</h2>
+                <button class="btn-main" style="width: auto; padding: 5px 15px;" onclick="closeSettings()">Xong</button>
+            </div>
+
+            <div style="background: rgba(139, 92, 246, 0.1); padding: 15px; border-radius: 12px; border: 1px solid #c4b5fd; margin-bottom: 25px;">
+                <div style="font-weight: 800; margin-bottom: 5px; font-size: 0.95rem; color: #7c3aed;">🔑 KẾT NỐI GEMINI AI</div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Bắt buộc phải có API Key để sử dụng tính năng Soạn Đề, Tóm tắt và Tự luận.</p>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <select id="ai-model" class="cr-select" style="font-size: 0.85rem; padding: 8px;">
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Khuyên dùng)</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                    </select>
+                    <input type="password" id="ai-api-key" class="input-text" style="padding: 8px 12px; font-size: 0.9rem;" placeholder="Dán API Key vào đây...">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <a href="https://aistudio.google.com/app/apikey?hl=vi" target="_blank" style="font-size: 0.8rem; color: #8b5cf6; font-weight: bold; text-decoration: underline;">👉 Lấy Key miễn phí</a>
+                        <button class="btn-main" style="width: auto; padding: 5px 15px; font-size: 0.8rem;" onclick="saveAndTestApiKey()">Lưu Key</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);">MÀU CHỦ ĐẠO</div>
+                    <div class="theme-picker" style="justify-content: flex-start;">
+                        <div class="theme-btn" style="background: #f8fafc;" onclick="setTheme('light')"></div>
+                        <div class="theme-btn" style="background: #0f172a;" onclick="setTheme('dark')"></div>
+                        <div class="theme-btn" style="background: #fdf2f8; border-color: #ec4899;" onclick="setTheme('pink')"></div>
+                        <div class="theme-btn" style="background: #fffbeb; border-color: #eab308;" onclick="setTheme('yellow')"></div>
+                        <div style="position: relative; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-light); cursor: pointer;">
+                            <input type="color" id="custom-color" value="#6366f1" style="position: absolute; top: -10px; left: -10px; width: 50px; height: 50px; cursor: pointer;" onchange="setCustomTheme(this.value)">
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);">MÀU VĂN BẢN</div>
+                    <div style="position: relative; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-light); cursor: pointer;">
+                        <input type="color" id="text-color-picker" value="#1e293b" style="position: absolute; top: -10px; left: -10px; width: 50px; height: 50px; cursor: pointer;" onchange="setTextColor(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-weight: 700; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);">HÌNH NỀN (BACKGROUND)</div>
+            <div style="display: flex; gap: 5px; margin-bottom: 25px;">
+                <input type="text" id="custom-bg-url" class="input-text" style="padding: 10px 12px; font-size: 0.85rem;" placeholder="Link Ảnh/GIF nền...">
+                <button class="btn-main" style="width: auto; padding: 10px 15px; font-size: 0.85rem;" onclick="applyBackground()">Lưu</button>
+                <button class="btn-danger" style="width: auto; padding: 10px 15px; font-size: 0.85rem;" onclick="clearBackground()">Xóa</button>
+            </div>
+
+            <div style="font-weight: 700; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);">HIỆU ỨNG KÍNH (GLASSMORPHISM)</div>
+            <label class="setting-item" style="background: var(--bg-color); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border-light); cursor:pointer; margin-bottom: 15px;">
+                <div style="font-size: 0.95rem;"><b>🔮 Kích hoạt Glassmorphism</b></div>
+                <div class="switch"><input type="checkbox" id="glass-toggle" onchange="toggleGlassMode()"><span class="slider"></span></div>
+            </label>
+
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; color: var(--text-muted);"><span>Độ mờ của Nền (Background Blur)</span></div>
+                <input type="range" class="range-custom" id="bg-blur-slider" min="0" max="30" value="15" oninput="updateBgBlur(this.value)">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; color: var(--text-muted);"><span>Độ mờ của Kính (Glass Blur)</span></div>
+                <input type="range" class="range-custom" id="glass-blur-slider" min="0" max="50" value="20" oninput="updateGlassBlur(this.value)">
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="fc-result-modal">
         <div class="modal-box">
             <div style="font-size: 5rem; margin-bottom: 15px;">🎉</div>
             <h2 style="color: var(--primary);">Hoàn thành!</h2>
             <p style="margin: 20px 0;">Ghi nhớ: <b id="fc-total-mastered">0</b> từ. Thuộc ngay: <b id="fc-first-try" style="color:var(--result-correct)">0</b> từ.</p>
-            <div style="background: var(--bg-color); padding: 18px; border-radius: 16px; font-weight: 700; color: var(--primary); margin-bottom: 30px; border: 1px dashed var(--primary);">Phần thưởng: +<span id="fc-exp-gained"></span> EXP | +1 💎</div>
+            <div style="background: var(--bg-color); padding: 18px; border-radius: 16px; font-weight: 700; color: var(--primary); margin-bottom: 30px; border: 1px dashed var(--primary);">Phần thưởng: +<span id="fc-exp-gained"></span> EXP</div>
             <button class="btn-main" onclick="closeFcModal()">Về Trang chủ</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="shop-modal">
-        <div class="modal-box" style="max-width: 750px;">
-            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 15px;">
-                <h2 style="color: var(--primary);">🛒 Shop Blind Box</h2>
-                <div class="badge-pill diamond-badge">💎 <span id="shop-diamonds">0</span></div>
-            </div>
-            <div class="shop-grid">
-                <div class="shop-item"><div style="font-size: 3rem;">🎁</div><h4>Hộp Cơ Bản</h4><button class="btn-main" style="background:#0ea5e9; margin-top:10px;" onclick="buyBox(1)">1 💎</button></div>
-                <div class="shop-item"><div style="font-size: 3rem;">✨</div><h4>Hộp Cao Cấp</h4><button class="btn-main" style="background:#8b5cf6; margin-top:10px;" onclick="buyBox(10)">10 💎</button></div>
-                <div class="shop-item"><div style="font-size: 3rem;">👑</div><h4>Hộp Thần Thoại</h4><button class="btn-main" style="background:#f59e0b; margin-top:10px;" onclick="buyBox(100)">100 💎</button></div>
-                <div class="shop-item" style="opacity:0.5; background:var(--border-light);"><div style="font-size: 3rem;">🚧</div><h4>Vật phẩm Ẩn</h4><button class="btn-main" style="background:var(--text-muted); margin-top:10px;" disabled>Sắp ra mắt</button></div>
-            </div>
-            <button class="btn-outline" style="margin-top: 30px;" onclick="closeShop()">Đóng Cửa Hàng</button>
         </div>
     </div>
 
