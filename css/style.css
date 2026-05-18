@@ -62,9 +62,9 @@
 /* ==========================================
    ANIMATIONS TOÀN HỆ THỐNG
    ========================================== */
-@keyframes fadeInUp { 
-    0% { opacity: 0; transform: translateY(20px) scale(0.98); } 
-    100% { opacity: 1; transform: translateY(0) scale(1); } 
+@keyframes fadeIn { 
+    0% { opacity: 0; } 
+    100% { opacity: 1; } 
 }
 @keyframes float {
     0% { transform: translateY(0px); }
@@ -85,25 +85,28 @@
 /* ==========================================
    CƠ BẢN & CUSTOM CURSOR
    ========================================== */
-body, html {
-    cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='8' fill='%23d97706' opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, auto;
+html, body {
+    overflow-x: visible; 
+    margin: 0;
+    padding: 0;
 }
+
+body {
+    cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='8' fill='%23d97706' opacity='0.7'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, auto;
+    background-color: var(--bg-color); 
+    color: var(--text-main); 
+    line-height: 1.6; 
+    transition: background-color 0.5s var(--smooth), color 0.5s ease;
+}
+
 a, button, input, select, textarea, .user-card, .nav-item, .option-item, .action-card, .lang-switch, .mini-icon-btn, .clear-cache-btn, .avatar, label.switch {
     cursor: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23b45309' opacity='0.9'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23ffffff'/%3E%3C/svg%3E") 12 12, pointer !important;
 }
 
 * { 
-    box-sizing: border-box; margin: 0; padding: 0; 
+    box-sizing: border-box; 
     font-family: 'Plus Jakarta Sans', sans-serif; 
     scroll-behavior: smooth; 
-}
-
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-main); 
-    line-height: 1.6; 
-    transition: background-color 0.5s var(--smooth), color 0.5s ease;
-    overflow-x: hidden;
 }
 
 /* Thanh Scrollbar tinh tế */
@@ -124,7 +127,6 @@ body {
 }
 #app-bg.active { opacity: 1; }
 
-/* Default Animated Mesh Background */
 body::before {
     content: ''; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
     background: radial-gradient(circle at 15% 50%, rgba(217, 119, 6, 0.08), transparent 50%),
@@ -168,11 +170,12 @@ body.has-bg { background-color: transparent !important; }
    ========================================== */
 .app-screen { 
     display: none; padding-top: 20px; padding-bottom: 50px; 
-    min-height: 100vh; overflow-x: hidden; 
+    min-height: 100vh; 
+    overflow: visible !important; 
 }
 .app-screen.active { 
     display: block; 
-    animation: fadeInUp 0.7s var(--spring) forwards; 
+    animation: fadeIn 0.6s ease forwards; 
 }
 
 .input-text, .cr-textarea, .cr-select { 
@@ -202,8 +205,7 @@ button {
 }
 .btn-main { 
     background: var(--primary-gradient); color: #fff; border: none; 
-    padding: 14px 28px; /* Tối ưu độ cao */
-    font-size: 1rem; font-weight: 800; letter-spacing: 0.3px;
+    padding: 14px 28px; font-size: 1rem; font-weight: 800; letter-spacing: 0.3px;
     border-radius: var(--radius-sm); width: 100%; 
     box-shadow: 0 4px 15px var(--primary-glow); 
     position: relative; overflow: hidden; z-index: 1;
@@ -273,11 +275,10 @@ button {
 .lang-switch:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.1); color: #fff; background: var(--primary-gradient); border-color: transparent; }
 
 /* ==========================================
-   HỒ SƠ & THẺ BÀI (DASHBOARD CARDS) - ĐÃ ĐƯỢC TỐI ƯU CHIỀU CAO
+   HỒ SƠ & THẺ BÀI (DASHBOARD CARDS)
    ========================================== */
 .avatar { 
-    width: 80px; height: 80px; /* Thu nhỏ avatar */
-    margin: 0 auto 10px auto; 
+    width: 80px; height: 80px; margin: 0 auto 10px auto; 
     border-radius: 50%; background: var(--bg-color); 
     border: 3px solid var(--primary); padding: 2px; 
     box-shadow: 0 0 15px var(--primary-glow); 
@@ -293,10 +294,10 @@ button {
 }
 .avatar:hover .avatar-overlay { opacity: 1; }
 
-.action-grid-2x2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; } /* Thu gọn khoảng cách */
+.action-grid-2x2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
 .action-card { 
     display: flex; flex-direction: column; align-items: center; 
-    justify-content: center; gap: 5px; padding: 12px 10px; /* Ép mỏng thẻ */
+    justify-content: center; gap: 5px; padding: 12px 10px; 
     background: var(--bg-color); border: 1.5px solid var(--border-light); 
     border-radius: var(--radius-lg); font-size: 0.9rem; font-weight: 800; 
     color: var(--text-main); box-shadow: var(--shadow-sm); transition: all 0.4s var(--spring);
@@ -306,14 +307,12 @@ button {
     transform: translateY(-4px); box-shadow: var(--shadow-md); color: var(--primary); 
 }
 .icon-wrapper { 
-    width: 42px; height: 42px; border-radius: 12px; /* Thu nhỏ icon */
+    width: 42px; height: 42px; border-radius: 12px; 
     background: var(--card-bg); display: flex; align-items: center; 
     justify-content: center; font-size: 1.3rem; margin-bottom: 2px;
     box-shadow: var(--shadow-sm); transition: 0.4s var(--spring);
 }
 .action-card:hover .icon-wrapper { background: var(--primary-gradient); color: #fff; transform: scale(1.15) rotate(-5deg); box-shadow: 0 5px 15px var(--primary-glow); filter: brightness(1.2);}
-
-/* Ép nút Đăng xuất nằm gọn gàng hơn */
 .profile-card > .btn-danger { margin-top: 15px !important; padding: 12px !important; }
 
 /* ==========================================
@@ -367,12 +366,10 @@ button {
    BỐ CỤC CHUNG & TRANG MAIN (LOGIN/DASHBOARD/UPLOAD)
    ========================================== */
 .login-box { max-width: 420px; margin: 12vh auto; background: var(--card-bg); padding: 35px 35px; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light); position: relative; overflow: hidden; }
-/* Dải màu trang trí phía trên Login */
 .login-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--primary-gradient); }
 
 .upload-container { max-width: 450px; margin: 12vh auto; background: var(--card-bg); padding: 35px; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light); }
 
-/* Đã chỉnh layout margin cho vừa màn hình laptop chuẩn */
 #dashboard-screen.active { display: grid; grid-template-columns: 340px 1fr; gap: 24px; max-width: 1100px; margin: 25px auto; padding: 0 20px; align-items: start; }
 .profile-card, .history-card { position: relative; background: var(--card-bg); border-radius: var(--radius-xl); padding: 25px; box-shadow: var(--shadow-md); border: 1px solid var(--border-light); transition: 0.4s var(--smooth); }
 .profile-card:hover, .history-card:hover { box-shadow: var(--shadow-lg); }
@@ -413,9 +410,28 @@ input:checked + .slider:before { transform: translateX(18px); }
 /* ==========================================
    GIAO DIỆN LÀM BÀI TRẮC NGHIỆM (QUIZ APP)
    ========================================== */
-.layout-split { display: flex; flex-direction: row; gap: 30px; max-width: 1200px; margin: 80px auto; padding: 0 20px; align-items: start; }
+.layout-split { 
+    display: flex; flex-direction: row; gap: 30px; 
+    max-width: 1200px; margin: 80px auto; padding: 0 20px; 
+    align-items: flex-start !important; 
+}
 .layout-main { flex: 3; display: flex; flex-direction: column; min-width: 0; } 
-.sidebar-nav { flex: 1; position: sticky; top: 80px; background: var(--card-bg); padding: 25px; border-radius: var(--radius-xl); border: 1px solid var(--border-light); box-shadow: var(--shadow-lg); max-height: calc(100vh - 100px); overflow-y: auto; min-width: 260px; }
+.sidebar-nav { 
+    flex: 1; 
+    position: -webkit-sticky; 
+    position: sticky !important; /* Đảm bảo khai báo cứng lệnh Sticky */
+    top: 90px !important; 
+    align-self: flex-start; 
+    height: max-content; 
+    background: var(--card-bg); 
+    padding: 25px; 
+    border-radius: var(--radius-xl); 
+    border: 1px solid var(--border-light); 
+    box-shadow: var(--shadow-lg); 
+    max-height: calc(100vh - 120px); 
+    overflow-y: auto; 
+    min-width: 260px; 
+}
 
 .question-card { background: var(--card-bg); border-radius: var(--radius-xl); padding: 30px 25px; border: 1px solid var(--border-light); box-shadow: var(--shadow-md); transition: 0.4s var(--smooth); margin-bottom: 25px; }
 .question-card:hover { box-shadow: var(--shadow-lg); border-color: rgba(217, 119, 6, 0.4); transform: translateY(-2px); }
@@ -530,19 +546,20 @@ input:checked + .slider:before { transform: translateX(18px); }
 .back-btn-hover:hover .text { opacity: 1; transition-delay: 0.15s; }
 
 /* ==========================================
-   ĐIỀU HƯỚNG CÂU HỎI (NAVIGATION GRID) - ĐÃ FIX VUÔNG & KHOẢNG CÁCH
+   ĐIỀU HƯỚNG CÂU HỎI (NAVIGATION GRID) (KHUNG VUÔNG CỐ ĐỊNH)
    ========================================== */
 .nav-grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); /* Chia cột tự động */
-    gap: 12px; /* Khoảng cách rộng, thoáng */
+    grid-template-columns: repeat(auto-fill, 44px); /* KHÓA CỨNG ĐỘ RỘNG CỘT TẠI 44PX */
+    justify-content: space-between; /* DÀN ĐỀU CÁC NÚT TỰ ĐỘNG */
+    gap: 12px; 
     margin-top: 15px;
+    align-content: start; 
 }
 .nav-item { 
-    aspect-ratio: 1 / 1 !important; /* ÉP BUỘC hÌNH VUÔNG 100% */
-    width: 100%; 
-    height: auto; 
-    padding: 0 !important; /* Xóa bỏ padding gây lỗi chữ nhật */
+    width: 44px !important;  /* KHÓA CỨNG RỘNG */
+    height: 44px !important; /* KHÓA CỨNG CAO */
+    padding: 0 !important; 
     margin: 0;
     border-radius: 10px; 
     background: var(--bg-color); 
@@ -555,6 +572,7 @@ input:checked + .slider:before { transform: translateX(18px); }
     color: var(--text-muted); 
     transition: 0.3s var(--spring); 
     box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    overflow: hidden; /* Đảm bảo nội dung không tràn vỡ nút */
 }
 .nav-item:hover { transform: scale(1.15) translateY(-3px); box-shadow: var(--shadow-md); background: var(--text-muted); color: #fff; border-color: transparent;}
 .nav-item.done { background: var(--text-main); color: var(--card-bg); border-color: transparent; } 
@@ -567,7 +585,7 @@ input:checked + .slider:before { transform: translateX(18px); }
    ========================================== */
 @media (max-width: 1024px) {
     .layout-split { grid-template-columns: 1fr; gap: 25px; margin-top: 30px; padding: 0 15px; flex-direction: column; }
-    .sidebar-nav { position: static; order: -1; margin-bottom: 10px; max-height: 250px; width: 100%; }
+    .sidebar-nav { position: static; order: -1; margin-bottom: 10px; max-height: 300px; width: 100%; }
     #dashboard-screen.active { grid-template-columns: 1fr; gap: 25px; margin-top: 20px; padding: 0 15px; }
     .dict-grid { grid-template-columns: 1fr; }
 }
@@ -593,4 +611,5 @@ input:checked + .slider:before { transform: translateX(18px); }
     .q-title-row { flex-direction: column; align-items: flex-start; gap: 10px; }
     .dict-controls { flex-direction: column; align-items: stretch; }
     .dict-speed-box { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; margin-top: 12px;}
+    .nav-grid { justify-content: space-evenly; }
 }
