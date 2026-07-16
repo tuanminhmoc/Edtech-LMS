@@ -8,13 +8,6 @@ python -m http.server 8080
 
 Mở `http://localhost:8080`.
 
-## Deploy GitHub Pages
-
-1. Đẩy toàn bộ thư mục lên repository.
-2. Vào **Settings → Pages**.
-3. Chọn **GitHub Actions**.
-4. Push lên nhánh `main` hoặc `master`.
-
 ## Kiểm tra code
 
 ```bash
