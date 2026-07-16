@@ -2,7 +2,7 @@
 <html lang="vi" class="intro-pending">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#f4f7f2">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>EdTech LMS Pro</title>
@@ -136,14 +136,20 @@
                     <svg viewBox="0 0 58 58" role="img">
                         <defs>
                             <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0" stop-color="#436b8c"/>
-                                <stop offset="1" stop-color="#739a87"/>
+                                <stop offset="0" stop-color="#b896ff"/>
+                                <stop offset=".55" stop-color="#7f5ce0"/>
+                                <stop offset="1" stop-color="#3f2b6f"/>
+                            </linearGradient>
+                            <linearGradient id="brandGlass" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="rgba(255,255,255,.78)"/>
+                                <stop offset="1" stop-color="rgba(255,255,255,0)"/>
                             </linearGradient>
                         </defs>
                         <rect x="4" y="4" width="50" height="50" rx="16" fill="url(#brandGradient)"/>
+                        <path d="M10 9h38a10 10 0 0 1 10 10v1.5c-14 5-30 7.5-48 7.5-7.3 0-13.7-.4-19.2-1.2V19A10 10 0 0 1 10 9z" fill="url(#brandGlass)" opacity=".34"/>
                         <path d="M17 18.5c7.2-4.3 16.8-4.3 24 0v23c-7.2-4.3-16.8-4.3-24 0z" fill="#fffdf8" opacity=".98"/>
-                        <path d="M29 19v22M20.5 23.5c3.5-1.6 6-1.4 8.5.1M37.5 23.5c-3.5-1.6-6-1.4-8.5.1" fill="none" stroke="#436b8c" stroke-width="2.4" stroke-linecap="round"/>
-                        <path d="m39 13 .9 2.8 2.8.9-2.8.9-.9 2.8-.9-2.8-2.8-.9 2.8-.9z" fill="#f0bc67"/>
+                        <path d="M29 19v22M20.5 23.5c3.5-1.6 6-1.4 8.5.1M37.5 23.5c-3.5-1.6-6-1.4-8.5.1" fill="none" stroke="#4d3377" stroke-width="2.4" stroke-linecap="round"/>
+                        <path d="m39 13 .9 2.8 2.8.9-2.8.9-.9 2.8-.9-2.8-2.8-.9 2.8-.9z" fill="#ffd267"/>
                     </svg>
                 </span>
                 <span class="brand-copy">
@@ -162,6 +168,9 @@
             <div class="top-actions">
                 <button class="donate-header-btn" id="donate-header-btn" type="button" onclick="openDonateModal()" aria-label="Ủng hộ dự án" title="Ủng hộ dự án">
                     <span class="donate-header-spark" aria-hidden="true">✦</span><span>DONATE</span>
+                </button>
+                <button class="icon-btn install-shortcut-btn" id="install-shortcut-btn" type="button" onclick="installApp()" aria-label="Cài ứng dụng trên thiết bị này" title="Cài ứng dụng" hidden>
+                    <svg><use href="#i-home"></use></svg>
                 </button>
                 <button class="icon-btn theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme(event)" aria-label="Chuyển giao diện" title="Giao diện">
                     <svg><use href="#i-theme"></use></svg><span class="theme-toggle-label" aria-hidden="true">Dark</span>
@@ -188,6 +197,7 @@
                             <div class="hero-actions">
                                 <button class="btn btn-primary" onclick="openPracticeSetup()"><svg><use href="#i-quiz"></use></svg>Bắt đầu luyện tập</button>
                                 <button class="btn btn-secondary" onclick="openCreator()"><svg><use href="#i-create"></use></svg>Soạn bộ đề mới</button>
+                                <button class="btn btn-secondary install-hero-btn" id="install-hero-btn" type="button" onclick="installApp()" hidden><svg><use href="#i-home"></use></svg>Cài app</button>
                             </div>
                         </div>
                         <div class="brand-illustration" aria-label="Linh vật cú mèo đang học">
@@ -592,7 +602,7 @@
                 <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
             </div>
             <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
-            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.0</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.2</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
         </div>
     </div>
 
@@ -607,7 +617,7 @@
 
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script>window.EDTECH_APP_VERSION = '1.1.0';</script>
+    <script>window.EDTECH_APP_VERSION = '1.1.2';</script>
     <script src="js/database.js"></script>
     <script src="js/lazy-libs.js"></script>
     <script src="js/worker-client.js"></script>

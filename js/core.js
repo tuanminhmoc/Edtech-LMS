@@ -2809,9 +2809,13 @@ function initBrandIntro() {
     const intro = document.getElementById('brand-intro');
     const target = document.getElementById('donate-header-btn');
     const topbar = document.querySelector('.topbar');
+    let resolveIntroReady = () => {};
+    const introReady = new Promise(resolve => { resolveIntroReady = resolve; });
+    window.__edtechIntroDonePromise = introReady;
     if (!intro) {
         root.classList.remove('intro-pending');
-        return;
+        resolveIntroReady();
+        return introReady;
     }
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2828,6 +2832,7 @@ function initBrandIntro() {
         const playWhenReady = () => {
             if (context.state !== 'running') return;
             soundUnlocked = true;
+            window.EdTechAudio?.play('owl', { force: true });
             playIntroSequenceSound();
         };
         if (context.state === 'running') playWhenReady();
@@ -2875,6 +2880,7 @@ function initBrandIntro() {
         intro.removeEventListener('pointerup', handleIntroTap);
         document.removeEventListener('keydown', handleIntroKey);
         intro.classList.add('is-leaving');
+        resolveIntroReady();
         if (instant || reduceMotion) intro.hidden = true;
         else window.setTimeout(() => { intro.hidden = true; }, 320);
     };
@@ -2897,7 +2903,8 @@ function initBrandIntro() {
     document.addEventListener('keydown', handleIntroKey);
     tryIntroSound();
 
-    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 300 : 1350));
+    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 220 : 980));
+    return introReady;
 }
 
 function openMobileQuizNavigator() {
@@ -2997,7 +3004,7 @@ function setRandomFocusMotivation() {
 }
 
 async function initApp() {
-    initBrandIntro();
+    const introReady = initBrandIntro();
     try {
         const persisted = await window.EdTechDB?.bootstrap({ learningKey: STORAGE_KEY, creatorKey: CREATOR_KEY, preferenceKey: PREF_KEY, recoveryKey: CREATOR_RECOVERY_KEY });
         if (persisted?.learning && typeof persisted.learning === 'object') appData = { ...clone(EMPTY_DATA), ...persisted.learning };
@@ -3034,6 +3041,18 @@ async function initApp() {
         unlockAudio();
         if (event.target.closest('button') && !event.target.closest('.flashcard, .rating')) playSound('select');
     }, { passive: true });
+    document.addEventListener('contextmenu', event => {
+        if (!event.target.closest('input, textarea, [contenteditable="true"]')) event.preventDefault();
+    });
+    document.addEventListener('keydown', event => {
+        const blockedCombo = event.key === 'F12'
+            || ((event.ctrlKey || event.metaKey) && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase()))
+            || ((event.ctrlKey || event.metaKey) && ['U', 'S'].includes(event.key.toUpperCase()));
+        if (blockedCombo) {
+            event.preventDefault();
+            showToast('Phím inspect/devtools đã bị vô hiệu hóa trên giao diện này.', 'info');
+        }
+    });
 
     document.getElementById('prompt-modal').addEventListener('click', event => {
         if (event.target.id === 'prompt-modal') closePromptPanel();
@@ -3074,6 +3093,7 @@ async function initApp() {
 
     window.EdTechTheme?.init();
     window.renderLocalQuestionSets?.();
+    await introReady;
     await window.offerRestoreActiveSession?.();
     window.EdTechRouter?.applyRoute();
     document.documentElement.classList.add('app-ready');

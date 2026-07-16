@@ -432,18 +432,35 @@ function changeHistoryPage(delta) {
     renderHistoryTablePaged();
 }
 
+function updateInstallButtons(visible = true) {
+    ['install-app-btn', 'install-shortcut-btn', 'install-hero-btn'].forEach(id => {
+        const button = document.getElementById(id);
+        if (button) button.hidden = !visible;
+    });
+}
+
 function initInstallPrompt() {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    updateInstallButtons(!standalone);
     window.addEventListener('beforeinstallprompt', event => {
         event.preventDefault();
         installPromptEvent = event;
-        const button = document.getElementById('install-app-btn');
-        if (button) button.hidden = false;
+        updateInstallButtons(true);
+    });
+    window.addEventListener('appinstalled', () => {
+        installPromptEvent = null;
+        updateInstallButtons(false);
+        showToast('EdTech đã được cài lên thiết bị này.', 'success');
     });
 }
 
 async function installApp() {
     if (!installPromptEvent) {
-        showToast('Trên iPhone, mở menu Chia sẻ rồi chọn “Thêm vào Màn hình chính”.', 'info');
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+        const message = isIOS
+            ? 'Trên iPhone/iPad: mở Chia sẻ rồi chọn “Thêm vào Màn hình chính”.'
+            : 'Trên Android/Desktop: mở menu trình duyệt và chọn “Cài ứng dụng” hoặc “Add to Home screen”.';
+        showToast(message, 'info');
         return;
     }
     await installPromptEvent.prompt();
@@ -517,10 +534,13 @@ renderCreatorEditor = function renderCreatorEditorEnhanced() {
     if (creatorMode === 'quiz') {
         const answerGrid = editor.querySelector('.editor-grid');
         if (answerGrid) {
+            const addOptionButton = item.options.length >= 6
+                ? ''
+                : `<button class="add-option-btn" type="button" onclick="addCreatorOption()"><svg><use href="#i-plus"></use></svg>Thêm đáp án (${item.options.length}/6)</button>`;
             answerGrid.innerHTML = item.options.map((option, optionIndex) => {
                 const letter = String.fromCharCode(65 + optionIndex);
                 return `<label><span>Đáp án ${letter}</span><div class="answer-editor"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea><button class="remove-option-btn" type="button" onclick="removeCreatorOption(${optionIndex})" ${item.options.length <= 2 ? 'disabled' : ''} aria-label="Xóa đáp án ${letter}">×</button><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span>${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`;
-            }).join('') + `<button class="add-option-btn" type="button" onclick="addCreatorOption()" ${item.options.length >= 6 ? 'disabled' : ''}><svg><use href="#i-plus"></use></svg>Thêm đáp án (${item.options.length}/6)</button>`;
+            }).join('') + addOptionButton;
         }
     }
     const meta = document.createElement('div');
@@ -579,10 +599,6 @@ finishFlashcardSession = function finishFlashcardsEnhanced() {
     clearActiveFlashcardSession();
 };
 
-window.addEventListener('beforeinstallprompt', event => {
-    event.preventDefault();
-    installPromptEvent = event;
-});
 window.addEventListener('unhandledrejection', event => {
     console.error('Unhandled promise rejection:', event.reason);
     if (!/AbortError/i.test(String(event.reason))) showToast('Có thao tác chưa hoàn tất. Dữ liệu đã được giữ an toàn.', 'error');
@@ -608,7 +624,8 @@ function trapActiveModalFocus(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const version = document.getElementById('app-version-label');
-    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.0.0'}`;
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.1.1'}`;
+    initInstallPrompt();
     document.getElementById('data-center-modal')?.addEventListener('click', event => { if (event.target.id === 'data-center-modal') closeDataCenter(); });
     document.addEventListener('keydown', event => {
         trapActiveModalFocus(event);

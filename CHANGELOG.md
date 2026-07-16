@@ -1,12 +1,12 @@
 # Changelog
 
-## 1.1.0
+## 1.1.2
 
-- Tối ưu ảnh: nén, lưu Blob trong IndexedDB và hiển thị thẻ ảnh gọn.
-- Dark Theme Dreamy Purple với linh vật cú tone bóng đêm.
-- Đổi chữ thương hiệu chính từ Focus thành EdTech.
-- Intro và âm thanh được làm lại.
-- Căn chỉnh giao diện cấu hình trên iPhone.
+- Tối ưu toàn bộ giao diện mobile cho dashboard, cấu hình học, trắc nghiệm, kết quả, flashcard, soạn đề, lịch sử và modal.
+- Cân lại topbar, safe-area iPhone, khoảng cách, nút bấm và các bottom sheet.
+- Lịch sử chuyển thành dạng card trên điện thoại; kết quả và HUD trắc nghiệm gọn hơn.
+- Trình soạn đề mobile dùng lưới số cân giữa, editor một cột và thao tác chạm thoải mái hơn.
+- README rút gọn, chỉ giữ cách chạy và tự deploy cơ bản.
 
 ## 1.0.1
 

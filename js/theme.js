@@ -10,7 +10,7 @@
 
     function updateMeta(theme) {
         const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = theme === 'dark' ? '#160f2b' : '#f4f7f2';
+        if (meta) meta.content = theme === 'dark' ? '#1a1230' : '#f4f7f2';
     }
 
     function updateButton(theme) {
@@ -23,7 +23,7 @@
         if (label) label.textContent = theme === 'dark' ? 'Light' : 'Dark';
     }
 
-    function applyTheme(theme, { animate = false, origin = null } = {}) {
+    function applyTheme(theme, { animate = false, origin = null, silent = false } = {}) {
         const next = theme === 'dark' ? 'dark' : 'light';
         const root = document.documentElement;
         const change = () => {
@@ -35,6 +35,8 @@
             updateButton(next);
             window.EdTechDB?.setKV('theme', next).catch(() => {});
         };
+
+        if (!silent) window.playSound?.(next === 'dark' ? 'themeDark' : 'themeLight');
 
         if (!animate || matchMedia('(prefers-reduced-motion: reduce)').matches) {
             change();
@@ -73,7 +75,6 @@
         const rect = event?.currentTarget?.getBoundingClientRect?.();
         const origin = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : null;
         const next = currentTheme === 'dark' ? 'light' : 'dark';
-        window.playSound?.('navigate');
         return applyTheme(next, { animate: true, origin });
     }
 
