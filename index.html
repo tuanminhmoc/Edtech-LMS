@@ -67,17 +67,6 @@
                 <strong>EdTech<span>.</span></strong>
                 <small>Học rõ ràng. Tiến bộ nhẹ nhàng.</small>
             </div>
-            <div class="intro-support-stage" id="intro-support-stage" role="status" aria-live="polite">
-                <span class="intro-support-kicker">Một lời nhắn nhỏ</span>
-                <h2>Nếu thấy web hữu ích, bạn có thể ủng hộ mình nhé.</h2>
-                <p>Cảm ơn bạn đã đồng hành cùng EdTech.</p>
-                <div class="intro-donate-demo" aria-hidden="true"><span>✦</span><strong>DONATE</strong></div>
-                <small>Nút DONATE luôn nằm cạnh nút âm thanh trên thanh công cụ.</small>
-            </div>
-            <div class="intro-guide-pointer" id="intro-guide-pointer" aria-hidden="true">
-                <svg viewBox="0 0 48 48"><path d="M24 43V11m0 0L12 23m12-12 12 12"/></svg>
-                <span>Đây là nút ủng hộ trên giao diện chính</span>
-            </div>
             <div class="intro-tap-hint" id="intro-tap-hint" aria-hidden="true">
                 <span class="intro-tap-dot"></span>
                 <span>Chạm vào vùng trống để tiếp tục</span>
@@ -169,8 +158,8 @@
                 <button class="donate-header-btn" id="donate-header-btn" type="button" onclick="openDonateModal()" aria-label="Ủng hộ dự án" title="Ủng hộ dự án">
                     <span class="donate-header-spark" aria-hidden="true">✦</span><span>DONATE</span>
                 </button>
-                <button class="icon-btn install-shortcut-btn" id="install-shortcut-btn" type="button" onclick="installApp()" aria-label="Cài ứng dụng trên thiết bị này" title="Cài ứng dụng" hidden>
-                    <svg><use href="#i-home"></use></svg>
+                <button class="icon-btn install-shortcut-btn" id="install-shortcut-btn" type="button" onclick="installApp()" aria-label="Cài EdTech trên thiết bị này" title="Cài EdTech" hidden>
+                    <svg><use href="#i-download"></use></svg>
                 </button>
                 <button class="icon-btn theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme(event)" aria-label="Chuyển giao diện" title="Giao diện">
                     <svg><use href="#i-theme"></use></svg><span class="theme-toggle-label" aria-hidden="true">Dark</span>
@@ -197,7 +186,7 @@
                             <div class="hero-actions">
                                 <button class="btn btn-primary" onclick="openPracticeSetup()"><svg><use href="#i-quiz"></use></svg>Bắt đầu luyện tập</button>
                                 <button class="btn btn-secondary" onclick="openCreator()"><svg><use href="#i-create"></use></svg>Soạn bộ đề mới</button>
-                                <button class="btn btn-secondary install-hero-btn" id="install-hero-btn" type="button" onclick="installApp()" hidden><svg><use href="#i-home"></use></svg>Cài app</button>
+                                <button class="btn btn-secondary install-hero-btn" id="install-hero-btn" type="button" onclick="installApp()" hidden><svg><use href="#i-download"></use></svg>Cài app</button>
                             </div>
                         </div>
                         <div class="brand-illustration" aria-label="Linh vật cú mèo đang học">
@@ -469,13 +458,13 @@
             <section class="app-screen" id="creator-screen">
                 <div class="page-heading creator-heading">
                     <button class="back-btn" onclick="showScreen('dashboard-screen')"><svg><use href="#i-back"></use></svg></button>
-                    <div><span class="section-kicker">Công cụ soạn đề</span><h1>Tạo nội dung học tập</h1><p>Soạn trắc nghiệm hoặc flashcard, hỗ trợ LaTeX và hình ảnh.</p><span class="creator-save-status saved" id="creator-save-status"><span></span>Đã lưu</span></div>
+                    <div><span class="section-kicker">Công cụ soạn đề</span><h1>Tạo nội dung học tập</h1><p>Soạn trắc nghiệm hoặc flashcard, hỗ trợ LaTeX và hình ảnh.</p></div>
                     <div class="creator-top-actions"><button class="btn btn-secondary" onclick="openCreatorPreview()"><svg><use href="#i-eye"></use></svg>Xem trước bộ đề</button><button class="btn btn-secondary" onclick="openPromptPanel()"><svg><use href="#i-copy"></use></svg>Copy prompt tạo nhanh</button><button class="btn btn-primary" id="creator-export-btn" onclick="exportCreatorToExcel()"><svg><use href="#i-save"></use></svg><span>Xuất Excel</span></button></div>
                 </div>
 
                 <div class="creator-layout">
                     <aside class="panel creator-sidebar">
-                        <div class="creator-mode-tabs"><button id="creator-tab-quiz" class="active" onclick="setCreatorMode('quiz')"><svg><use href="#i-quiz"></use></svg>Trắc nghiệm</button><button id="creator-tab-flashcard" onclick="setCreatorMode('flashcard')"><svg><use href="#i-cards"></use></svg>Flashcard</button></div>
+                        <div class="creator-mode-tabs"><button id="creator-tab-quiz" class="active" onclick="setCreatorMode('quiz')"><svg><use href="#i-quiz"></use></svg>TN</button><button id="creator-tab-flashcard" onclick="setCreatorMode('flashcard')"><svg><use href="#i-cards"></use></svg>Flashcard</button></div>
                         <div class="sidebar-heading"><div><span class="section-kicker">Danh sách</span><h2 id="creator-list-title">Câu hỏi</h2></div><button class="icon-btn small" onclick="addCreatorItem()" title="Thêm mới"><svg><use href="#i-plus"></use></svg></button></div>
                         <div class="creator-list-tools"><input id="creator-search" type="search" placeholder="Tìm trong bộ đề..." oninput="setCreatorSearch(this.value)"><select id="creator-filter" onchange="setCreatorFilter(this.value)"><option value="all">Tất cả</option><option value="invalid">Chưa hoàn chỉnh</option><option value="valid">Hoàn chỉnh</option></select></div>
                         <small class="drag-help">Kéo thả để sắp xếp · hoặc dùng nút ↑ ↓ trong trình sửa</small>
@@ -594,7 +583,7 @@
             <div class="data-action-grid">
                 <button class="data-action-card" type="button" onclick="exportFullBackup()"><svg><use href="#i-download"></use></svg><span><strong>Xuất bản sao lưu</strong><small>Tải toàn bộ dữ liệu thành một file JSON.</small></span></button>
                 <label class="data-action-card" for="restore-file-input"><svg><use href="#i-upload"></use></svg><span><strong>Chọn file khôi phục</strong><small>Đọc và xem trước trước khi nhập.</small></span><input id="restore-file-input" type="file" accept="application/json,.json" hidden onchange="handleRestoreFile(this.files[0])"></label>
-                <button class="data-action-card" id="install-app-btn" type="button" onclick="installApp()"><svg><use href="#i-home"></use></svg><span><strong>Cài ứng dụng</strong><small>Dùng như app và mở lại khi mất mạng.</small></span></button>
+                <button class="data-action-card" id="install-app-btn" type="button" onclick="installApp()"><svg><use href="#i-download"></use></svg><span><strong>Cài ứng dụng</strong><small>Mở EdTech như ứng dụng độc lập và dùng offline.</small></span></button>
             </div>
             <div class="restore-preview" id="restore-preview" hidden></div>
             <div class="restore-options">
@@ -602,7 +591,7 @@
                 <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
             </div>
             <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
-            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.2</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.4</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
         </div>
     </div>
 
@@ -617,7 +606,7 @@
 
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script>window.EDTECH_APP_VERSION = '1.1.2';</script>
+    <script>window.EDTECH_APP_VERSION = '1.1.4';</script>
     <script src="js/database.js"></script>
     <script src="js/lazy-libs.js"></script>
     <script src="js/worker-client.js"></script>

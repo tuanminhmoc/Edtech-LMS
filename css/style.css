@@ -8181,3 +8181,419 @@ html[data-theme="dark"] .install-hero-btn:hover {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* ===== v1.1.3 — residual UI fixes and fixed 4-answer quiz editor ===== */
+.answer-editor-fixed {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+}
+
+.answer-editor-fixed .editor-textarea {
+    width: 100%;
+}
+
+html[data-theme="dark"] .field-row {
+    color: var(--text);
+    background: linear-gradient(180deg, rgba(49, 39, 72, .96), rgba(36, 28, 55, .98));
+    border-color: var(--border);
+}
+
+html[data-theme="dark"] .field-row strong {
+    color: var(--text);
+}
+
+html[data-theme="dark"] .field-row small {
+    color: var(--text-soft);
+}
+
+html[data-theme="dark"] .field-row > span > svg {
+    stroke: #bca4ff;
+}
+
+html[data-theme="dark"] .number-input {
+    color: var(--text);
+    border-color: #654f88;
+    background: #2e2347;
+}
+
+html[data-theme="dark"] .number-input input,
+html[data-theme="dark"] .number-input em {
+    color: #f4edff;
+}
+
+html[data-theme="dark"] .creator-preview {
+    border-color: #51406e;
+    background: linear-gradient(155deg, #2d2443, #211930 72%);
+}
+
+html[data-theme="dark"] .preview-question {
+    color: #f6f0ff;
+}
+
+html[data-theme="dark"] .preview-option {
+    color: #eee7fa;
+    border-color: #665582;
+    background: rgba(255,255,255,.035);
+}
+
+html[data-theme="dark"] .preview-option.correct {
+    color: #f5fff9;
+    border-color: rgba(127, 211, 187, .7);
+    background: rgba(66, 111, 101, .54);
+}
+
+html[data-theme="dark"] .preview-flashcard {
+    color: #f5efff;
+    border-color: #6a568c;
+    background: linear-gradient(160deg, #31264a, #261d3a);
+    box-shadow: inset 0 1px rgba(255,255,255,.035);
+}
+
+html[data-theme="dark"] .preview-flashcard small {
+    color: #b697ff;
+}
+
+html[data-theme="dark"] .preview-flashcard strong {
+    color: #f7f2ff;
+}
+
+html[data-theme="dark"] .preview-flashcard > span {
+    color: #c7bbda !important;
+}
+
+html[data-theme="dark"] .preview-flashcard.back-preview {
+    color: #f4fbf8;
+    border-color: rgba(122, 198, 177, .55);
+    background: linear-gradient(155deg, #294148, #25353d);
+}
+
+html[data-theme="dark"] .preview-flashcard.back-preview small {
+    color: #a7dfcd;
+}
+
+html[data-theme="dark"] .donate-bank-card {
+    color: var(--text);
+    border-color: #57456f;
+    background: linear-gradient(145deg, #30263f, #251d34);
+}
+
+html[data-theme="dark"] .donate-bank-card small {
+    color: #c7bbda;
+}
+
+html[data-theme="dark"] .donate-bank-card strong {
+    color: #f4eaff;
+}
+
+html[data-theme="dark"] .donate-bank-card button {
+    color: #f7f0ff;
+    border-color: #745e9a;
+    background: #392b55;
+}
+
+.creator-grid-select strong {
+    position: relative;
+    z-index: 1;
+    color: var(--text);
+    opacity: 1;
+}
+
+html[data-theme="dark"] .creator-grid-select strong {
+    color: #f7f1ff;
+}
+
+.creator-grid-delete {
+    z-index: 4;
+}
+
+.creator-mode-tabs button {
+    white-space: nowrap;
+}
+
+@media (max-width: 680px) {
+    .creator-heading {
+        grid-template-columns: 44px minmax(0, 1fr) !important;
+        align-items: start;
+    }
+
+    .creator-heading > div:nth-child(2) {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .creator-heading h1 {
+        max-width: 100%;
+        font-size: clamp(1.48rem, 7.3vw, 1.88rem) !important;
+        line-height: 1.12;
+        overflow-wrap: anywhere;
+    }
+
+    .creator-heading p {
+        font-size: .7rem;
+    }
+
+    .creator-mode-tabs {
+        grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr);
+    }
+
+    .creator-mode-tabs button {
+        min-height: 44px;
+        font-size: .68rem;
+    }
+
+    .creator-number-grid {
+        align-items: center;
+    }
+
+    .creator-grid-tile {
+        aspect-ratio: 1;
+        min-height: 43px;
+    }
+
+    .creator-grid-select strong {
+        font-size: .78rem;
+    }
+
+    .answer-editor-fixed {
+        grid-template-columns: 40px minmax(0, 1fr) !important;
+    }
+
+    .intro-guide-pointer {
+        width: min(178px, calc(100vw - 28px));
+    }
+
+    .intro-guide-pointer svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .intro-guide-pointer span {
+        width: 100%;
+        padding: 7px 9px;
+        font-size: .49rem;
+    }
+
+    .donate-bank-card {
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        gap: 9px;
+    }
+
+    .donate-bank-card button {
+        grid-column: auto;
+        width: auto;
+        min-height: 38px;
+    }
+
+    .field-row {
+        min-height: 74px;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .field-row > span {
+        min-width: 0;
+    }
+
+    .field-row > span > span {
+        min-width: 0;
+    }
+
+    .field-row strong,
+    .field-row small {
+        overflow-wrap: anywhere;
+    }
+
+    .number-input {
+        flex: 0 0 auto;
+    }
+}
+
+@media (max-width: 390px) {
+    .donate-bank-card {
+        grid-template-columns: 40px minmax(0, 1fr);
+    }
+
+    .donate-bank-card button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .creator-mode-tabs {
+        grid-template-columns: .7fr 1.3fr;
+    }
+}
+
+/* ===== v1.1.4 — final interaction and cross-device polish ===== */
+
+/* Intro no longer contains a donation pointer/guide. */
+.intro-support-stage,
+.intro-guide-pointer {
+    display: none !important;
+}
+
+/* Keep the donation action discoverable without blocking the intro. */
+.donate-header-btn {
+    position: relative;
+    isolation: isolate;
+    animation: donateAura 2.8s ease-in-out infinite !important;
+}
+
+.donate-header-btn::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -7px;
+    border-radius: inherit;
+    background: radial-gradient(circle, rgba(255, 213, 112, .48), rgba(255, 196, 67, .16) 52%, transparent 73%);
+    opacity: .62;
+    transform: scale(.94);
+    pointer-events: none;
+    animation: donateAuraHalo 2.8s ease-in-out infinite;
+}
+
+@keyframes donateAura {
+    0%, 100% { box-shadow: 0 8px 22px rgba(203, 141, 27, .22), 0 0 0 0 rgba(255, 209, 106, 0); }
+    50% { box-shadow: 0 12px 30px rgba(203, 141, 27, .35), 0 0 0 7px rgba(255, 209, 106, .12); }
+}
+
+@keyframes donateAuraHalo {
+    0%, 100% { opacity: .42; transform: scale(.92); }
+    50% { opacity: .82; transform: scale(1.06); }
+}
+
+html[data-theme="dark"] .donate-header-btn::before {
+    background: radial-gradient(circle, rgba(255, 221, 132, .54), rgba(237, 173, 48, .18) 52%, transparent 73%);
+}
+
+/* Hide the autosave badge; autosave continues silently in the background. */
+.creator-save-status {
+    display: none !important;
+}
+
+/* The small creator index tile is now independent from legacy list-item rules. */
+.creator-number-grid {
+    align-items: start !important;
+    justify-items: stretch;
+}
+
+.creator-grid-tile,
+.creator-list-item.creator-grid-tile {
+    position: relative !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1 !important;
+    padding: 0 !important;
+    grid-template-columns: none !important;
+    overflow: visible !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 13px !important;
+}
+
+.creator-grid-select,
+.creator-list-item .creator-grid-select {
+    position: absolute !important;
+    inset: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: inherit !important;
+    background: transparent !important;
+}
+
+.creator-grid-select strong,
+.creator-list-item .creator-grid-select strong {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--text) !important;
+    font-size: .82rem !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.creator-grid-select .creator-validity-dot {
+    right: 7px !important;
+    bottom: 7px !important;
+    width: 7px !important;
+    height: 7px !important;
+}
+
+.creator-grid-delete {
+    z-index: 5 !important;
+    top: -6px !important;
+    right: -6px !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    padding: 0 !important;
+    line-height: 18px !important;
+}
+
+/* Install action has a dedicated download/install visual, not a home action. */
+.install-shortcut-btn svg,
+.install-hero-btn svg,
+#install-app-btn > svg {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.9 !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.install-shortcut-btn:not([hidden]) {
+    display: inline-grid;
+}
+
+@media (max-width: 680px) {
+    .creator-number-grid {
+        grid-template-columns: repeat(5, minmax(42px, 1fr)) !important;
+        gap: 10px !important;
+        padding: 8px 5px 6px !important;
+    }
+
+    .creator-grid-tile,
+    .creator-list-item.creator-grid-tile {
+        min-height: 44px !important;
+    }
+
+    .creator-grid-select strong,
+    .creator-list-item .creator-grid-select strong {
+        font-size: .8rem !important;
+    }
+
+    .donate-header-btn {
+        animation-duration: 3.2s !important;
+    }
+}
+
+@media (max-width: 374px) {
+    .creator-number-grid {
+        grid-template-columns: repeat(4, minmax(42px, 1fr)) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .donate-header-btn,
+    .donate-header-btn::before {
+        animation: none !important;
+    }
+    .donate-header-btn {
+        box-shadow: 0 9px 26px rgba(203, 141, 27, .28) !important;
+    }
+}

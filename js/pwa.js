@@ -12,9 +12,10 @@
     }
 
     async function register() {
-        if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+        if (registration) return registration;
+        if (!('serviceWorker' in navigator) || location.protocol === 'file:') return null;
         try {
-            registration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+            registration = await navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' });
             if (registration.waiting) showUpdateBanner(registration.waiting);
             registration.addEventListener('updatefound', () => {
                 const installing = registration.installing;
@@ -23,11 +24,14 @@
                 });
             });
             navigator.serviceWorker.addEventListener('controllerchange', () => location.reload());
+            return registration;
         } catch (error) {
             console.warn('Không thể đăng ký PWA:', error);
+            return null;
         }
     }
 
-    window.addEventListener('load', register, { once: true });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', register, { once: true });
+    else register();
     window.EdTechPWA = { register, get registration() { return registration; } };
 })();

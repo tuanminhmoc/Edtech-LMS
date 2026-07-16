@@ -964,7 +964,7 @@ function detectWorkbookColumns(rows) {
     const headers = (rows?.[0] || []).map(normalizeHeader);
     const find = (...terms) => headers.findIndex(header => terms.some(term => header.includes(term)));
     const question = Math.max(0, find('cau hoi', 'question', 'mat truoc', 'front'));
-    let optionColumns = headers.map((header, index) => ({ header, index })).filter(item => /dap an [1-6]|option [1-6]/.test(item.header)).map(item => item.index);
+    let optionColumns = headers.map((header, index) => ({ header, index })).filter(item => /dap an [1-4]|option [1-4]/.test(item.header)).map(item => item.index);
     if (!optionColumns.length) optionColumns = [1, 2, 3, 4].filter(index => index < (rows?.[0]?.length || 7));
     return {
         question,
@@ -984,8 +984,8 @@ function parseQuizRows(rows) {
         const row = rows[index] || [];
         const question = String(row[columns.question] ?? '').trim();
         if (!question) continue;
-        const rawOptions = columns.optionColumns.map(column => String(row[column] ?? '').trim()).filter(Boolean).slice(0, 6);
-        if (rawOptions.length < 2) continue;
+        const rawOptions = columns.optionColumns.map(column => String(row[column] ?? '').trim()).slice(0, 4);
+        if (rawOptions.length !== 4 || rawOptions.some(option => !option)) continue;
         const rawCorrect = columns.correct >= 0 ? row[columns.correct] : row[5];
         let answerIndex = normalizeCorrectIndex(rawCorrect);
         if (Number.isInteger(Number(rawCorrect)) && Number(rawCorrect) >= 1 && Number(rawCorrect) <= rawOptions.length) answerIndex = Number(rawCorrect) - 1;
@@ -1007,13 +1007,13 @@ function parseQuizRows(rows) {
 }
 
 function quizQuestionsToRows(questions) {
-    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó']];
+    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó']];
     (questions || []).forEach(question => {
-        const options = (question.options || []).slice(0, 6);
+        const options = (question.options || []).slice(0, 4);
         rows.push([
             question.question || '',
             ...options,
-            ...Array(Math.max(0, 6 - options.length)).fill(''),
+            ...Array(Math.max(0, 4 - options.length)).fill(''),
             (Number(question.correct) || 0) + 1,
             question.explanation || '',
             (question.tags || []).join(', '),
@@ -1414,8 +1414,8 @@ function getCardMeta(deckKey, cardId) {
 }
 
 function flashcardsToRows(cards) {
-    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
-    (cards || []).forEach(card => rows.push([card.front || '', card.back || '', '', '', '', '', '', 1, card.explanation || '', (card.tags || []).join(', '), card.difficulty || 'medium', card.reversible === false ? 'Không' : 'Có']));
+    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
+    (cards || []).forEach(card => rows.push([card.front || '', card.back || '', '', '', '', 1, card.explanation || '', (card.tags || []).join(', '), card.difficulty || 'medium', card.reversible === false ? 'Không' : 'Có']));
     return rows;
 }
 
@@ -2076,8 +2076,8 @@ function renderCreatorEditor() {
     const imageInput = field => `<input id="creator-file-${field}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, '${field}')">`;
 
     if (creatorMode === 'quiz') {
-        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
-        editor.innerHTML = `<div class="editor-header"><div><span class="section-kicker">Trắc nghiệm</span><h2>Câu hỏi ${index}</h2></div><div class="editor-actions">${moveActions}<button class="icon-btn small" onclick="duplicateCreatorItem()" title="Nhân bản"><svg><use href="#i-copy"></use></svg></button><button class="icon-btn small danger-soft" onclick="deleteCreatorItem()" title="Xóa"><svg><use href="#i-trash"></use></svg></button></div></div>
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        editor.innerHTML = `<div class="editor-header"><div><span class="section-kicker">TN</span><h2>Câu hỏi ${index}</h2></div><div class="editor-actions">${moveActions}<button class="icon-btn small" onclick="duplicateCreatorItem()" title="Nhân bản"><svg><use href="#i-copy"></use></svg></button><button class="icon-btn small danger-soft" onclick="deleteCreatorItem()" title="Xóa"><svg><use href="#i-trash"></use></svg></button></div></div>
             ${validation}
             <div class="editor-section"><label><span class="field-label-row"><span>Nội dung câu hỏi</span>${imageButton('question')}</span><textarea class="editor-textarea" rows="5" data-creator-field="question" oninput="updateCreatorField('question', this.value)" onpaste="handleCreatorPaste(event, 'question')" placeholder="Nhập câu hỏi, hỗ trợ công thức $...$">${escapeHTML(stripCreatorMediaMarkup(item.question))}</textarea>${imageInput('question')}${renderCreatorMediaCards(item.question, 'question')}</label></div>
             <div class="editor-section"><div class="field-label-row"><strong>Đáp án</strong><small style="color:var(--text-soft)">Bấm chữ cái để chọn đáp án đúng</small></div><div class="editor-grid">${item.options.map((option, optionIndex) => `<label><span>Đáp án ${optionLetters[optionIndex]}</span><div class="answer-editor"><button class="answer-radio ${item.correct !== null && item.correct !== undefined && Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${optionLetters[optionIndex]}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea>${imageInput(`option-${optionIndex}`)}</div>${imageButton(`option-${optionIndex}`)}${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`).join('')}</div></div>
@@ -2308,15 +2308,15 @@ async function exportCreatorToExcel() {
     }
     try {
         const XLSX = await window.EdTechLibraries.loadXLSX();
-        const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
+        const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
         if (creatorMode === 'quiz') {
             for (const item of items) {
                 const options = [];
-                for (const option of (item.options || []).slice(0, 6)) options.push(await materializeMediaMarkup(option));
+                for (const option of (item.options || []).slice(0, 4)) options.push(await materializeMediaMarkup(option));
                 rows.push([
                     await materializeMediaMarkup(item.question),
                     ...options,
-                    ...Array(Math.max(0, 6 - options.length)).fill(''),
+                    ...Array(Math.max(0, 4 - options.length)).fill(''),
                     Number(item.correct) + 1,
                     await materializeMediaMarkup(item.explanation || ''),
                     (item.tags || []).join(', '),
@@ -2327,7 +2327,7 @@ async function exportCreatorToExcel() {
         } else {
             for (const item of items) rows.push([
                 await materializeMediaMarkup(item.front),
-                await materializeMediaMarkup(item.back), '', '', '', '', '', 1,
+                await materializeMediaMarkup(item.back), '', '', '', 1,
                 await materializeMediaMarkup(item.explanation || ''),
                 (item.tags || []).join(', '), item.difficulty || 'medium', item.reversible === false ? 'Không' : 'Có'
             ]);
@@ -2506,9 +2506,9 @@ function cleanJSONText(text) {
 }
 
 function normalizeCorrectIndex(value) {
-    if (value !== null && value !== undefined && value !== '' && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 5) return Number(value);
+    if (value !== null && value !== undefined && value !== '' && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 3) return Number(value);
     const letter = String(value || '').trim().toUpperCase();
-    if (/^[A-F]$/.test(letter)) return letter.charCodeAt(0) - 65;
+    if (/^[A-D]$/.test(letter)) return letter.charCodeAt(0) - 65;
     return null;
 }
 
@@ -2519,11 +2519,11 @@ function parseImportEntry(entry, index) {
         const item = {
             id: makeId('quiz'),
             question: String(entry.question ?? '').trim(),
-            options: Array.isArray(entry.options) ? entry.options.slice(0, 6).map(value => String(value ?? '').trim()) : [],
+            options: Array.isArray(entry.options) ? entry.options.slice(0, 4).map(value => String(value ?? '').trim()) : [],
             correct: normalizeCorrectIndex(entry.correct ?? entry.correctAnswer),
             explanation: String(entry.explanation ?? '').trim()
         };
-        while (item.options.length < 2) item.options.push('');
+        while (item.options.length < 4) item.options.push('');
         errors.push(...validateCreatorItem(item, 'quiz'));
         return { index, errors, item };
     }
@@ -2781,34 +2781,9 @@ function handleGlobalKeyboard(event) {
     }
 }
 
-function positionIntroDonateGuide() {
-    const target = document.getElementById('donate-header-btn');
-    const pointer = document.getElementById('intro-guide-pointer');
-    if (!target || !pointer) return;
-    const targetRect = target.getBoundingClientRect();
-    const topbarRect = document.querySelector('.topbar')?.getBoundingClientRect();
-    const directTop = targetRect.bottom + 12;
-    const pointerTop = window.matchMedia('(max-width: 680px)').matches && topbarRect
-        ? Math.max(directTop, topbarRect.bottom + 9)
-        : directTop;
-    pointer.style.left = `${targetRect.left + targetRect.width / 2}px`;
-    pointer.style.top = `${pointerTop}px`;
-    pointer.style.setProperty('--guide-line-height', `${Math.max(0, pointerTop - directTop)}px`);
-    requestAnimationFrame(() => {
-        const pointerRect = pointer.getBoundingClientRect();
-        const safe = 12;
-        let shift = 0;
-        if (pointerRect.left < safe) shift = safe - pointerRect.left;
-        else if (pointerRect.right > window.innerWidth - safe) shift = window.innerWidth - safe - pointerRect.right;
-        pointer.style.setProperty('--guide-shift', `${shift}px`);
-    });
-}
-
 function initBrandIntro() {
     const root = document.documentElement;
     const intro = document.getElementById('brand-intro');
-    const target = document.getElementById('donate-header-btn');
-    const topbar = document.querySelector('.topbar');
     let resolveIntroReady = () => {};
     const introReady = new Promise(resolve => { resolveIntroReady = resolve; });
     window.__edtechIntroDonePromise = introReady;
@@ -2820,7 +2795,6 @@ function initBrandIntro() {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let finished = false;
-    let supportVisible = false;
     let readyToClose = false;
     const timers = [];
     const clearTimers = () => timers.splice(0).forEach(timer => clearTimeout(timer));
@@ -2839,13 +2813,6 @@ function initBrandIntro() {
         else context.resume().then(playWhenReady).catch(() => {});
     };
 
-    const clearGuide = () => {
-        root.classList.remove('intro-app-preview');
-        topbar?.classList.remove('intro-guide-layer');
-        target?.classList.remove('intro-guide-target');
-        window.removeEventListener('resize', positionIntroDonateGuide);
-    };
-
     const allowClose = () => {
         if (finished || readyToClose) return;
         readyToClose = true;
@@ -2853,28 +2820,10 @@ function initBrandIntro() {
         intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro. Chạm vào vùng trống để tiếp tục.');
     };
 
-    const showSupportStage = () => {
-        if (finished || supportVisible) return;
-        supportVisible = true;
-        intro.classList.add('is-clearing');
-        timers.push(window.setTimeout(() => {
-            if (finished) return;
-            root.classList.add('intro-app-preview');
-            intro.classList.add('is-support-stage');
-            topbar?.classList.add('intro-guide-layer');
-            target?.classList.add('intro-guide-target');
-            positionIntroDonateGuide();
-            window.addEventListener('resize', positionIntroDonateGuide, { passive: true });
-            playSound('soft');
-            timers.push(window.setTimeout(allowClose, reduceMotion ? 20 : 240));
-        }, reduceMotion ? 30 : 260));
-    };
-
     const finish = ({ instant = false } = {}) => {
         if (finished) return;
         finished = true;
         clearTimers();
-        clearGuide();
         root.classList.remove('intro-pending');
         intro.removeEventListener('pointerdown', tryIntroSound);
         intro.removeEventListener('pointerup', handleIntroTap);
@@ -2903,7 +2852,7 @@ function initBrandIntro() {
     document.addEventListener('keydown', handleIntroKey);
     tryIntroSound();
 
-    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 220 : 980));
+    timers.push(window.setTimeout(allowClose, reduceMotion ? 120 : 1120));
     return introReady;
 }
 

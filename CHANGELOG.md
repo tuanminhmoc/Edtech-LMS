@@ -1,12 +1,26 @@
 # Changelog
 
-## 1.1.2
 
-- Tối ưu toàn bộ giao diện mobile cho dashboard, cấu hình học, trắc nghiệm, kết quả, flashcard, soạn đề, lịch sử và modal.
-- Cân lại topbar, safe-area iPhone, khoảng cách, nút bấm và các bottom sheet.
-- Lịch sử chuyển thành dạng card trên điện thoại; kết quả và HUD trắc nghiệm gọn hơn.
-- Trình soạn đề mobile dùng lưới số cân giữa, editor một cột và thao tác chạm thoải mái hơn.
-- README rút gọn, chỉ giữ cách chạy và tự deploy cơ bản.
+## 1.1.4
+
+- Bỏ hướng dẫn DONATE trong intro; nút DONATE dùng hào quang nhẹ thường trực.
+- Bỏ nhãn trạng thái “Đã lưu” khỏi giao diện soạn đề.
+- Sửa căn giữa và kích thước ô số câu trên desktop, Android và iPhone.
+- Nút Cài app gọi trực tiếp hộp cài PWA của Chrome/Edge khi khả dụng.
+- Đổi biểu tượng cài app sang biểu tượng tải/cài để không nhầm với nút Trang chủ.
+- Cập nhật cache PWA.
+
+## 1.1.3
+
+- Sửa các vùng Dark Theme còn nền sáng, chữ chìm hoặc tương phản gắt.
+- Cân lại hướng dẫn DONATE trên desktop và mobile.
+- Cải thiện preview trắc nghiệm, flashcard và thẻ tài khoản MB trong Dark Theme.
+- Căn giữa số câu trong sidebar soạn đề và thu gọn tiêu đề mobile.
+- Đổi nhãn chế độ soạn trắc nghiệm thành **TN**.
+- Trắc nghiệm được cố định đúng 4 đáp án A–D; bỏ thêm/xóa đáp án.
+- Chuẩn hóa import, export Excel và JSON theo cấu trúc 4 đáp án.
+- Sửa luồng cài PWA trên desktop: bắt sự kiện cài sớm, đăng ký Service Worker sớm và thêm hướng dẫn theo trình duyệt khi prompt không khả dụng.
+- Cập nhật manifest, cache và icon cài ứng dụng.
 
 ## 1.0.1
 

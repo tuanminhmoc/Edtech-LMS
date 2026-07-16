@@ -7,6 +7,12 @@ const HISTORY_PAGE_SIZE = 20;
 let activeSessionSaveTimer = null;
 let creatorEditSnapshotTimer = null;
 let installPromptEvent = null;
+function captureInstallPrompt(event) {
+    event.preventDefault();
+    installPromptEvent = event;
+    updateInstallButtons(true);
+}
+window.addEventListener('beforeinstallprompt', captureInstallPrompt);
 
 function debounceActiveSessionSave(callback) {
     clearTimeout(activeSessionSaveTimer);
@@ -155,7 +161,7 @@ async function loadLocalQuestionSet(id) {
     const pill = document.getElementById('selected-file-pill');
     if (pill) {
         pill.hidden = false;
-        pill.textContent = `${currentFileName} · Đã lưu`;
+        pill.textContent = currentFileName;
     }
     document.getElementById('drop-title').textContent = 'Đã chọn bộ đề trên thiết bị';
     document.getElementById('drop-subtitle').textContent = `${item.count || Math.max(0, item.rows.length - 1)} mục sẵn sàng`;
@@ -272,25 +278,11 @@ function deleteSelectedCreatorItems() {
 }
 
 function addCreatorOption() {
-    const item = getActiveCreatorItem();
-    if (!item || creatorMode !== 'quiz') return;
-    if (!Array.isArray(item.options)) item.options = ['', ''];
-    if (item.options.length >= 6) return;
-    pushCreatorHistory();
-    item.options.push('');
-    renderCreator();
-    scheduleCreatorSave();
+    showToast('Trắc nghiệm được cố định 4 đáp án A–D.', 'info');
 }
 
-function removeCreatorOption(index) {
-    const item = getActiveCreatorItem();
-    if (!item || creatorMode !== 'quiz' || item.options.length <= 2) return;
-    pushCreatorHistory();
-    item.options.splice(index, 1);
-    if (Number(item.correct) === index) item.correct = null;
-    else if (Number(item.correct) > index) item.correct -= 1;
-    renderCreator();
-    scheduleCreatorSave();
+function removeCreatorOption() {
+    showToast('Trắc nghiệm được cố định 4 đáp án A–D.', 'info');
 }
 
 function updateCreatorTags(value) {
@@ -439,14 +431,12 @@ function updateInstallButtons(visible = true) {
     });
 }
 
+function isStandaloneApp() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
 function initInstallPrompt() {
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    updateInstallButtons(!standalone);
-    window.addEventListener('beforeinstallprompt', event => {
-        event.preventDefault();
-        installPromptEvent = event;
-        updateInstallButtons(true);
-    });
+    updateInstallButtons(!isStandaloneApp());
     window.addEventListener('appinstalled', () => {
         installPromptEvent = null;
         updateInstallButtons(false);
@@ -455,16 +445,38 @@ function initInstallPrompt() {
 }
 
 async function installApp() {
-    if (!installPromptEvent) {
-        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
-        const message = isIOS
-            ? 'Trên iPhone/iPad: mở Chia sẻ rồi chọn “Thêm vào Màn hình chính”.'
-            : 'Trên Android/Desktop: mở menu trình duyệt và chọn “Cài ứng dụng” hoặc “Add to Home screen”.';
-        showToast(message, 'info');
+    if (isStandaloneApp()) {
+        showToast('EdTech đang chạy ở chế độ ứng dụng.', 'success');
         return;
     }
-    await installPromptEvent.prompt();
-    installPromptEvent = null;
+
+    if (installPromptEvent) {
+        const prompt = installPromptEvent;
+        installPromptEvent = null;
+        try {
+            await prompt.prompt();
+            const choice = await prompt.userChoice.catch(() => null);
+            if (choice?.outcome === 'accepted') updateInstallButtons(false);
+            else updateInstallButtons(true);
+        } catch (error) {
+            console.warn('Không thể mở hộp cài ứng dụng:', error);
+            updateInstallButtons(true);
+            showToast('Trình duyệt chưa thể mở hộp cài đặt. Hãy tải lại trang và thử lại.', 'info');
+        }
+        return;
+    }
+
+    await window.EdTechPWA?.register?.();
+    const ua = navigator.userAgent || '';
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+    const isSafari = /safari/i.test(ua) && !/chrome|crios|edg|opr/i.test(ua);
+    if (isIOS) {
+        showToast('iPhone/iPad: bấm Chia sẻ rồi chọn “Thêm vào Màn hình chính”.', 'info');
+    } else if (isSafari) {
+        showToast('Safari trên Mac: mở File rồi chọn “Add to Dock”.', 'info');
+    } else {
+        showToast('Chrome/Edge chỉ cho cài khi trang chạy bằng HTTPS và đạt điều kiện PWA. Hãy tải lại trang rồi bấm Cài app lần nữa.', 'info');
+    }
 }
 
 // Wrap core mutations with history and persistence.
@@ -500,11 +512,11 @@ validateCreatorItem = function validateCreatorItemEnhanced(item, mode = creatorM
     const errors = [];
     if (mode === 'quiz') {
         const question = String(item?.question || '').trim();
-        const options = Array.isArray(item?.options) ? item.options.slice(0, 6).map(value => String(value || '').trim()) : [];
+        const options = Array.isArray(item?.options) ? item.options.slice(0, 4).map(value => String(value || '').trim()) : [];
         const nonEmpty = options.filter(Boolean);
         if (!question) errors.push('Câu hỏi đang để trống.');
-        if (nonEmpty.length < 2) errors.push(`Cần ít nhất 2 đáp án, hiện có ${nonEmpty.length}.`);
-        if (options.length > 6) errors.push('Chỉ hỗ trợ tối đa 6 đáp án.');
+        if (options.length !== 4) errors.push('Câu trắc nghiệm phải có đúng 4 đáp án.');
+        if (nonEmpty.length !== 4) errors.push(`Cần nhập đủ 4 đáp án, hiện có ${nonEmpty.length}.`);
         const normalized = nonEmpty.map(value => normalizeAnswerText(value));
         if (new Set(normalized).size !== normalized.length) errors.push('Có đáp án bị trùng nhau.');
         const correct = Number(item?.correct);
@@ -524,8 +536,9 @@ renderCreatorEditor = function renderCreatorEditorEnhanced() {
         item.tags = Array.isArray(item.tags) ? item.tags : [];
         item.difficulty = ['easy', 'medium', 'hard'].includes(item.difficulty) ? item.difficulty : 'medium';
         if (creatorMode === 'quiz') {
-            item.options = Array.isArray(item.options) ? item.options.slice(0, 6) : ['', '', '', ''];
-            while (item.options.length < 2) item.options.push('');
+            item.options = Array.isArray(item.options) ? item.options.slice(0, 4) : ['', '', '', ''];
+            while (item.options.length < 4) item.options.push('');
+            if (!Number.isInteger(Number(item.correct)) || Number(item.correct) < 0 || Number(item.correct) > 3) item.correct = null;
         } else if (item.reversible === undefined) item.reversible = true;
     }
     coreRenderCreatorEditor();
@@ -534,13 +547,10 @@ renderCreatorEditor = function renderCreatorEditorEnhanced() {
     if (creatorMode === 'quiz') {
         const answerGrid = editor.querySelector('.editor-grid');
         if (answerGrid) {
-            const addOptionButton = item.options.length >= 6
-                ? ''
-                : `<button class="add-option-btn" type="button" onclick="addCreatorOption()"><svg><use href="#i-plus"></use></svg>Thêm đáp án (${item.options.length}/6)</button>`;
             answerGrid.innerHTML = item.options.map((option, optionIndex) => {
                 const letter = String.fromCharCode(65 + optionIndex);
-                return `<label><span>Đáp án ${letter}</span><div class="answer-editor"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea><button class="remove-option-btn" type="button" onclick="removeCreatorOption(${optionIndex})" ${item.options.length <= 2 ? 'disabled' : ''} aria-label="Xóa đáp án ${letter}">×</button><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span>${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`;
-            }).join('') + addOptionButton;
+                return `<label><span>Đáp án ${letter}</span><div class="answer-editor answer-editor-fixed"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span>${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`;
+            }).join('');
         }
     }
     const meta = document.createElement('div');

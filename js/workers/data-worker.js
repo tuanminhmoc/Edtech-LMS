@@ -13,7 +13,7 @@ function normalizeCorrect(value, optionCount) {
         if (number >= 1 && number <= optionCount) return number - 1;
     }
     const letter = String(value || '').trim().toUpperCase();
-    if (/^[A-F]$/.test(letter)) {
+    if (/^[A-D]$/.test(letter)) {
         const index = letter.charCodeAt(0) - 65;
         return index < optionCount ? index : null;
     }
@@ -40,10 +40,10 @@ function analyzeImport(payload) {
         }
         if (mode === 'quiz') {
             const question = normalizeText(entry.question);
-            const options = Array.isArray(entry.options) ? entry.options.slice(0, 6).map(normalizeText).filter(Boolean) : [];
+            const options = Array.isArray(entry.options) ? entry.options.slice(0, 4).map(normalizeText).filter(Boolean) : [];
             const correct = normalizeCorrect(entry.correct ?? entry.correctAnswer, options.length);
             if (!question) errors.push('Câu hỏi đang để trống.');
-            if (options.length < 2) errors.push('Cần ít nhất hai đáp án.');
+            if (options.length !== 4) errors.push('Cần đúng bốn đáp án A–D.');
             if (new Set(options.map(item => item.toLowerCase())).size !== options.length) errors.push('Có đáp án bị trùng.');
             if (correct === null) errors.push('Chưa xác định được đáp án đúng.');
             const signature = `${question.toLowerCase()}|${options.join('|').toLowerCase()}`;
