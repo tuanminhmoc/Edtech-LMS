@@ -164,6 +164,7 @@ let draggedCreatorId = null;
 let audioContext = null;
 let soundUnlocked = false;
 let mobileQuizNavTimer = null;
+var mobileResultReviewTimer = null;
 
 function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -400,7 +401,9 @@ function showScreen(screenId) {
     if (!target) return;
     target.classList.add('active');
     document.body.classList.toggle('quiz-screen-active', screenId === 'quiz-app');
+    document.body.classList.toggle('quiz-result-active', screenId === 'quiz-result-screen');
     if (screenId !== 'quiz-app') closeMobileQuizNavigator(true);
+    if (screenId !== 'quiz-result-screen') closeMobileResultReview(true);
 
     const navTarget = ['quiz-app', 'quiz-result-screen', 'flashcard-app', 'flashcard-result-screen'].includes(screenId)
         ? 'upload-screen'
@@ -899,8 +902,14 @@ function finalizeQuiz() {
 
 function renderQuizResult(result) {
     const completedAt = new Date(result.completedAt || Date.now());
-    document.getElementById('result-file-name').textContent = result.fileName || 'Bộ đề trắc nghiệm';
-    document.getElementById('result-completed-at').textContent = `Hoàn thành lúc ${new Intl.DateTimeFormat('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }).format(completedAt)}`;
+    const resultFileName = result.fileName || 'Bộ đề trắc nghiệm';
+    const completedLabel = `Hoàn thành lúc ${new Intl.DateTimeFormat('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }).format(completedAt)}`;
+    document.getElementById('result-file-name').textContent = resultFileName;
+    document.getElementById('result-completed-at').textContent = completedLabel;
+    const mobileFileName = document.getElementById('result-mobile-file-name');
+    const mobileCompletedAt = document.getElementById('result-mobile-completed-at');
+    if (mobileFileName) mobileFileName.textContent = resultFileName;
+    if (mobileCompletedAt) mobileCompletedAt.textContent = completedLabel;
     document.getElementById('result-percent').textContent = `${result.accuracy}%`;
     document.getElementById('result-fraction').textContent = `${result.correct} / ${result.total} đúng`;
     document.getElementById('result-correct').textContent = result.correct;
@@ -910,6 +919,9 @@ function renderQuizResult(result) {
     document.getElementById('result-score-ring').style.setProperty('--score', `${result.accuracy * 3.6}deg`);
     const retryWrongButton = document.getElementById('retry-wrong-btn');
     if (retryWrongButton) retryWrongButton.hidden = !result.review.some(item => item.status !== 'correct');
+    const mobileReviewCount = document.getElementById('mobile-review-count');
+    if (mobileReviewCount) mobileReviewCount.textContent = `${result.review.length} câu`;
+    closeMobileResultReview(true);
 
     let title = 'Cứ tiếp tục nhé!';
     let message = `Bạn nhận được ${result.xp} XP. Hãy xem lại những câu chưa đúng để ghi nhớ chắc hơn.`;
@@ -931,6 +943,36 @@ function renderQuizResult(result) {
         </article>`;
     }).join('');
     typesetMath(document.getElementById('result-review-list'));
+}
+
+
+function openMobileResultReview() {
+    const panel = document.getElementById('result-review-panel');
+    const backdrop = document.getElementById('result-review-mobile-backdrop');
+    if (!panel) return;
+    if (!window.matchMedia('(max-width: 680px)').matches) {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+    clearTimeout(mobileResultReviewTimer);
+    if (backdrop) backdrop.hidden = false;
+    requestAnimationFrame(() => {
+        document.body.classList.add('result-review-open');
+        backdrop?.classList.add('is-open');
+        panel.querySelector('.result-review-mobile-close')?.focus({ preventScroll: true });
+    });
+}
+
+function closeMobileResultReview(immediate = false) {
+    const backdrop = document.getElementById('result-review-mobile-backdrop');
+    clearTimeout(mobileResultReviewTimer);
+    document.body.classList.remove('result-review-open');
+    backdrop?.classList.remove('is-open');
+    const finish = () => {
+        if (backdrop) backdrop.hidden = true;
+    };
+    if (immediate) finish();
+    else mobileResultReviewTimer = setTimeout(finish, 260);
 }
 
 function filterReview(filter, button) {
@@ -2281,6 +2323,7 @@ function initPreferenceInputs() {
 function handleGlobalKeyboard(event) {
     if (event.key === 'Escape') {
         if (!document.getElementById('donate-modal').hidden) closeDonateModal();
+        else if (document.body.classList.contains('result-review-open')) closeMobileResultReview();
         else if (document.body.classList.contains('quiz-nav-open')) closeMobileQuizNavigator();
         else if (!document.getElementById('prompt-modal').hidden) closePromptPanel();
         else if (!document.getElementById('creator-preview-modal').hidden) closeCreatorPreview();
@@ -2549,6 +2592,10 @@ function initApp() {
     document.addEventListener('dragend', () => {
         draggedCreatorId = null;
         document.querySelectorAll('.creator-list-item.dragging').forEach(item => item.classList.remove('dragging'));
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 680 && document.body.classList.contains('result-review-open')) closeMobileResultReview(true);
     });
 
     window.addEventListener('beforeunload', () => {

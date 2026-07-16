@@ -329,6 +329,11 @@
 
                 <div class="result-layout">
                     <section class="result-hero panel">
+                        <div class="result-mobile-meta">
+                            <span>Kết quả trắc nghiệm</span>
+                            <strong id="result-mobile-file-name">Bộ đề</strong>
+                            <small id="result-mobile-completed-at">Hoàn thành</small>
+                        </div>
                         <div class="result-score-ring" id="result-score-ring"><span><strong id="result-percent">0%</strong><small id="result-fraction">0 / 0 đúng</small></span></div>
                         <div class="result-message"><span class="result-badge"><svg><use href="#i-spark"></use></svg> Hoàn thành</span><h2 id="result-title">Làm tốt lắm!</h2><p id="result-message">Bạn đã hoàn thành bài luyện tập.</p></div>
                         <div class="result-mini-stats">
@@ -337,14 +342,26 @@
                             <div><span class="mini-stat-icon empty">—</span><span><small>Bỏ trống</small><strong id="result-empty">0</strong></span></div>
                             <div><span class="mini-stat-icon time"><svg><use href="#i-clock"></use></svg></span><span><small>Thời gian</small><strong id="result-time">0:00</strong></span></div>
                         </div>
-                        <div class="result-actions"><button class="btn btn-secondary" onclick="showScreen('dashboard-screen')"><svg><use href="#i-home"></use></svg>Về tổng quan</button><button class="btn btn-secondary" id="retry-wrong-btn" onclick="retryWrongQuiz()"><svg><use href="#i-refresh"></use></svg>Luyện câu sai</button><button class="btn btn-primary" onclick="retryLastQuiz()"><svg><use href="#i-refresh"></use></svg>Làm lại bài</button></div>
+                        <div class="result-actions">
+                            <button class="btn btn-secondary result-home-btn" onclick="showScreen('dashboard-screen')"><svg><use href="#i-home"></use></svg>Về tổng quan</button>
+                            <button class="btn btn-secondary" id="retry-wrong-btn" onclick="retryWrongQuiz()"><svg><use href="#i-refresh"></use></svg>Luyện câu sai</button>
+                            <button class="btn btn-secondary mobile-review-trigger" id="mobile-review-trigger" type="button" onclick="openMobileResultReview()"><svg><use href="#i-eye"></use></svg><span>Xem lại bài</span><small id="mobile-review-count">0 câu</small></button>
+                            <button class="btn btn-primary result-retry-main" onclick="retryLastQuiz()"><svg><use href="#i-refresh"></use></svg>Làm lại bài</button>
+                        </div>
                     </section>
 
-                    <section class="panel review-panel">
-                        <div class="panel-heading inline"><div><span class="section-kicker">Xem lại bài</span><h2>Chi tiết từng câu</h2></div><div class="review-filter"><button class="active" data-filter="all" onclick="filterReview('all', this)">Tất cả</button><button data-filter="wrong" onclick="filterReview('wrong', this)">Cần xem lại</button></div></div>
+                    <section class="panel review-panel" id="result-review-panel" aria-label="Chi tiết bài làm">
+                        <div class="panel-heading inline">
+                            <div><span class="section-kicker">Xem lại bài</span><h2>Chi tiết từng câu</h2></div>
+                            <div class="review-heading-actions">
+                                <div class="review-filter"><button class="active" data-filter="all" onclick="filterReview('all', this)">Tất cả</button><button data-filter="wrong" onclick="filterReview('wrong', this)">Cần xem lại</button></div>
+                                <button class="icon-btn small result-review-mobile-close" type="button" onclick="closeMobileResultReview()" aria-label="Đóng phần xem lại">×</button>
+                            </div>
+                        </div>
                         <div id="result-review-list" class="result-review-list"></div>
                     </section>
                 </div>
+                <button class="result-review-mobile-backdrop" id="result-review-mobile-backdrop" type="button" onclick="closeMobileResultReview()" aria-label="Đóng phần xem lại" hidden></button>
             </section>
 
             <section class="app-screen" id="flashcard-app">

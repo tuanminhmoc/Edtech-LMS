@@ -4875,3 +4875,446 @@ html.intro-pending.intro-app-preview .ambient {
     }
     .intro-tap-dot { animation: none !important; }
 }
+
+
+/* ===== v7: mobile result HUD and on-demand review sheet ===== */
+.result-mobile-meta,
+.mobile-review-trigger,
+.result-review-mobile-close,
+.result-review-mobile-backdrop {
+    display: none;
+}
+
+.review-heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-heading > div,
+.result-layout,
+.result-hero,
+.result-message {
+    min-width: 0;
+}
+
+#result-file-name,
+#result-mobile-file-name {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+@media (max-width: 680px) {
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .app-shell {
+        width: calc(100% - 16px);
+        max-width: none;
+        margin: 8px auto 24px;
+    }
+
+    .topbar {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 8px;
+        row-gap: 9px;
+        padding: 9px;
+    }
+
+    .brand,
+    .top-actions,
+    .main-nav {
+        min-width: 0;
+    }
+
+    .brand {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .top-actions {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        flex-wrap: nowrap;
+    }
+
+    .main-nav {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        width: 100%;
+        overflow: visible;
+        padding: 4px;
+    }
+
+    .nav-link {
+        width: 100%;
+        min-width: 0;
+        padding: 9px 5px;
+    }
+
+    .main-content,
+    .app-screen,
+    #quiz-result-screen,
+    .result-layout,
+    .result-hero {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    #quiz-result-screen > .page-heading {
+        display: none;
+    }
+
+    #quiz-result-screen .result-layout {
+        gap: 0;
+    }
+
+    #quiz-result-screen .result-hero {
+        grid-template-columns: 104px minmax(0, 1fr);
+        align-items: center;
+        gap: 16px;
+        padding: 20px 16px 17px;
+        border-radius: 23px;
+        text-align: left;
+    }
+
+    .result-mobile-meta {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding-bottom: 13px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .result-mobile-meta span {
+        color: var(--primary);
+        font-size: .58rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .result-mobile-meta strong {
+        max-width: 100%;
+        font-size: .92rem;
+        line-height: 1.4;
+    }
+
+    .result-mobile-meta small {
+        color: var(--text-soft);
+        font-size: .61rem;
+    }
+
+    #quiz-result-screen .result-score-ring {
+        width: 104px;
+        height: 104px;
+        margin: 0;
+    }
+
+    #quiz-result-screen .result-score-ring::after {
+        inset: 8px;
+    }
+
+    #quiz-result-screen .result-score-ring strong {
+        font-size: 1.55rem;
+    }
+
+    #quiz-result-screen .result-score-ring small {
+        margin-top: 4px;
+        font-size: .57rem;
+    }
+
+    #quiz-result-screen .result-badge {
+        margin-inline: 0;
+        padding: 5px 8px;
+        font-size: .55rem;
+    }
+
+    #quiz-result-screen .result-message h2 {
+        margin: 8px 0 4px;
+        font-size: 1.22rem;
+        line-height: 1.25;
+    }
+
+    #quiz-result-screen .result-message p {
+        font-size: .68rem;
+        line-height: 1.55;
+    }
+
+    #quiz-result-screen .result-mini-stats {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px;
+        width: 100%;
+    }
+
+    #quiz-result-screen .result-mini-stats > div {
+        min-width: 0;
+        min-height: 62px;
+        justify-content: flex-start;
+        gap: 9px;
+        padding: 10px;
+        border-radius: 14px;
+    }
+
+    #quiz-result-screen .mini-stat-icon {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+    }
+
+    #quiz-result-screen .result-mini-stats small {
+        font-size: .58rem;
+    }
+
+    #quiz-result-screen .result-mini-stats strong {
+        font-size: .84rem;
+    }
+
+    #quiz-result-screen .result-actions {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        width: 100%;
+        margin: 1px 0 0;
+    }
+
+    #quiz-result-screen .result-actions .btn {
+        width: 100%;
+        min-width: 0;
+        min-height: 45px;
+        justify-content: center;
+        padding: 10px 9px;
+        border-radius: 13px;
+        font-size: .66rem;
+        white-space: normal;
+        line-height: 1.3;
+    }
+
+    #quiz-result-screen .result-actions .result-retry-main {
+        order: 1;
+        grid-column: 1 / -1;
+    }
+
+    #quiz-result-screen .result-actions #retry-wrong-btn {
+        order: 2;
+    }
+
+    #quiz-result-screen .mobile-review-trigger {
+        order: 3;
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    #quiz-result-screen .mobile-review-trigger small {
+        color: var(--text-faint);
+        font-size: .54rem;
+        font-weight: 700;
+    }
+
+    #quiz-result-screen .result-home-btn {
+        order: 4;
+        grid-column: 1 / -1;
+        background: transparent;
+    }
+
+    body.result-review-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    #quiz-result-screen .review-panel {
+        position: fixed !important;
+        z-index: 6100;
+        left: 8px;
+        right: 8px;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        top: auto;
+        width: auto;
+        max-width: none;
+        max-height: calc(100dvh - 16px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0;
+        padding: 16px;
+        border-radius: 24px;
+        background: rgba(255,255,255,.985);
+        box-shadow: 0 28px 80px rgba(30,48,52,.28);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(calc(100% + 28px));
+        transition: opacity .2s ease, visibility .2s ease, transform .28s cubic-bezier(.2,.82,.2,1);
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    body.result-review-open #quiz-result-screen .review-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    #quiz-result-screen .review-panel .panel-heading {
+        flex: 0 0 auto;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 0;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    #quiz-result-screen .review-panel .panel-heading h2 {
+        font-size: 1rem;
+    }
+
+    .review-heading-actions {
+        align-items: flex-start;
+    }
+
+    .result-review-mobile-close {
+        display: inline-grid;
+        flex: 0 0 auto;
+        font-size: 1.1rem;
+    }
+
+    #quiz-result-screen .review-filter {
+        gap: 3px;
+        padding: 3px;
+    }
+
+    #quiz-result-screen .review-filter button {
+        padding: 6px 8px;
+        font-size: .58rem;
+    }
+
+    #quiz-result-screen .result-review-list {
+        min-height: 0;
+        flex: 1 1 auto;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 1px 2px calc(8px + env(safe-area-inset-bottom));
+    }
+
+    #quiz-result-screen .review-item {
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    #quiz-result-screen .review-item-header strong {
+        min-width: 0;
+        font-size: .72rem;
+        overflow-wrap: anywhere;
+    }
+
+    #quiz-result-screen .review-answer-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    #quiz-result-screen .review-answer-row div,
+    #quiz-result-screen .review-explanation {
+        font-size: .65rem;
+    }
+
+    .result-review-mobile-backdrop {
+        position: fixed;
+        z-index: 6000;
+        inset: 0;
+        display: block;
+        padding: 0;
+        border: 0;
+        background: rgba(27,42,47,.42);
+        opacity: 0;
+        transition: opacity .2s ease;
+        backdrop-filter: blur(2px);
+    }
+
+    .result-review-mobile-backdrop.is-open {
+        opacity: 1;
+    }
+
+    .result-review-mobile-backdrop[hidden] {
+        display: none !important;
+    }
+}
+
+@media (max-width: 390px) {
+    #quiz-result-screen .result-hero {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 13px;
+        padding-inline: 13px;
+    }
+
+    #quiz-result-screen .result-score-ring {
+        width: 92px;
+        height: 92px;
+    }
+
+    #quiz-result-screen .result-message h2 {
+        font-size: 1.08rem;
+    }
+
+    .donate-header-btn {
+        min-width: 66px;
+        padding-inline: 7px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #quiz-result-screen .review-panel,
+    .result-review-mobile-backdrop {
+        transition: none !important;
+    }
+}
+
+@media (max-width: 680px) {
+    /* A retained screen-entry transform would make fixed review UI relative to the page content instead of the viewport. */
+    #quiz-result-screen.active {
+        animation: none;
+        transform: none;
+    }
+}
+
+@media (max-width: 680px) {
+    #quiz-result-screen .review-panel .panel-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    #quiz-result-screen .review-panel .panel-heading > div:first-child {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+    }
+
+    #quiz-result-screen .review-heading-actions {
+        display: contents;
+    }
+
+    #quiz-result-screen .review-filter {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: start;
+        margin-top: 8px;
+    }
+
+    #quiz-result-screen .result-review-mobile-close {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
