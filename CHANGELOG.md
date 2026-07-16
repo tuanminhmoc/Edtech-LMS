@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0
+
+- Tối ưu ảnh: nén, lưu Blob trong IndexedDB và hiển thị thẻ ảnh gọn.
+- Dark Theme Dreamy Purple với linh vật cú tone bóng đêm.
+- Đổi chữ thương hiệu chính từ Focus thành EdTech.
+- Intro và âm thanh được làm lại.
+- Căn chỉnh giao diện cấu hình trên iPhone.
+
 ## 1.0.1
 
 - Làm dịu toàn bộ bảng màu Dark Theme: nền xanh than trung tính, chữ trắng ngà, màu nhấn giảm độ chói và bóng đổ nhẹ hơn.

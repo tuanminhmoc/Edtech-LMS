@@ -10,7 +10,7 @@
 
     function updateMeta(theme) {
         const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.content = theme === 'dark' ? '#111a22' : '#f4f7f2';
+        if (meta) meta.content = theme === 'dark' ? '#160f2b' : '#f4f7f2';
     }
 
     function updateButton(theme) {

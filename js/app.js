@@ -519,7 +519,7 @@ renderCreatorEditor = function renderCreatorEditorEnhanced() {
         if (answerGrid) {
             answerGrid.innerHTML = item.options.map((option, optionIndex) => {
                 const letter = String.fromCharCode(65 + optionIndex);
-                return `<label><span>Đáp án ${letter}</span><div class="answer-editor"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(option)}</textarea><button class="remove-option-btn" type="button" onclick="removeCreatorOption(${optionIndex})" ${item.options.length <= 2 ? 'disabled' : ''} aria-label="Xóa đáp án ${letter}">×</button><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span></label>`;
+                return `<label><span>Đáp án ${letter}</span><div class="answer-editor"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea><button class="remove-option-btn" type="button" onclick="removeCreatorOption(${optionIndex})" ${item.options.length <= 2 ? 'disabled' : ''} aria-label="Xóa đáp án ${letter}">×</button><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span>${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`;
             }).join('') + `<button class="add-option-btn" type="button" onclick="addCreatorOption()" ${item.options.length >= 6 ? 'disabled' : ''}><svg><use href="#i-plus"></use></svg>Thêm đáp án (${item.options.length}/6)</button>`;
         }
     }
@@ -548,7 +548,7 @@ setCreatorCorrect = function setCreatorCorrectTracked(index) { pushCreatorHistor
     if (typeof original !== 'function') return;
     window[name] = function trackedCreatorMutation(...args) { pushCreatorHistory(); return original(...args); };
 });
-fileToDataURL = optimizeImageFile;
+window.fileToDataURL = optimizeImageFile;
 analyzeAIJsonResult = analyzeAIJsonResultFinal;
 importAIJsonResult = importAIJsonResultFinal;
 renderHistoryTable = renderHistoryTablePaged;

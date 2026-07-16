@@ -250,6 +250,36 @@
         return new Blob([array], { type });
     }
 
+
+    async function saveMedia(record) {
+        const normalized = {
+            id: record.id || `media-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+            name: String(record.name || 'image.webp'),
+            type: String(record.type || record.blob?.type || 'image/webp'),
+            size: Number(record.size || record.blob?.size || 0),
+            width: Number(record.width || 0),
+            height: Number(record.height || 0),
+            blob: record.blob instanceof Blob ? record.blob : null,
+            createdAt: record.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        if (!(normalized.blob instanceof Blob)) throw new Error('Dữ liệu ảnh không hợp lệ.');
+        await put('media', normalized);
+        return normalized;
+    }
+
+    async function getMedia(id) {
+        return get('media', id);
+    }
+
+    async function listMedia() {
+        return getAll('media');
+    }
+
+    async function deleteMedia(id) {
+        return remove('media', id);
+    }
+
     async function exportAll() {
         const stores = {};
         for (const storeName of Object.keys(STORES)) {
@@ -318,6 +348,10 @@
         savePreferences,
         saveQuestionSet,
         listQuestionSets,
+        saveMedia,
+        getMedia,
+        listMedia,
+        deleteMedia,
         storageEstimate,
         requestPersistence,
         exportAll,

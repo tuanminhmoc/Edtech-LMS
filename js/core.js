@@ -105,7 +105,7 @@ const FOCUS_MOTIVATIONS = [
     "Hãy tự hào vì bạn đã dành thời gian để học.",
     "Học tập không cần vội, chỉ cần không ngừng.",
     "Bạn đã bắt đầu, đó luôn là bước khó nhất.",
-    "Focus vào hiện tại, kết quả sẽ đến đúng lúc."
+    "Tập trung vào hiện tại, kết quả sẽ đến đúng lúc."
 ];
 
 const EMPTY_DATA = {
@@ -176,6 +176,12 @@ let soundUnlocked = false;
 let introSoundPlayed = false;
 let mobileQuizNavTimer = null;
 var mobileResultReviewTimer = null;
+
+const creatorMediaURLs = new Map();
+const creatorMediaMeta = new Map();
+const MEDIA_TOKEN_PATTERN = /\[media:([a-zA-Z0-9_-]+)\]/g;
+const MAX_CREATOR_IMAGE_BYTES = 12 * 1024 * 1024;
+const TARGET_CREATOR_IMAGE_BYTES = 650 * 1024;
 
 function safeStorageGet(key) {
     try { return localStorage.getItem(key); } catch (_) { return null; }
@@ -318,19 +324,269 @@ function escapeHTML(value) {
         .replace(/'/g, '&#039;');
 }
 
+function formatMediaSize(bytes) {
+    const value = Math.max(0, Number(bytes) || 0);
+    if (value < 1024) return `${value} B`;
+    if (value < 1024 * 1024) return `${Math.round(value / 1024)} KB`;
+    return `${(value / (1024 * 1024)).toFixed(value > 10 * 1024 * 1024 ? 0 : 1)} MB`;
+}
+
+function extractCreatorMediaIds(value) {
+    const ids = [];
+    String(value || '').replace(/\[media:([a-zA-Z0-9_-]+)\]/g, (_, id) => {
+        if (!ids.includes(id)) ids.push(id);
+        return _;
+    });
+    return ids;
+}
+
+function stripCreatorMediaMarkup(value) {
+    return String(value || '')
+        .replace(/\s*\[media:[a-zA-Z0-9_-]+\]\s*/g, '\n')
+        .replace(/\s*\[img\][\s\S]*?\[\/img\]\s*/gi, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
+function preserveCreatorMediaMarkup(existing, visibleText) {
+    const media = String(existing || '').match(/\[media:[a-zA-Z0-9_-]+\]/g) || [];
+    const legacy = String(existing || '').match(/\[img\][\s\S]*?\[\/img\]/gi) || [];
+    const suffix = [...media, ...legacy].join('\n');
+    const text = String(visibleText || '').trimEnd();
+    return suffix ? `${text}${text ? '\n' : ''}${suffix}` : text;
+}
+
+function creatorMediaFieldValue(item, field) {
+    if (field.startsWith('option-')) return item.options?.[Number(field.split('-')[1])] || '';
+    return item[field] || '';
+}
+
+function setCreatorMediaFieldValue(item, field, value) {
+    if (field.startsWith('option-')) item.options[Number(field.split('-')[1])] = value;
+    else item[field] = value;
+}
+
+function renderCreatorMediaCards(value, field) {
+    const ids = extractCreatorMediaIds(value);
+    if (!ids.length) return '';
+    return `<div class="creator-media-list" aria-label="Ảnh đã chèn">${ids.map(id => {
+        const meta = creatorMediaMeta.get(id) || {};
+        const src = creatorMediaURLs.get(id) || '';
+        const dimensions = meta.width && meta.height ? `${meta.width}×${meta.height}` : 'Ảnh minh họa';
+        return `<article class="creator-media-card" data-media-id="${escapeHTML(id)}">
+            <button class="creator-media-preview" type="button" onclick="openCreatorMedia('${escapeHTML(id)}')" aria-label="Xem ảnh ${escapeHTML(meta.name || '')}">
+                ${src ? `<img src="${src}" alt="Ảnh đã chèn">` : '<span class="creator-media-placeholder">Ảnh</span>'}
+            </button>
+            <span class="creator-media-info"><strong>${escapeHTML(meta.name || 'Ảnh đã chèn')}</strong><small>${escapeHTML(dimensions)} · ${formatMediaSize(meta.size)}</small></span>
+            <span class="creator-media-actions"><button type="button" onclick="replaceCreatorMedia('${escapeHTML(field)}','${escapeHTML(id)}')">Thay</button><button class="danger" type="button" onclick="removeCreatorMedia('${escapeHTML(field)}','${escapeHTML(id)}')">Xóa</button></span>
+        </article>`;
+    }).join('')}</div>`;
+}
+
 function parseRichText(value) {
     if (!value) return '';
     let safe = escapeHTML(value).replace(/\n/g, '<br>');
     safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    safe = safe.replace(/\[media:([a-zA-Z0-9_-]+)\]/gi, (_, id) => {
+        const url = creatorMediaURLs.get(id);
+        if (!url) return '<em class="media-missing">[Ảnh chưa sẵn sàng]</em>';
+        return `<img class="rendered-img" src="${url}" alt="Hình minh họa" loading="lazy">`;
+    });
     safe = safe.replace(/\[img\]([\s\S]*?)\[\/img\]/gi, (_, source) => {
         const url = source.trim().replace(/\s/g, '');
         if (url.length > 6_000_000) return '<em>[Ảnh vượt giới hạn dung lượng]</em>';
         if (/^(data:image\/(?:png|jpeg|webp|gif);base64,|blob:)/i.test(url)) {
-            return `<img class="rendered-img" src="${url}" alt="Hình minh họa">`;
+            return `<img class="rendered-img" src="${url}" alt="Hình minh họa" loading="lazy">`;
         }
         return '<em>[Ảnh không hợp lệ]</em>';
     });
     return safe;
+}
+
+function blobToDataURLLocal(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(reader.error || new Error('Không thể đọc ảnh.'));
+        reader.readAsDataURL(blob);
+    });
+}
+
+function dataURLToBlobLocal(dataURL) {
+    const match = /^data:([^;,]+)(?:;base64)?,(.*)$/s.exec(String(dataURL || ''));
+    if (!match) throw new Error('Ảnh base64 không hợp lệ.');
+    const type = match[1] || 'image/png';
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    return new Blob([bytes], { type });
+}
+
+async function readImageDimensions(blob) {
+    const url = URL.createObjectURL(blob);
+    try {
+        const image = await new Promise((resolve, reject) => {
+            const element = new Image();
+            element.onload = () => resolve(element);
+            element.onerror = () => reject(new Error('Không thể đọc kích thước ảnh.'));
+            element.src = url;
+        });
+        return { image, width: image.naturalWidth || image.width, height: image.naturalHeight || image.height, release: () => URL.revokeObjectURL(url) };
+    } catch (error) {
+        URL.revokeObjectURL(url);
+        throw error;
+    }
+}
+
+async function optimizeCreatorImage(file) {
+    if (!(file instanceof Blob) || !String(file.type || '').startsWith('image/')) throw new Error('File đã chọn không phải hình ảnh.');
+    if (file.size > MAX_CREATOR_IMAGE_BYTES) throw new Error('Ảnh quá lớn. Vui lòng chọn ảnh dưới 12 MB.');
+    if (file.type === 'image/gif') {
+        const { width, height, release } = await readImageDimensions(file);
+        release();
+        return { blob: file, width, height, name: file.name || 'image.gif', optimized: false };
+    }
+    const { image, width, height, release } = await readImageDimensions(file);
+    try {
+        const scale = Math.min(1, 1600 / Math.max(width, height));
+        const targetWidth = Math.max(1, Math.round(width * scale));
+        const targetHeight = Math.max(1, Math.round(height * scale));
+        if (scale === 1 && file.size <= TARGET_CREATOR_IMAGE_BYTES && /image\/(?:webp|jpeg|png)/.test(file.type)) {
+            return { blob: file, width, height, name: file.name || 'image', optimized: false };
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const context = canvas.getContext('2d', { alpha: true });
+        if (!context) return { blob: file, width, height, name: file.name || 'image', optimized: false };
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = 'high';
+        context.drawImage(image, 0, 0, targetWidth, targetHeight);
+        const output = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .82));
+        if (!output) return { blob: file, width, height, name: file.name || 'image', optimized: false };
+        const baseName = String(file.name || 'image').replace(/\.[^.]+$/, '').slice(0, 70) || 'image';
+        return { blob: output, width: targetWidth, height: targetHeight, name: `${baseName}.webp`, optimized: true };
+    } finally {
+        release();
+    }
+}
+
+function cacheCreatorMedia(record) {
+    if (!record?.id || !(record.blob instanceof Blob)) return;
+    const previous = creatorMediaURLs.get(record.id);
+    if (previous) URL.revokeObjectURL(previous);
+    creatorMediaURLs.set(record.id, URL.createObjectURL(record.blob));
+    creatorMediaMeta.set(record.id, { name: record.name, type: record.type, size: record.size || record.blob.size, width: record.width, height: record.height });
+}
+
+async function hydrateCreatorMediaCache() {
+    const records = await window.EdTechDB?.listMedia?.().catch(() => []) || [];
+    records.forEach(cacheCreatorMedia);
+}
+
+async function storeCreatorMedia(file, existingId = null, { quiet = false } = {}) {
+    const originalSize = file.size;
+    const optimized = await optimizeCreatorImage(file);
+    const record = await window.EdTechDB.saveMedia({
+        id: existingId || makeId('media'),
+        name: optimized.name,
+        type: optimized.blob.type,
+        size: optimized.blob.size,
+        width: optimized.width,
+        height: optimized.height,
+        blob: optimized.blob
+    });
+    cacheCreatorMedia(record);
+    if (!quiet && optimized.optimized) showToast(`Đã tối ưu ảnh: ${formatMediaSize(originalSize)} → ${formatMediaSize(record.size)}.`, 'success');
+    return record;
+}
+
+async function openCreatorMedia(id) {
+    let url = creatorMediaURLs.get(id);
+    if (!url) {
+        const record = await window.EdTechDB?.getMedia?.(id);
+        if (record) { cacheCreatorMedia(record); url = creatorMediaURLs.get(id); }
+    }
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    else showToast('Không tìm thấy ảnh này.', 'error');
+}
+
+async function replaceCreatorMedia(field, id) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        try {
+            await storeCreatorMedia(file, id);
+            saveCreatorDrafts(true);
+            renderCreator();
+            playSound('upload');
+        } catch (error) { showToast(error.message || 'Không thể thay ảnh.', 'error'); }
+    };
+    input.click();
+}
+
+function mediaIsReferenced(id) {
+    const token = `[media:${id}]`;
+    return ['quiz', 'flashcard'].some(mode => (creatorDrafts[mode] || []).some(item => {
+        const values = mode === 'quiz' ? [item.question, item.explanation, ...(item.options || [])] : [item.front, item.back, item.explanation];
+        return values.some(value => String(value || '').includes(token));
+    }));
+}
+
+async function removeCreatorMedia(field, id) {
+    const item = getActiveCreatorItem();
+    const value = creatorMediaFieldValue(item, field);
+    const next = String(value || '').replace(new RegExp(`\\s*\\[media:${id.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\]\\s*`, 'g'), '\n').replace(/\n{3,}/g, '\n\n').trim();
+    setCreatorMediaFieldValue(item, field, next);
+    saveCreatorDrafts(true);
+    if (!mediaIsReferenced(id)) {
+        await window.EdTechDB?.deleteMedia?.(id).catch(() => {});
+        const url = creatorMediaURLs.get(id);
+        if (url) URL.revokeObjectURL(url);
+        creatorMediaURLs.delete(id);
+        creatorMediaMeta.delete(id);
+    }
+    renderCreator();
+    showToast('Đã xóa ảnh khỏi nội dung.', 'info');
+}
+
+async function materializeMediaMarkup(value) {
+    let output = String(value || '');
+    const ids = extractCreatorMediaIds(output);
+    for (const id of ids) {
+        const record = await window.EdTechDB?.getMedia?.(id);
+        if (!record?.blob) continue;
+        const dataURL = await blobToDataURLLocal(record.blob);
+        output = output.replaceAll(`[media:${id}]`, `[img]${dataURL}[/img]`);
+    }
+    return output;
+}
+
+async function migrateEmbeddedCreatorMedia() {
+    let changed = false;
+    const fieldsFor = (mode, item) => mode === 'quiz' ? ['question', 'explanation', ...(item.options || []).map((_, index) => `option-${index}`)] : ['front', 'back', 'explanation'];
+    for (const mode of ['quiz', 'flashcard']) {
+        for (const item of creatorDrafts[mode] || []) {
+            for (const field of fieldsFor(mode, item)) {
+                let value = creatorMediaFieldValue(item, field);
+                const matches = [...String(value || '').matchAll(/\[img\](data:image\/(?:png|jpeg|webp|gif);base64,[\s\S]*?)\[\/img\]/gi)];
+                for (const match of matches) {
+                    try {
+                        const blob = dataURLToBlobLocal(match[1].replace(/\s/g, ''));
+                        const file = typeof File === 'function' ? new File([blob], `legacy-${Date.now()}.${blob.type.split('/')[1] || 'png'}`, { type: blob.type }) : blob;
+                        const record = await storeCreatorMedia(file, null, { quiet: true });
+                        value = value.replace(match[0], `[media:${record.id}]`);
+                        changed = true;
+                    } catch (error) { console.warn('Không thể chuyển một ảnh base64 cũ:', error); }
+                }
+                setCreatorMediaFieldValue(item, field, value);
+            }
+        }
+    }
+    if (changed) await saveCreatorDrafts(true);
 }
 
 function shuffleArray(items) {
@@ -1816,20 +2072,22 @@ function renderCreatorEditor() {
         ? `<div class="creator-validation-box"><strong>Cần hoàn thiện ${errors.length} mục</strong><ul>${errors.map(error => `<li>${escapeHTML(error)}</li>`).join('')}</ul></div>`
         : '<div class="creator-validation-box valid"><strong>Đã sẵn sàng để xuất</strong><span>Nội dung hiện tại không có lỗi bắt buộc.</span></div>';
     const moveActions = `<button class="icon-btn small" onclick="moveCreatorItem(-1)" title="Di chuyển lên" ${index <= 1 ? 'disabled' : ''}>↑</button><button class="icon-btn small" onclick="moveCreatorItem(1)" title="Di chuyển xuống" ${index >= items.length ? 'disabled' : ''}>↓</button>`;
+    const imageButton = field => `<span class="field-tools"><button type="button" onclick="triggerCreatorImage('${field}')">Chèn ảnh</button></span>`;
+    const imageInput = field => `<input id="creator-file-${field}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, '${field}')">`;
 
     if (creatorMode === 'quiz') {
         const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
         editor.innerHTML = `<div class="editor-header"><div><span class="section-kicker">Trắc nghiệm</span><h2>Câu hỏi ${index}</h2></div><div class="editor-actions">${moveActions}<button class="icon-btn small" onclick="duplicateCreatorItem()" title="Nhân bản"><svg><use href="#i-copy"></use></svg></button><button class="icon-btn small danger-soft" onclick="deleteCreatorItem()" title="Xóa"><svg><use href="#i-trash"></use></svg></button></div></div>
             ${validation}
-            <div class="editor-section"><label><span class="field-label-row"><span>Nội dung câu hỏi</span><span class="field-tools"><button onclick="triggerCreatorImage('question')">Chèn ảnh</button></span></span><textarea class="editor-textarea" rows="5" data-creator-field="question" oninput="updateCreatorField('question', this.value)" onpaste="handleCreatorPaste(event, 'question')" placeholder="Nhập câu hỏi, hỗ trợ công thức $...$">${escapeHTML(item.question)}</textarea><input id="creator-file-question" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'question')"></label></div>
-            <div class="editor-section"><div class="field-label-row"><strong>Đáp án</strong><small style="color:var(--text-soft)">Bấm chữ cái để chọn đáp án đúng</small></div><div class="editor-grid">${item.options.map((option, optionIndex) => `<label><span>Đáp án ${optionLetters[optionIndex]}</span><div class="answer-editor"><button class="answer-radio ${item.correct !== null && item.correct !== undefined && Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${optionLetters[optionIndex]}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(option)}</textarea><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${optionLetters[optionIndex]}</button></span></label>`).join('')}</div></div>
-            <div class="editor-section"><label><span class="field-label-row"><span>Giải thích sau khi chấm</span><span class="field-tools"><button onclick="triggerCreatorImage('explanation')">Chèn ảnh</button></span></span><textarea class="editor-textarea" rows="4" oninput="updateCreatorField('explanation', this.value)" onpaste="handleCreatorPaste(event, 'explanation')" placeholder="Giải thích vì sao đáp án đúng...">${escapeHTML(item.explanation)}</textarea><input id="creator-file-explanation" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'explanation')"></label></div>`;
+            <div class="editor-section"><label><span class="field-label-row"><span>Nội dung câu hỏi</span>${imageButton('question')}</span><textarea class="editor-textarea" rows="5" data-creator-field="question" oninput="updateCreatorField('question', this.value)" onpaste="handleCreatorPaste(event, 'question')" placeholder="Nhập câu hỏi, hỗ trợ công thức $...$">${escapeHTML(stripCreatorMediaMarkup(item.question))}</textarea>${imageInput('question')}${renderCreatorMediaCards(item.question, 'question')}</label></div>
+            <div class="editor-section"><div class="field-label-row"><strong>Đáp án</strong><small style="color:var(--text-soft)">Bấm chữ cái để chọn đáp án đúng</small></div><div class="editor-grid">${item.options.map((option, optionIndex) => `<label><span>Đáp án ${optionLetters[optionIndex]}</span><div class="answer-editor"><button class="answer-radio ${item.correct !== null && item.correct !== undefined && Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${optionLetters[optionIndex]}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(stripCreatorMediaMarkup(option))}</textarea>${imageInput(`option-${optionIndex}`)}</div>${imageButton(`option-${optionIndex}`)}${renderCreatorMediaCards(option, `option-${optionIndex}`)}</label>`).join('')}</div></div>
+            <div class="editor-section"><label><span class="field-label-row"><span>Giải thích sau khi chấm</span>${imageButton('explanation')}</span><textarea class="editor-textarea" rows="4" oninput="updateCreatorField('explanation', this.value)" onpaste="handleCreatorPaste(event, 'explanation')" placeholder="Giải thích vì sao đáp án đúng...">${escapeHTML(stripCreatorMediaMarkup(item.explanation))}</textarea>${imageInput('explanation')}${renderCreatorMediaCards(item.explanation, 'explanation')}</label></div>`;
     } else {
         editor.innerHTML = `<div class="editor-header"><div><span class="section-kicker">Flashcard</span><h2>Thẻ ${index}</h2></div><div class="editor-actions">${moveActions}<button class="icon-btn small" onclick="duplicateCreatorItem()" title="Nhân bản"><svg><use href="#i-copy"></use></svg></button><button class="icon-btn small danger-soft" onclick="deleteCreatorItem()" title="Xóa"><svg><use href="#i-trash"></use></svg></button></div></div>
             ${validation}
-            <div class="editor-section"><label><span class="field-label-row"><span>Mặt trước</span><span class="field-tools"><button onclick="triggerCreatorImage('front')">Chèn ảnh</button></span></span><textarea class="editor-textarea" rows="7" oninput="updateCreatorField('front', this.value)" onpaste="handleCreatorPaste(event, 'front')" placeholder="Thuật ngữ, câu hỏi hoặc khái niệm...">${escapeHTML(item.front)}</textarea><input id="creator-file-front" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'front')"></label></div>
-            <div class="editor-section"><label><span class="field-label-row"><span>Mặt sau</span><span class="field-tools"><button onclick="triggerCreatorImage('back')">Chèn ảnh</button></span></span><textarea class="editor-textarea" rows="7" oninput="updateCreatorField('back', this.value)" onpaste="handleCreatorPaste(event, 'back')" placeholder="Định nghĩa, đáp án hoặc nội dung cần nhớ...">${escapeHTML(item.back)}</textarea><input id="creator-file-back" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'back')"></label></div>
-            <div class="editor-section"><label>Ghi chú bổ sung<textarea class="editor-textarea" rows="4" oninput="updateCreatorField('explanation', this.value)" placeholder="Ví dụ, mẹo ghi nhớ hoặc giải thích thêm...">${escapeHTML(item.explanation)}</textarea></label></div>`;
+            <div class="editor-section"><label><span class="field-label-row"><span>Mặt trước</span>${imageButton('front')}</span><textarea class="editor-textarea" rows="7" oninput="updateCreatorField('front', this.value)" onpaste="handleCreatorPaste(event, 'front')" placeholder="Thuật ngữ, câu hỏi hoặc khái niệm...">${escapeHTML(stripCreatorMediaMarkup(item.front))}</textarea>${imageInput('front')}${renderCreatorMediaCards(item.front, 'front')}</label></div>
+            <div class="editor-section"><label><span class="field-label-row"><span>Mặt sau</span>${imageButton('back')}</span><textarea class="editor-textarea" rows="7" oninput="updateCreatorField('back', this.value)" onpaste="handleCreatorPaste(event, 'back')" placeholder="Định nghĩa, đáp án hoặc nội dung cần nhớ...">${escapeHTML(stripCreatorMediaMarkup(item.back))}</textarea>${imageInput('back')}${renderCreatorMediaCards(item.back, 'back')}</label></div>
+            <div class="editor-section"><label><span class="field-label-row"><span>Ghi chú bổ sung</span>${imageButton('explanation')}</span><textarea class="editor-textarea" rows="4" oninput="updateCreatorField('explanation', this.value)" onpaste="handleCreatorPaste(event, 'explanation')" placeholder="Ví dụ, mẹo ghi nhớ hoặc giải thích thêm...">${escapeHTML(stripCreatorMediaMarkup(item.explanation))}</textarea>${imageInput('explanation')}${renderCreatorMediaCards(item.explanation, 'explanation')}</label></div>`;
     }
 }
 
@@ -1847,7 +2105,7 @@ function renderCreatorPreview() {
 
 function updateCreatorField(field, value) {
     const item = getActiveCreatorItem();
-    item[field] = value;
+    item[field] = preserveCreatorMediaMarkup(item[field], value);
     scheduleCreatorSave();
     renderCreatorList();
     renderCreatorPreview();
@@ -1856,7 +2114,7 @@ function updateCreatorField(field, value) {
 
 function updateCreatorOption(index, value) {
     const item = getActiveCreatorItem();
-    item.options[index] = value;
+    item.options[index] = preserveCreatorMediaMarkup(item.options[index], value);
     scheduleCreatorSave();
     renderCreatorList();
     renderCreatorPreview();
@@ -2001,25 +2259,16 @@ function triggerCreatorImage(field) {
     document.getElementById(`creator-file-${field}`)?.click();
 }
 
-function fileToDataURL(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
 async function insertCreatorImage(event, field) {
     const file = event.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-        showToast('File đã chọn không phải hình ảnh.', 'error');
-        return;
-    }
-    const dataURL = await fileToDataURL(file);
-    insertCreatorImageMarkup(field, dataURL);
     event.target.value = '';
+    if (!file) return;
+    try {
+        const record = await storeCreatorMedia(file);
+        insertCreatorImageMarkup(field, record.id);
+    } catch (error) {
+        showToast(error.message || 'Không thể thêm ảnh.', 'error');
+    }
 }
 
 async function handleCreatorPaste(event, field) {
@@ -2028,23 +2277,23 @@ async function handleCreatorPaste(event, field) {
     event.preventDefault();
     const file = imageItem.getAsFile();
     if (!file) return;
-    const dataURL = await fileToDataURL(file);
-    insertCreatorImageMarkup(field, dataURL);
+    try {
+        const record = await storeCreatorMedia(file);
+        insertCreatorImageMarkup(field, record.id);
+    } catch (error) {
+        showToast(error.message || 'Không thể dán ảnh.', 'error');
+    }
 }
 
-function insertCreatorImageMarkup(field, dataURL) {
-    const markup = `\n[img]${dataURL}[/img]\n`;
+function insertCreatorImageMarkup(field, mediaId) {
+    const markup = `\n[media:${mediaId}]\n`;
     const item = getActiveCreatorItem();
-    if (field.startsWith('option-')) {
-        const index = Number(field.split('-')[1]);
-        item.options[index] = `${item.options[index] || ''}${markup}`;
-    } else {
-        item[field] = `${item[field] || ''}${markup}`;
-    }
-    saveCreatorDrafts();
+    const current = creatorMediaFieldValue(item, field);
+    setCreatorMediaFieldValue(item, field, `${current || ''}${markup}`.trim());
+    saveCreatorDrafts(true);
     renderCreator();
     playSound('upload');
-    showToast('Đã chèn hình ảnh vào nội dung.', 'success');
+    showToast('Đã thêm ảnh vào nội dung.', 'success');
 }
 
 async function exportCreatorToExcel() {
@@ -2061,18 +2310,27 @@ async function exportCreatorToExcel() {
         const XLSX = await window.EdTechLibraries.loadXLSX();
         const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
         if (creatorMode === 'quiz') {
-            items.forEach(item => rows.push([
-                item.question,
-                ...(item.options || []).slice(0, 6),
-                ...Array(Math.max(0, 6 - (item.options || []).length)).fill(''),
-                Number(item.correct) + 1,
-                item.explanation || '',
-                (item.tags || []).join(', '),
-                item.difficulty || 'medium',
-                ''
-            ]));
+            for (const item of items) {
+                const options = [];
+                for (const option of (item.options || []).slice(0, 6)) options.push(await materializeMediaMarkup(option));
+                rows.push([
+                    await materializeMediaMarkup(item.question),
+                    ...options,
+                    ...Array(Math.max(0, 6 - options.length)).fill(''),
+                    Number(item.correct) + 1,
+                    await materializeMediaMarkup(item.explanation || ''),
+                    (item.tags || []).join(', '),
+                    item.difficulty || 'medium',
+                    ''
+                ]);
+            }
         } else {
-            items.forEach(item => rows.push([item.front, item.back, '', '', '', '', '', 1, item.explanation || '', (item.tags || []).join(', '), item.difficulty || 'medium', item.reversible === false ? 'Không' : 'Có']));
+            for (const item of items) rows.push([
+                await materializeMediaMarkup(item.front),
+                await materializeMediaMarkup(item.back), '', '', '', '', '', 1,
+                await materializeMediaMarkup(item.explanation || ''),
+                (item.tags || []).join(', '), item.difficulty || 'medium', item.reversible === false ? 'Không' : 'Có'
+            ]);
         }
         const worksheet = XLSX.utils.aoa_to_sheet(rows);
         worksheet['!cols'] = [{ wch: 48 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 48 }, { wch: 24 }, { wch: 14 }, { wch: 12 }];
@@ -2750,6 +3008,12 @@ async function initApp() {
     } catch (error) {
         console.warn('IndexedDB bootstrap fallback:', error);
     }
+    try {
+        await hydrateCreatorMediaCache();
+        await migrateEmbeddedCreatorMedia();
+    } catch (error) {
+        console.warn('Không thể chuẩn bị toàn bộ dữ liệu ảnh:', error);
+    }
     setRandomFocusMotivation();
     if (!Array.isArray(appData.history)) appData.history = [];
     if (!appData.flashcards || typeof appData.flashcards !== 'object') appData.flashcards = {};
@@ -2762,6 +3026,8 @@ async function initApp() {
     updateSoundButton();
     selectStudyMode(studyMode, false);
     renderDashboard();
+
+    window.addEventListener('pagehide', () => creatorMediaURLs.forEach(url => URL.revokeObjectURL(url)), { once: true });
 
     document.addEventListener('keydown', handleGlobalKeyboard);
     document.addEventListener('pointerdown', event => {
