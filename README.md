@@ -1,7 +1,5 @@
 # EdTech LMS Pro v1.0.1
 
-Ứng dụng học tập chạy hoàn toàn trên trình duyệt, phù hợp triển khai bằng GitHub Pages. Không cần tài khoản, API hay máy chủ riêng.
-
 ## Chức năng chính
 
 - Trắc nghiệm lớn với mục lục phân trang, tự lưu và khôi phục sau reload.
