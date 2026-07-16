@@ -5,6 +5,109 @@ const CREATOR_KEY = 'edtech_lms_pro_creator_v3';
 const PREF_KEY = 'edtech_lms_pro_preferences_v3';
 const CREATOR_RECOVERY_KEY = 'edtech_lms_pro_creator_recovery_v3';
 
+const FOCUS_MOTIVATIONS = [
+    "Bắt đầu nhẹ nhàng, tiến bộ rõ ràng.",
+    "Tập trung vào một việc, rồi làm nó thật tốt.",
+    "Mỗi câu hỏi hoàn thành là một bước tiến nhỏ.",
+    "Học chậm một chút vẫn tốt hơn đứng yên.",
+    "Hôm nay hiểu thêm một điều cũng là thành công.",
+    "Sự tập trung biến thời gian ngắn thành kết quả lớn.",
+    "Một phiên học tốt bắt đầu từ một quyết định nhỏ.",
+    "Đừng đợi cảm hứng, hãy bắt đầu để tạo cảm hứng.",
+    "Kiến thức vững được xây từ những lần ôn đều đặn.",
+    "Bạn không cần hoàn hảo, chỉ cần tiếp tục.",
+    "Một câu đúng hôm nay có thể mở ra cả một chương mới.",
+    "Tập trung vào tiến bộ, không phải tốc độ.",
+    "Học ít nhưng sâu luôn đáng giá hơn học nhiều mà vội.",
+    "Mỗi lần sửa sai là một lần hiểu bài rõ hơn.",
+    "Bình tĩnh đọc kỹ, đáp án sẽ dần sáng rõ.",
+    "Kỷ luật nhỏ mỗi ngày tạo nên năng lực lớn.",
+    "Hãy cho bản thân đủ thời gian để hiểu thật sự.",
+    "Một giờ tập trung đáng giá hơn nhiều giờ phân tâm.",
+    "Bạn đang xây nền móng cho phiên bản tốt hơn của mình.",
+    "Không sao nếu khó, khó nghĩa là bạn đang học.",
+    "Hãy bắt đầu với câu dễ nhất rồi tiến dần lên.",
+    "Mỗi lần ôn lại, trí nhớ của bạn mạnh thêm một chút.",
+    "Tập trung hôm nay để tự tin hơn ngày mai.",
+    "Sai một câu không định nghĩa khả năng của bạn.",
+    "Cứ làm từng bước, bài dài rồi cũng sẽ xong.",
+    "Học tập là cuộc đua với chính mình của hôm qua.",
+    "Giữ nhịp đều quan trọng hơn bứt tốc nhất thời.",
+    "Một mục tiêu rõ ràng giúp đầu óc nhẹ nhàng hơn.",
+    "Đọc kỹ câu hỏi là đã đi được nửa đường.",
+    "Bạn càng kiên nhẫn, kiến thức càng ở lại lâu.",
+    "Đừng sợ câu khó, hãy tách nó thành phần nhỏ.",
+    "Mỗi phút tập trung đều đang được tích lũy.",
+    "Hãy học để hiểu, điểm số sẽ đi theo sau.",
+    "Một ngày tốt để bắt đầu chính là hôm nay.",
+    "Những điều lớn lao thường bắt đầu rất yên lặng.",
+    "Bạn có thể nghỉ một chút, nhưng đừng bỏ cuộc.",
+    "Sự rõ ràng đến sau khi bạn chịu khó đặt câu hỏi.",
+    "Từng flashcard nhỏ đang tạo nên một trí nhớ lớn.",
+    "Hãy tin vào sức mạnh của việc lặp lại đúng cách.",
+    "Một đáp án sai có thể dẫn bạn đến hiểu biết đúng.",
+    "Tập trung không phải làm nhiều, mà là làm đúng việc.",
+    "Học hôm nay là món quà cho chính bạn ngày mai.",
+    "Bạn đang tiến bộ ngay cả khi chưa nhận ra.",
+    "Mỗi lần quay lại bàn học là một chiến thắng.",
+    "Đừng so sánh chương đầu của bạn với chương cuối của người khác.",
+    "Kiến thức cần thời gian, giống như cây cần được tưới đều.",
+    "Bắt đầu từ điều bạn biết, rồi mở rộng từng chút.",
+    "Câu hỏi khó nhất thường dạy ta nhiều nhất.",
+    "Tập trung vào quá trình, kết quả sẽ tự lên tiếng.",
+    "Bạn chỉ cần làm tốt bước tiếp theo.",
+    "Hãy để sự tò mò dẫn đường cho buổi học.",
+    "Một bộ đề hôm nay, thêm một phần tự tin ngày mai.",
+    "Không cần học hoàn hảo, chỉ cần học thật.",
+    "Nhớ lâu bắt đầu từ hiểu sâu.",
+    "Mỗi lần tự kiểm tra là một lần củng cố kiến thức.",
+    "Hãy biến lỗi sai thành ghi chú hữu ích.",
+    "Tâm trí yên, việc học sáng.",
+    "Đừng vội chọn đáp án trước khi đọc hết câu hỏi.",
+    "Sự tiến bộ được tạo nên trong những ngày bình thường.",
+    "Bạn không chậm, bạn đang xây kiến thức chắc chắn.",
+    "Một lần tập trung trọn vẹn có thể thay đổi cả ngày.",
+    "Học đúng trọng tâm giúp bạn đi xa mà không kiệt sức.",
+    "Bài học hôm nay sẽ trở thành phản xạ ngày mai.",
+    "Hãy hoàn thành trước, rồi hoàn thiện sau.",
+    "Mỗi câu trả lời đều là một cơ hội luyện tư duy.",
+    "Tự tin đến từ sự chuẩn bị lặp lại mỗi ngày.",
+    "Điều chưa hiểu hôm nay có thể trở nên đơn giản ngày mai.",
+    "Tập trung là cách bạn nói rằng mục tiêu này quan trọng.",
+    "Hãy học theo nhịp phù hợp với chính bạn.",
+    "Một chút cố gắng đều đặn luôn tạo ra khác biệt.",
+    "Bạn đang gần hơn mục tiêu sau mỗi câu hoàn thành.",
+    "Không có buổi học nào vô ích nếu bạn rút ra được một điều.",
+    "Hãy để câu sai chỉ đường cho lần ôn tiếp theo.",
+    "Một tâm trí bình tĩnh ghi nhớ tốt hơn một tâm trí vội vàng.",
+    "Học tập tốt không ồn ào, nó tích lũy âm thầm.",
+    "Bạn không cần biết hết, chỉ cần sẵn sàng học tiếp.",
+    "Mỗi lần lật thẻ là một lần đánh thức trí nhớ.",
+    "Hãy dành trọn sự chú ý cho câu hỏi trước mắt.",
+    "Sự bền bỉ thắng những khoảnh khắc thiếu động lực.",
+    "Một kế hoạch đơn giản vẫn tốt hơn một ý định mơ hồ.",
+    "Đừng bỏ qua phần giải thích, đó là nơi kiến thức ở lại.",
+    "Hãy biến hôm nay thành một ngày có tiến bộ.",
+    "Khi bạn hiểu lý do, bạn sẽ nhớ đáp án lâu hơn.",
+    "Từng bước nhỏ đang đưa bạn đến mục tiêu lớn.",
+    "Bạn có quyền học lại cho đến khi thật sự hiểu.",
+    "Hãy kiên nhẫn với bộ não đang học điều mới.",
+    "Tập trung vào câu này, chưa cần lo câu tiếp theo.",
+    "Một phiên ôn ngắn vẫn có thể tạo khác biệt dài lâu.",
+    "Kiến thức không mất đi khi bạn thường xuyên gọi nó trở lại.",
+    "Hãy dùng sự bình tĩnh để vượt qua câu hỏi khó.",
+    "Bạn càng chủ động kiểm tra, bạn càng biết mình cần ôn gì.",
+    "Mỗi ngày tiến một chút là một chiến lược rất mạnh.",
+    "Hãy học với mục đích, không chỉ để hoàn thành.",
+    "Sự tập trung là khoảng lặng nơi tiến bộ bắt đầu.",
+    "Cứ tiếp tục, phiên bản giỏi hơn của bạn đang được tạo ra.",
+    "Một câu hỏi tại một thời điểm là đủ.",
+    "Hãy tự hào vì bạn đã dành thời gian để học.",
+    "Học tập không cần vội, chỉ cần không ngừng.",
+    "Bạn đã bắt đầu, đó luôn là bước khó nhất.",
+    "Focus vào hiện tại, kết quả sẽ đến đúng lúc."
+];
+
 const EMPTY_DATA = {
     history: [],
     xp: 0,
@@ -60,7 +163,6 @@ let draggedCreatorId = null;
 
 let audioContext = null;
 let soundUnlocked = false;
-let donateIsClosing = false;
 let mobileQuizNavTimer = null;
 
 function clone(value) {
@@ -2229,7 +2331,6 @@ function positionIntroDonateGuide() {
 function initBrandIntro() {
     const root = document.documentElement;
     const intro = document.getElementById('brand-intro');
-    const skip = document.getElementById('intro-skip');
     const target = document.getElementById('donate-header-btn');
     const topbar = document.querySelector('.topbar');
     if (!intro) {
@@ -2240,6 +2341,7 @@ function initBrandIntro() {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let finished = false;
     let supportVisible = false;
+    let readyToClose = false;
     const timers = [];
     const clearTimers = () => timers.splice(0).forEach(timer => clearTimeout(timer));
 
@@ -2263,7 +2365,14 @@ function initBrandIntro() {
             positionIntroDonateGuide();
             window.addEventListener('resize', positionIntroDonateGuide, { passive: true });
             playSound('soft');
-        }, reduceMotion ? 80 : 440));
+        }, reduceMotion ? 60 : 460));
+    };
+
+    const allowClose = () => {
+        if (finished || readyToClose) return;
+        readyToClose = true;
+        intro.classList.add('is-ready-to-close');
+        intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro. Chạm vào màn hình để tiếp tục.');
     };
 
     const finish = ({ instant = false } = {}) => {
@@ -2272,27 +2381,34 @@ function initBrandIntro() {
         clearTimers();
         clearGuide();
         root.classList.remove('intro-pending');
+        intro.removeEventListener('pointerup', handleIntroTap);
         document.removeEventListener('keydown', handleIntroKey);
         intro.classList.add('is-leaving');
         if (instant || reduceMotion) {
             intro.hidden = true;
         } else {
-            window.setTimeout(() => { intro.hidden = true; }, 520);
+            window.setTimeout(() => { intro.hidden = true; }, 460);
         }
     };
 
-    const handleIntroKey = event => {
-        if (event.key === 'Escape') finish();
+    const handleIntroTap = event => {
+        if (!readyToClose || event.target.closest('button, a')) return;
+        finish();
     };
 
-    skip?.addEventListener('click', event => {
-        event.stopPropagation();
-        finish();
-    });
+    const handleIntroKey = event => {
+        if (!readyToClose) return;
+        if (event.key === 'Enter' || event.key === ' ' || event.key === 'Escape') {
+            event.preventDefault();
+            finish();
+        }
+    };
+
+    intro.addEventListener('pointerup', handleIntroTap);
     document.addEventListener('keydown', handleIntroKey);
 
-    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 650 : 2350));
-    timers.push(window.setTimeout(() => finish(), reduceMotion ? 2850 : 5450));
+    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 420 : 2300));
+    timers.push(window.setTimeout(allowClose, reduceMotion ? 3000 : 7600));
 }
 
 function openMobileQuizNavigator() {
@@ -2348,48 +2464,25 @@ function updateMobileQuizProgress(answered, total) {
 
 function openDonateModal() {
     const modal = document.getElementById('donate-modal');
-    if (!modal || donateIsClosing) return;
+    if (!modal || !modal.hidden) return;
     unlockAudio();
-    playSound('success');
+    playSound('soft');
+    modal.getAnimations?.().forEach(animation => animation.cancel());
+    document.getElementById('donate-card')?.getAnimations?.().forEach(animation => animation.cancel());
     modal.hidden = false;
     modal.classList.remove('is-closing');
+    modal.classList.add('is-open');
     document.body.classList.add('donate-open');
-    requestAnimationFrame(() => modal.classList.add('is-open'));
 }
 
-function closeDonateModal(instant = false) {
+function closeDonateModal() {
     const modal = document.getElementById('donate-modal');
-    const card = document.getElementById('donate-card');
-    const target = document.getElementById('donate-header-btn');
-    if (!modal || modal.hidden || donateIsClosing) return;
-    donateIsClosing = true;
-    modal.classList.add('is-closing');
-
-    const finish = () => {
-        modal.hidden = true;
-        modal.classList.remove('is-open', 'is-closing');
-        document.body.classList.remove('donate-open');
-        donateIsClosing = false;
-        target?.classList.add('donate-landed');
-        window.setTimeout(() => target?.classList.remove('donate-landed'), 900);
-    };
-
-    if (instant || !card || !target || typeof card.animate !== 'function' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        finish();
-        return;
-    }
-    const sourceRect = card.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    const dx = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
-    const dy = targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
-    const scale = Math.max(.08, Math.min(targetRect.width / sourceRect.width, targetRect.height / sourceRect.height));
-    modal.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 480, easing: 'ease', fill: 'forwards' });
-    const collapse = card.animate([
-        { transform: 'translate3d(0,0,0) scale(1)', opacity: 1, borderRadius: '24px' },
-        { transform: `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`, opacity: .12, borderRadius: '999px' }
-    ], { duration: 520, easing: 'cubic-bezier(.2,.82,.2,1)', fill: 'forwards' });
-    collapse.addEventListener('finish', finish, { once: true });
-    collapse.addEventListener('cancel', finish, { once: true });
+    if (!modal || modal.hidden) return;
+    modal.getAnimations?.().forEach(animation => animation.cancel());
+    document.getElementById('donate-card')?.getAnimations?.().forEach(animation => animation.cancel());
+    modal.hidden = true;
+    modal.classList.remove('is-open', 'is-closing');
+    document.body.classList.remove('donate-open');
 }
 
 async function copyDonationAccount() {
@@ -2401,8 +2494,21 @@ async function copyDonationAccount() {
     }
 }
 
+function setRandomFocusMotivation() {
+    const element = document.getElementById('focus-motivation');
+    if (!element || !FOCUS_MOTIVATIONS.length) return;
+    const previousIndex = Number(sessionStorage.getItem('edtech_focus_quote_index'));
+    let index = Math.floor(Math.random() * FOCUS_MOTIVATIONS.length);
+    if (FOCUS_MOTIVATIONS.length > 1 && index === previousIndex) {
+        index = (index + 1 + Math.floor(Math.random() * (FOCUS_MOTIVATIONS.length - 1))) % FOCUS_MOTIVATIONS.length;
+    }
+    sessionStorage.setItem('edtech_focus_quote_index', String(index));
+    element.textContent = FOCUS_MOTIVATIONS[index];
+}
+
 function initApp() {
     initBrandIntro();
+    setRandomFocusMotivation();
     if (!Array.isArray(appData.history)) appData.history = [];
     if (!appData.flashcards || typeof appData.flashcards !== 'object') appData.flashcards = {};
     if (!Number.isFinite(Number(appData.xp))) appData.xp = 0;

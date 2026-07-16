@@ -4654,3 +4654,224 @@ html.intro-pending.intro-app-preview .ambient {
     border-left: 2px dashed rgba(211, 154, 53, .72);
     transform: translateX(-50%);
 }
+
+
+/* ===== v6: slower tap-to-dismiss intro, calm support card and stable donate dialog ===== */
+.focus-motivation {
+    position: relative;
+    max-width: 520px;
+    margin: 24px 0 0;
+    padding-left: 22px;
+    color: var(--text-soft);
+    font-size: clamp(.76rem, 1.15vw, .9rem);
+    font-weight: 560;
+    line-height: 1.75;
+    text-wrap: balance;
+}
+
+.focus-motivation::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    top: .08em;
+    color: var(--gold);
+    font-size: .84em;
+}
+
+.focus-hero-copy .hero-actions { margin-top: 30px; }
+
+.brand-intro { cursor: pointer; touch-action: manipulation; }
+
+.intro-support-stage {
+    top: 51%;
+    width: min(470px, calc(100vw - 36px));
+    padding: 28px 30px 26px;
+    border-radius: 24px;
+    box-shadow: 0 22px 64px rgba(48, 66, 61, .13), inset 0 1px 0 rgba(255,255,255,.92);
+}
+
+.intro-support-kicker {
+    margin-bottom: 12px;
+    font-size: .58rem;
+    letter-spacing: .13em;
+}
+
+.intro-support-stage h2 {
+    max-width: 370px;
+    margin-inline: auto;
+    font-size: clamp(1.15rem, 3vw, 1.55rem);
+    line-height: 1.42;
+    letter-spacing: -.025em;
+    text-wrap: balance;
+}
+
+.intro-support-stage p {
+    max-width: 360px;
+    margin-top: 11px;
+    font-size: .66rem;
+    line-height: 1.68;
+}
+
+.intro-support-stage small {
+    display: block;
+    max-width: 340px;
+    margin: 13px auto 0;
+    color: var(--text-faint);
+    font-size: .58rem;
+    line-height: 1.55;
+}
+
+.intro-donate-demo {
+    min-width: 126px;
+    height: 50px;
+    margin-top: 18px;
+    padding-inline: 18px;
+    border-radius: 15px;
+    font-size: .68rem;
+}
+
+.intro-guide-pointer span {
+    font-size: .56rem;
+    font-weight: 760;
+}
+
+.intro-tap-hint {
+    position: fixed;
+    z-index: 10050;
+    left: 50%;
+    bottom: max(22px, env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 15px;
+    border: 1px solid rgba(67, 107, 140, .14);
+    border-radius: 999px;
+    color: var(--text-soft);
+    background: rgba(255,255,255,.82);
+    box-shadow: 0 12px 34px rgba(48, 66, 61, .11);
+    backdrop-filter: blur(14px);
+    font-size: .62rem;
+    font-weight: 700;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 12px);
+    pointer-events: none;
+}
+
+.brand-intro.is-ready-to-close .intro-tap-hint {
+    visibility: visible;
+    animation: introTapHintIn .5s ease forwards, introTapHintBreathe 1.7s .55s ease-in-out infinite alternate;
+}
+
+.intro-tap-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 0 rgba(240, 188, 103, .38);
+    animation: introTapDot 1.55s ease-out infinite;
+}
+
+@keyframes introTapHintIn {
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes introTapHintBreathe {
+    from { box-shadow: 0 10px 30px rgba(48, 66, 61, .09); }
+    to { box-shadow: 0 16px 38px rgba(48, 66, 61, .15); }
+}
+
+@keyframes introTapDot {
+    0% { box-shadow: 0 0 0 0 rgba(240, 188, 103, .42); }
+    75%, 100% { box-shadow: 0 0 0 9px rgba(240, 188, 103, 0); }
+}
+
+/* DONATE opens and closes instantly to remain stable after repeated use. */
+.donate-overlay,
+.donate-overlay.is-open,
+.donate-overlay.is-closing {
+    opacity: 1;
+    transition: none !important;
+}
+
+.donate-modal-box,
+.donate-header-btn {
+    transition: none !important;
+}
+
+.donate-header-btn:active { transform: none; }
+.donate-header-btn.donate-landed { animation: none !important; }
+
+@media (max-width: 680px) {
+    .focus-motivation {
+        max-width: 30rem;
+        margin-top: 19px;
+        padding-left: 19px;
+        font-size: .73rem;
+        line-height: 1.72;
+    }
+
+    .focus-hero-copy .hero-actions { margin-top: 24px; }
+
+    .intro-support-stage {
+        top: 52%;
+        width: calc(100% - 30px);
+        padding: 24px 20px 22px;
+        border-radius: 22px;
+    }
+
+    .intro-support-stage h2 {
+        max-width: 19rem;
+        font-size: clamp(1.08rem, 5.3vw, 1.34rem);
+        line-height: 1.45;
+    }
+
+    .intro-support-stage p {
+        max-width: 18rem;
+        font-size: .62rem;
+    }
+
+    .intro-support-stage small {
+        max-width: 17rem;
+        font-size: .54rem;
+    }
+
+    .intro-donate-demo {
+        min-width: 116px;
+        height: 46px;
+        margin-top: 15px;
+        font-size: .62rem;
+    }
+
+    .intro-guide-pointer {
+        width: min(184px, 54vw);
+    }
+
+    .intro-guide-pointer span {
+        font-size: .51rem;
+        padding: 6px 8px;
+    }
+
+    .intro-tap-hint {
+        bottom: max(15px, env(safe-area-inset-bottom));
+        width: max-content;
+        max-width: calc(100vw - 26px);
+        padding: 9px 13px;
+        font-size: .57rem;
+    }
+}
+
+@media (max-width: 430px) {
+    .intro-support-stage { top: 53%; }
+    .intro-guide-pointer svg { width: 27px; height: 27px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-intro.is-ready-to-close .intro-tap-hint {
+        animation: none !important;
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+    }
+    .intro-tap-dot { animation: none !important; }
+}

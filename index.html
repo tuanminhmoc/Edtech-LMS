@@ -23,7 +23,6 @@
 </head>
 <body>
     <div class="brand-intro" id="brand-intro" role="dialog" aria-label="Giới thiệu EdTech LMS Pro" aria-live="polite">
-        <button class="intro-skip" id="intro-skip" type="button" aria-label="Bỏ qua phần giới thiệu">Bỏ qua</button>
         <div class="intro-scene">
             <div class="intro-glow intro-glow-one"></div>
             <div class="intro-glow intro-glow-two"></div>
@@ -66,13 +65,18 @@
             </div>
             <div class="intro-support-stage" id="intro-support-stage" role="status" aria-live="polite">
                 <span class="intro-support-kicker">Một lời nhắn nhỏ</span>
-                <h2>Nếu bạn thấy web hữu ích<br>hãy ủng hộ mình nhé:</h2>
+                <h2>Nếu bạn thấy web hữu ích, hãy ủng hộ mình nhé.</h2>
+                <p>Mỗi sự ủng hộ đều giúp mình tiếp tục chăm chút và cải tiến trang web.</p>
                 <div class="intro-donate-demo" aria-hidden="true"><span>✦</span><strong>DONATE</strong></div>
-                <p>Bạn có thể mở khung ủng hộ bất cứ lúc nào bằng nút DONATE trên thanh công cụ.</p>
+                <small>Nút DONATE luôn nằm cạnh nút âm thanh trên thanh công cụ.</small>
             </div>
             <div class="intro-guide-pointer" id="intro-guide-pointer" aria-hidden="true">
                 <svg viewBox="0 0 48 48"><path d="M24 43V11m0 0L12 23m12-12 12 12"/></svg>
-                <span>Nhấn nút này khi bạn muốn ủng hộ</span>
+                <span>Đây là nút ủng hộ trên giao diện chính</span>
+            </div>
+            <div class="intro-tap-hint" id="intro-tap-hint" aria-hidden="true">
+                <span class="intro-tap-dot"></span>
+                <span>Chạm vào màn hình để tiếp tục</span>
             </div>
         </div>
     </div>
@@ -159,6 +163,7 @@
                     <article class="hero-card">
                         <div class="hero-copy focus-hero-copy">
                             <h1 class="focus-title">Focus</h1>
+                            <p class="focus-motivation" id="focus-motivation">Bắt đầu nhẹ nhàng, tiến bộ rõ ràng.</p>
                             <div class="hero-actions">
                                 <button class="btn btn-primary" onclick="openPracticeSetup()"><svg><use href="#i-quiz"></use></svg>Bắt đầu luyện tập</button>
                                 <button class="btn btn-secondary" onclick="openCreator()"><svg><use href="#i-create"></use></svg>Soạn bộ đề mới</button>
