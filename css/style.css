@@ -8597,3 +8597,49 @@ html[data-theme="dark"] .donate-header-btn::before {
         box-shadow: 0 9px 26px rgba(203, 141, 27, .28) !important;
     }
 }
+
+/* ===== v1.1.5 mobile scroll polish ===== */
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+    html,
+    body,
+    body * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar,
+    body *::-webkit-scrollbar {
+        width: 0 !important;
+        height: 0 !important;
+        display: none !important;
+        background: transparent !important;
+    }
+
+    html,
+    body {
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    :is(
+        .modal-box,
+        .creator-full-preview,
+        .quiz-nav-panel,
+        .result-review-panel,
+        .local-question-set-list,
+        .table-wrap,
+        .fc-tabs,
+        .activity-list,
+        .creator-sidebar,
+        .creator-editor,
+        .creator-preview-panel,
+        .data-center-body,
+        .prompt-modal-box,
+        .donate-modal-box
+    ) {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+}

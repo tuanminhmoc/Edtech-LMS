@@ -1,8 +1,20 @@
 # Changelog
 
+## 1.1.7
 
-## 1.1.4
+- Khôi phục luồng cài PWA native của Chrome, Edge và Brave.
+- Chờ Service Worker sẵn sàng trước khi kết luận hộp cài không khả dụng.
+- Thêm bộ cài Windows một file để tự tạo shortcut `.lnk` trên Desktop và Start Menu.
+- Shortcut Windows mở EdTech trong cửa sổ app riêng bằng chế độ `--app` và dùng icon riêng.
+- Bỏ hoàn toàn shortcut `.url` không ổn định.
+- Giữ Dark Theme làm mặc định và giữ các tối ưu mobile từ bản trước.
 
+## 1.1.5
+
+- Đặt Dark Theme làm giao diện mặc định cho người dùng mới; lựa chọn Light/Dark vẫn được ghi nhớ.
+- Khôi phục bắt sự kiện cài PWA từ đầu trang để Chrome, Edge và Brave tạo shortcut ứng dụng native.
+- Thêm shortcut `.url` dự phòng trên Windows khi trình duyệt chưa cấp prompt cài.
+- Ẩn thanh cuộn trên giao diện mobile nhưng vẫn giữ thao tác vuốt mượt và cuộn độc lập trong bottom sheet/modal.
 - Bỏ hướng dẫn DONATE trong intro; nút DONATE dùng hào quang nhẹ thường trực.
 - Bỏ nhãn trạng thái “Đã lưu” khỏi giao diện soạn đề.
 - Sửa căn giữa và kích thước ô số câu trên desktop, Android và iPhone.

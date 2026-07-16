@@ -6,13 +6,18 @@ let historyPage = 0;
 const HISTORY_PAGE_SIZE = 20;
 let activeSessionSaveTimer = null;
 let creatorEditSnapshotTimer = null;
-let installPromptEvent = null;
+let installPromptEvent = window.__edtechInstallPrompt || null;
 function captureInstallPrompt(event) {
-    event.preventDefault();
+    event.preventDefault?.();
     installPromptEvent = event;
+    window.__edtechInstallPrompt = event;
     updateInstallButtons(true);
 }
 window.addEventListener('beforeinstallprompt', captureInstallPrompt);
+window.addEventListener('edtech-install-ready', () => {
+    installPromptEvent = window.__edtechInstallPrompt || installPromptEvent;
+    updateInstallButtons(true);
+});
 
 function debounceActiveSessionSave(callback) {
     clearTimeout(activeSessionSaveTimer);
@@ -436,12 +441,73 @@ function isStandaloneApp() {
 }
 
 function initInstallPrompt() {
+    installPromptEvent = window.__edtechInstallPrompt || installPromptEvent;
     updateInstallButtons(!isStandaloneApp());
-    window.addEventListener('appinstalled', () => {
+    window.addEventListener('edtech-app-installed', () => {
         installPromptEvent = null;
         updateInstallButtons(false);
         showToast('EdTech đã được cài lên thiết bị này.', 'success');
     });
+    window.addEventListener('appinstalled', () => {
+        installPromptEvent = null;
+        window.__edtechInstallPrompt = null;
+        updateInstallButtons(false);
+        showToast('EdTech đã được cài lên thiết bị này.', 'success');
+    });
+}
+
+function getPublicAppUrl() {
+    try {
+        if (/^https?:$/.test(location.protocol)) return new URL('./#home', location.href).href;
+        return new URL(window.EDTECH_PUBLIC_URL || 'https://tuanminhmoc.github.io/').href.replace(/#.*$/, '') + '#home';
+    } catch (_) {
+        return 'https://tuanminhmoc.github.io/#home';
+    }
+}
+
+function waitForNativeInstallPrompt(timeout = 1600) {
+    installPromptEvent = window.__edtechInstallPrompt || installPromptEvent;
+    if (installPromptEvent) return Promise.resolve(installPromptEvent);
+    return new Promise(resolve => {
+        let settled = false;
+        const finish = value => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            window.removeEventListener('edtech-install-ready', handleReady);
+            resolve(value || null);
+        };
+        const handleReady = () => finish(window.__edtechInstallPrompt || installPromptEvent);
+        const timer = setTimeout(() => finish(null), timeout);
+        window.addEventListener('edtech-install-ready', handleReady, { once: true });
+    });
+}
+
+function downloadWindowsInstaller() {
+    const link = document.createElement('a');
+    link.href = new URL('./downloads/Install%20EdTech%20LMS%20Pro.cmd', location.href).href;
+    link.download = 'Install EdTech LMS Pro.cmd';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
+async function promptNativeInstall(prompt) {
+    try {
+        await prompt.prompt();
+        const choice = await prompt.userChoice.catch(() => null);
+        if (choice?.outcome === 'accepted') {
+            installPromptEvent = null;
+            window.__edtechInstallPrompt = null;
+            updateInstallButtons(false);
+            return true;
+        }
+        updateInstallButtons(true);
+        return false;
+    } catch (error) {
+        console.warn('Không thể mở hộp cài ứng dụng:', error);
+        return false;
+    }
 }
 
 async function installApp() {
@@ -450,32 +516,32 @@ async function installApp() {
         return;
     }
 
-    if (installPromptEvent) {
-        const prompt = installPromptEvent;
-        installPromptEvent = null;
-        try {
-            await prompt.prompt();
-            const choice = await prompt.userChoice.catch(() => null);
-            if (choice?.outcome === 'accepted') updateInstallButtons(false);
-            else updateInstallButtons(true);
-        } catch (error) {
-            console.warn('Không thể mở hộp cài ứng dụng:', error);
-            updateInstallButtons(true);
-            showToast('Trình duyệt chưa thể mở hộp cài đặt. Hãy tải lại trang và thử lại.', 'info');
-        }
+    let prompt = window.__edtechInstallPrompt || installPromptEvent;
+    if (!prompt) {
+        await window.EdTechPWA?.register?.();
+        if ('serviceWorker' in navigator) await navigator.serviceWorker.ready.catch(() => null);
+        prompt = await waitForNativeInstallPrompt(1800);
+    }
+
+    if (prompt) {
+        await promptNativeInstall(prompt);
         return;
     }
 
-    await window.EdTechPWA?.register?.();
     const ua = navigator.userAgent || '';
     const isIOS = /iphone|ipad|ipod/i.test(ua);
-    const isSafari = /safari/i.test(ua) && !/chrome|crios|edg|opr/i.test(ua);
-    if (isIOS) {
+    const isMacSafari = /macintosh|mac os x/i.test(ua) && /safari/i.test(ua) && !/chrome|crios|edg|opr|brave/i.test(ua);
+    const isWindows = /windows/i.test(ua);
+
+    if (isWindows) {
+        downloadWindowsInstaller();
+        showToast('Đã tải bộ cài Windows. Mở file để tạo app trên Desktop và Start Menu.', 'success');
+    } else if (isIOS) {
         showToast('iPhone/iPad: bấm Chia sẻ rồi chọn “Thêm vào Màn hình chính”.', 'info');
-    } else if (isSafari) {
+    } else if (isMacSafari) {
         showToast('Safari trên Mac: mở File rồi chọn “Add to Dock”.', 'info');
     } else {
-        showToast('Chrome/Edge chỉ cho cài khi trang chạy bằng HTTPS và đạt điều kiện PWA. Hãy tải lại trang rồi bấm Cài app lần nữa.', 'info');
+        showToast('Mở menu trình duyệt và chọn “Cài ứng dụng” hoặc “Add to Home screen”.', 'info');
     }
 }
 
@@ -634,7 +700,7 @@ function trapActiveModalFocus(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const version = document.getElementById('app-version-label');
-    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.1.1'}`;
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.1.7'}`;
     initInstallPrompt();
     document.getElementById('data-center-modal')?.addEventListener('click', event => { if (event.target.id === 'data-center-modal') closeDataCenter(); });
     document.addEventListener('keydown', event => {

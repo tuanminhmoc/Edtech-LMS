@@ -13,9 +13,13 @@ await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(1900);
 if (await page.locator('#brand-intro').isVisible()) await page.locator('#brand-intro').click({ position: { x: 12, y: 12 } });
 await page.waitForTimeout(450);
+if (await page.locator('html').getAttribute('data-theme') !== 'dark') throw new Error('Dark theme is not the default.');
 await page.locator('#theme-toggle').click();
 await page.waitForTimeout(700);
-if (await page.locator('html').getAttribute('data-theme') !== 'dark') throw new Error('Dark theme did not activate.');
+if (await page.locator('html').getAttribute('data-theme') !== 'light') throw new Error('Light theme did not activate.');
+await page.locator('#theme-toggle').click();
+await page.waitForTimeout(700);
+if (await page.locator('html').getAttribute('data-theme') !== 'dark') throw new Error('Dark theme did not reactivate.');
 await page.evaluate(() => openCreator('quiz'));
 await page.waitForTimeout(250);
 await page.evaluate(() => {

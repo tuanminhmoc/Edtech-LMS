@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION = '1.1.4';
+const APP_VERSION = '1.1.7';
 const CACHE_NAME = `edtech-lms-pro-${APP_VERSION}`;
 const RUNTIME_CACHE = `edtech-lms-runtime-${APP_VERSION}`;
 const BASE = new URL('./', self.location.href);
@@ -22,7 +22,9 @@ const LOCAL_ASSETS = [
   './manifest.webmanifest',
   './assets/icons/icon.svg',
   './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png'
+  './assets/icons/icon-512.png',
+  './assets/icons/EdTech-LMS-Pro.ico',
+  './downloads/Install EdTech LMS Pro.cmd'
 ].map(path => new URL(path, BASE).href);
 
 self.addEventListener('install', event => {

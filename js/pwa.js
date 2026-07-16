@@ -31,7 +31,6 @@
         }
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', register, { once: true });
-    else register();
+    register();
     window.EdTechPWA = { register, get registration() { return registration; } };
 })();

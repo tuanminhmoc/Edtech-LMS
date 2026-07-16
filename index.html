@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="vi" class="intro-pending">
+<html lang="vi" class="intro-pending" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f4f7f2">
+    <meta name="theme-color" content="#1a1230">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>EdTech LMS Pro</title>
 
     <meta name="description" content="EdTech LMS Pro — luyện trắc nghiệm, flashcard thông minh và soạn đề riêng tư ngay trên thiết bị.">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="EdTech LMS Pro">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
@@ -18,7 +18,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        try { document.documentElement.dataset.theme = localStorage.getItem('edtech_lms_pro_theme') === 'dark' ? 'dark' : 'light'; } catch (_) {}
+        (function () {
+            try {
+                const stored = localStorage.getItem('edtech_lms_pro_theme');
+                document.documentElement.dataset.theme = stored === 'light' ? 'light' : 'dark';
+                document.documentElement.style.colorScheme = document.documentElement.dataset.theme;
+            } catch (_) {
+                document.documentElement.dataset.theme = 'dark';
+                document.documentElement.style.colorScheme = 'dark';
+            }
+            window.EDTECH_PUBLIC_URL = 'https://tuanminhmoc.github.io/';
+            window.__edtechInstallPrompt = null;
+            window.addEventListener('beforeinstallprompt', function (event) {
+                event.preventDefault();
+                window.__edtechInstallPrompt = event;
+                window.dispatchEvent(new CustomEvent('edtech-install-ready'));
+            });
+            window.addEventListener('appinstalled', function () {
+                window.__edtechInstallPrompt = null;
+                window.dispatchEvent(new CustomEvent('edtech-app-installed'));
+            });
+        })();
     </script>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -467,7 +487,6 @@
                         <div class="creator-mode-tabs"><button id="creator-tab-quiz" class="active" onclick="setCreatorMode('quiz')"><svg><use href="#i-quiz"></use></svg>TN</button><button id="creator-tab-flashcard" onclick="setCreatorMode('flashcard')"><svg><use href="#i-cards"></use></svg>Flashcard</button></div>
                         <div class="sidebar-heading"><div><span class="section-kicker">Danh sách</span><h2 id="creator-list-title">Câu hỏi</h2></div><button class="icon-btn small" onclick="addCreatorItem()" title="Thêm mới"><svg><use href="#i-plus"></use></svg></button></div>
                         <div class="creator-list-tools"><input id="creator-search" type="search" placeholder="Tìm trong bộ đề..." oninput="setCreatorSearch(this.value)"><select id="creator-filter" onchange="setCreatorFilter(this.value)"><option value="all">Tất cả</option><option value="invalid">Chưa hoàn chỉnh</option><option value="valid">Hoàn chỉnh</option></select></div>
-                        <small class="drag-help">Kéo thả để sắp xếp · hoặc dùng nút ↑ ↓ trong trình sửa</small>
                         <div class="creator-history-tools"><button class="mini-tool-btn" type="button" onclick="creatorUndo()" id="creator-undo-btn" title="Hoàn tác"><svg><use href="#i-undo"></use></svg>Hoàn tác</button><button class="mini-tool-btn" type="button" onclick="creatorRedo()" id="creator-redo-btn" title="Làm lại"><svg><use href="#i-redo"></use></svg>Làm lại</button><button class="mini-tool-btn" type="button" onclick="toggleCreatorMultiSelect()" id="creator-multiselect-btn">Chọn nhiều</button></div>
                         <div class="creator-bulk-toolbar" id="creator-bulk-toolbar" hidden><span id="creator-selected-count">0 mục đã chọn</span><button type="button" onclick="selectAllCreatorVisible()">Chọn trang</button><button type="button" class="danger" onclick="deleteSelectedCreatorItems()">Xóa đã chọn</button></div>
                         <div id="creator-item-list" class="creator-item-list"></div>
@@ -591,7 +610,7 @@
                 <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
             </div>
             <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
-            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.4</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.1.7</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
         </div>
     </div>
 
@@ -606,7 +625,7 @@
 
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script>window.EDTECH_APP_VERSION = '1.1.4';</script>
+    <script>window.EDTECH_APP_VERSION = '1.1.7';</script>
     <script src="js/database.js"></script>
     <script src="js/lazy-libs.js"></script>
     <script src="js/worker-client.js"></script>

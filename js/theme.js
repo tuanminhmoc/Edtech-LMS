@@ -2,10 +2,10 @@
 
 (function () {
     const STORAGE_KEY = 'edtech_lms_pro_theme';
-    let currentTheme = 'light';
+    let currentTheme = 'dark';
 
     function resolveStoredTheme() {
-        try { const stored = localStorage.getItem(STORAGE_KEY); return stored === 'dark' ? 'dark' : 'light'; } catch (_) { return 'light'; }
+        try { const stored = localStorage.getItem(STORAGE_KEY); return stored === 'light' ? 'light' : 'dark'; } catch (_) { return 'dark'; }
     }
 
     function updateMeta(theme) {
