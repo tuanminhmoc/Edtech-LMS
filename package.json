@@ -1,0 +1,13 @@
+{
+  "name": "edtech-lms-pro",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Static-first learning app for GitHub Pages",
+  "scripts": {
+    "check": "node tests/static-check.mjs",
+    "test": "node tests/smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.61.1"
+  }
+}

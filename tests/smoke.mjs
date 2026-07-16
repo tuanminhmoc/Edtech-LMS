@@ -1,0 +1,41 @@
+import { chromium } from 'playwright';
+
+const baseURL = process.env.BASE_URL || 'http://127.0.0.1:4173';
+const launchOptions = { headless: true };
+if (process.env.PLAYWRIGHT_CHROMIUM_PATH) launchOptions.executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH;
+if (process.env.PLAYWRIGHT_CHROMIUM_PATH) launchOptions.args = ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'];
+const browser = await chromium.launch(launchOptions);
+const errors = [];
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+page.on('pageerror', error => errors.push(String(error)));
+page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(1900);
+if (await page.locator('#brand-intro').isVisible()) await page.locator('#brand-intro').click({ position: { x: 12, y: 12 } });
+await page.waitForTimeout(450);
+await page.locator('#theme-toggle').click();
+await page.waitForTimeout(700);
+if (await page.locator('html').getAttribute('data-theme') !== 'dark') throw new Error('Dark theme did not activate.');
+await page.evaluate(() => openCreator('quiz'));
+await page.waitForTimeout(250);
+await page.evaluate(() => {
+  creatorDrafts.quiz = Array.from({ length: 100 }, (_, index) => ({ id: `test-${index}`, question: `Câu ${index + 1}`, options: ['A', 'B', 'C', 'D'], correct: 0, explanation: '' }));
+  activeCreatorId = creatorDrafts.quiz[0].id;
+  renderCreator();
+});
+if (await page.locator('#creator-item-list .creator-grid-tile').count() > 25) throw new Error('Creator list is not paginated.');
+await page.evaluate(() => {
+  const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích']];
+  for (let index = 0; index < 500; index += 1) rows.push([`Câu ${index + 1}`, 'A', 'B', 'C', 'D', 1, '']);
+  currentFileName = 'Performance 500';
+  preferences.shuffleQuestions = false;
+  preferences.shuffleOptions = false;
+  startQuizMode(rows);
+});
+await page.waitForTimeout(250);
+if (await page.locator('#questions-container .question-card').count() !== 1) throw new Error('Quiz did not virtualize question cards.');
+if (await page.locator('#nav-grid .nav-item').count() > 20) throw new Error('Quiz navigator is not paginated.');
+await page.locator('#data-center-modal').evaluate(element => element.hidden = true).catch(() => {});
+if (errors.length) throw new Error(`Browser errors:\n${errors.join('\n')}`);
+await browser.close();
+console.log('Playwright smoke test passed.');

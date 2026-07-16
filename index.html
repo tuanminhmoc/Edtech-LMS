@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#f4f7f2">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>EdTech LMS Pro</title>
 
+    <meta name="description" content="EdTech LMS Pro — luyện trắc nghiệm, flashcard thông minh và soạn đề riêng tư ngay trên thiết bị.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="EdTech LMS Pro">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-            svg: { scale: 1.02, fontCache: 'global' }
-        };
+        try { document.documentElement.dataset.theme = localStorage.getItem('edtech_lms_pro_theme') === 'dark' ? 'dark' : 'light'; } catch (_) {}
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
-
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -112,7 +113,18 @@
         <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z"/><path d="m19 16 .8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
         <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7L20 14.4"/><path d="M20 20v-5.6h-5.6"/></symbol>
         <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+        <symbol id="i-theme" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.6-.1-1.2-.2-1.8A7 7 0 0 1 12 3z"/><path d="M17.5 3.5v3M16 5h3M5 4v2M4 5h2"/></symbol>
+        <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M5 12h8a6 6 0 1 1 0 12"/></symbol>
+        <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 1 0 0 12"/></symbol>
     </svg>
+
+    <div class="app-update-banner" id="app-update-banner" hidden role="status">
+        <span><strong>Có phiên bản mới</strong><small>Cập nhật để nhận cải tiến và sửa lỗi mới nhất.</small></span>
+        <div><button type="button" data-update-later>Để sau</button><button type="button" data-update-now>Cập nhật ngay</button></div>
+    </div>
 
     <div class="app-shell">
         <header class="topbar">
@@ -148,8 +160,14 @@
                 <button class="donate-header-btn" id="donate-header-btn" type="button" onclick="openDonateModal()" aria-label="Ủng hộ dự án" title="Ủng hộ dự án">
                     <span class="donate-header-spark" aria-hidden="true">✦</span><span>DONATE</span>
                 </button>
+                <button class="icon-btn theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme(event)" aria-label="Chuyển giao diện" title="Giao diện">
+                    <svg><use href="#i-theme"></use></svg><span class="theme-toggle-label" aria-hidden="true">Dark</span>
+                </button>
                 <button class="icon-btn" id="sound-toggle" type="button" onclick="toggleSound()" aria-label="Bật hoặc tắt âm thanh" title="Âm thanh">
                     <svg><use href="#i-sound"></use></svg>
+                </button>
+                <button class="icon-btn" type="button" onclick="openDataCenter()" aria-label="Sao lưu và quản lý dữ liệu" title="Dữ liệu">
+                    <svg><use href="#i-database"></use></svg>
                 </button>
                 <button class="icon-btn danger-soft" type="button" onclick="requestClearLearningData()" aria-label="Xóa dữ liệu học tập" title="Xóa dữ liệu học tập">
                     <svg><use href="#i-trash"></use></svg>
@@ -261,6 +279,10 @@
                                 <small id="drop-subtitle">Hỗ trợ .xlsx và .xls</small>
                                 <span class="file-pill" id="selected-file-pill" hidden></span>
                             </label>
+                            <div class="local-library-block">
+                                <div class="local-library-heading"><div><strong>Bộ đề trên thiết bị</strong><small>Mở lại nhanh mà không cần chọn file lần nữa.</small></div><button class="text-btn" type="button" onclick="renderLocalQuestionSets()">Làm mới</button></div>
+                                <div id="local-question-set-list" class="local-question-set-list"><span class="empty-inline">Chưa có bộ đề được lưu.</span></div>
+                            </div>
                         </section>
 
                         <section class="panel setup-section">
@@ -444,6 +466,8 @@
                         <div class="sidebar-heading"><div><span class="section-kicker">Danh sách</span><h2 id="creator-list-title">Câu hỏi</h2></div><button class="icon-btn small" onclick="addCreatorItem()" title="Thêm mới"><svg><use href="#i-plus"></use></svg></button></div>
                         <div class="creator-list-tools"><input id="creator-search" type="search" placeholder="Tìm trong bộ đề..." oninput="setCreatorSearch(this.value)"><select id="creator-filter" onchange="setCreatorFilter(this.value)"><option value="all">Tất cả</option><option value="invalid">Chưa hoàn chỉnh</option><option value="valid">Hoàn chỉnh</option></select></div>
                         <small class="drag-help">Kéo thả để sắp xếp · hoặc dùng nút ↑ ↓ trong trình sửa</small>
+                        <div class="creator-history-tools"><button class="mini-tool-btn" type="button" onclick="creatorUndo()" id="creator-undo-btn" title="Hoàn tác"><svg><use href="#i-undo"></use></svg>Hoàn tác</button><button class="mini-tool-btn" type="button" onclick="creatorRedo()" id="creator-redo-btn" title="Làm lại"><svg><use href="#i-redo"></use></svg>Làm lại</button><button class="mini-tool-btn" type="button" onclick="toggleCreatorMultiSelect()" id="creator-multiselect-btn">Chọn nhiều</button></div>
+                        <div class="creator-bulk-toolbar" id="creator-bulk-toolbar" hidden><span id="creator-selected-count">0 mục đã chọn</span><button type="button" onclick="selectAllCreatorVisible()">Chọn trang</button><button type="button" class="danger" onclick="deleteSelectedCreatorItems()">Xóa đã chọn</button></div>
                         <div id="creator-item-list" class="creator-item-list"></div>
                         <button class="btn btn-secondary btn-full" onclick="addCreatorItem()"><svg><use href="#i-plus"></use></svg>Thêm mục mới</button>
                         <button class="text-danger-btn" onclick="clearCreatorItems()"><svg><use href="#i-trash"></use></svg>Xóa toàn bộ nội dung</button>
@@ -542,6 +566,33 @@
         </div>
     </div>
 
+    <div class="modal-overlay data-center-overlay" id="data-center-modal" role="dialog" aria-modal="true" aria-labelledby="data-center-title" hidden>
+        <div class="modal-box data-center-box">
+            <button class="modal-close" type="button" onclick="closeDataCenter()" aria-label="Đóng"><svg><use href="#i-close"></use></svg></button>
+            <span class="section-kicker">Dữ liệu riêng tư trên thiết bị</span>
+            <h2 id="data-center-title">Sao lưu &amp; khôi phục</h2>
+            <p>IndexedDB lưu bộ đề, lịch sử, bản nháp và tiến độ flashcard ngay trong trình duyệt. Hãy tạo bản sao lưu khi chuyển máy.</p>
+            <section class="data-storage-card">
+                <div><strong>Dung lượng đang dùng</strong><span id="data-storage-usage">Đang kiểm tra…</span></div>
+                <div class="data-storage-track"><i id="data-storage-bar"></i></div>
+                <small id="data-storage-persistent">Đang kiểm tra trạng thái lưu trữ…</small>
+                <button class="btn btn-secondary btn-small" id="request-storage-persistence" type="button" onclick="requestStoragePersistence()">Bảo vệ dữ liệu tốt hơn</button>
+            </section>
+            <div class="data-action-grid">
+                <button class="data-action-card" type="button" onclick="exportFullBackup()"><svg><use href="#i-download"></use></svg><span><strong>Xuất bản sao lưu</strong><small>Tải toàn bộ dữ liệu thành một file JSON.</small></span></button>
+                <label class="data-action-card" for="restore-file-input"><svg><use href="#i-upload"></use></svg><span><strong>Chọn file khôi phục</strong><small>Đọc và xem trước trước khi nhập.</small></span><input id="restore-file-input" type="file" accept="application/json,.json" hidden onchange="handleRestoreFile(this.files[0])"></label>
+                <button class="data-action-card" id="install-app-btn" type="button" onclick="installApp()"><svg><use href="#i-home"></use></svg><span><strong>Cài ứng dụng</strong><small>Dùng như app và mở lại khi mất mạng.</small></span></button>
+            </div>
+            <div class="restore-preview" id="restore-preview" hidden></div>
+            <div class="restore-options">
+                <label><input type="radio" name="restore-mode" value="merge" checked><span><strong>Gộp dữ liệu</strong><small>Giữ dữ liệu hiện có và thêm bản sao lưu.</small></span></label>
+                <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
+            </div>
+            <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.0.1</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="confirm-modal" hidden>
         <div class="modal-box confirm-box">
             <span class="confirm-icon"><svg><use href="#i-trash"></use></svg></span>
@@ -553,6 +604,16 @@
 
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
+    <script>window.EDTECH_APP_VERSION = '1.0.1';</script>
+    <script src="js/database.js"></script>
+    <script src="js/lazy-libs.js"></script>
+    <script src="js/worker-client.js"></script>
+    <script src="js/audio-manager.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/pwa.js"></script>
     <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

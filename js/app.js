@@ -1,0 +1,647 @@
+'use strict';
+
+/* Final release integrations for IndexedDB, recovery, scalable editors and GitHub Pages. */
+
+let historyPage = 0;
+const HISTORY_PAGE_SIZE = 20;
+let activeSessionSaveTimer = null;
+let creatorEditSnapshotTimer = null;
+let installPromptEvent = null;
+
+function debounceActiveSessionSave(callback) {
+    clearTimeout(activeSessionSaveTimer);
+    activeSessionSaveTimer = setTimeout(callback, 160);
+}
+
+function persistActiveQuizSession() {
+    if (!window.EdTechDB || quizSubmitted || !quizData?.length) return;
+    debounceActiveSessionSave(() => {
+        window.EdTechDB.put('activeSessions', {
+            id: 'active-quiz',
+            type: 'quiz',
+            updatedAt: new Date().toISOString(),
+            fileName: currentFileName || 'Bộ đề trắc nghiệm',
+            quizData: clone(quizData),
+            quizAnswers: clone(quizAnswers),
+            flaggedQuestions: [...flaggedQuestions],
+            currentQuizIndex,
+            quizNavPage,
+            quizStartedAt,
+            quizDeadline,
+            quizTimeLimitSeconds,
+            lastQuizSource: lastQuizSource ? clone(lastQuizSource) : null
+        }).catch(error => console.warn('Không thể lưu bài đang làm:', error));
+    });
+}
+
+function clearActiveQuizSession() {
+    clearTimeout(activeSessionSaveTimer);
+    return window.EdTechDB?.delete('activeSessions', 'active-quiz').catch(() => {});
+}
+
+function persistActiveFlashcardSession() {
+    if (!window.EdTechDB || !fcState?.cards?.length) return;
+    window.EdTechDB.put('activeSessions', {
+        id: 'active-flashcards',
+        type: 'flashcard',
+        updatedAt: new Date().toISOString(),
+        fileName: currentFileName || fcState.fileName || 'Bộ Flashcard',
+        state: clone(fcState),
+        source: lastFlashcardSource ? clone(lastFlashcardSource) : null
+    }).catch(error => console.warn('Không thể lưu phiên flashcard:', error));
+}
+
+function clearActiveFlashcardSession() {
+    return window.EdTechDB?.delete('activeSessions', 'active-flashcards').catch(() => {});
+}
+
+async function offerRestoreActiveSession() {
+    if (!window.EdTechDB) return;
+    const [quizSession, flashcardSession] = await Promise.all([
+        window.EdTechDB.get('activeSessions', 'active-quiz').catch(() => null),
+        window.EdTechDB.get('activeSessions', 'active-flashcards').catch(() => null)
+    ]);
+    const session = quizSession || flashcardSession;
+    if (!session) return;
+    const age = Date.now() - new Date(session.updatedAt || 0).getTime();
+    if (!Number.isFinite(age) || age > 14 * 86400000) {
+        await window.EdTechDB.delete('activeSessions', session.id).catch(() => {});
+        return;
+    }
+    await new Promise(resolve => {
+        openConfirmModal(
+            session.type === 'quiz' ? 'Tiếp tục bài trắc nghiệm?' : 'Tiếp tục phiên flashcard?',
+            `Phát hiện “${session.fileName || 'Phiên học'}” chưa hoàn thành. Tiến độ đã được lưu tự động trên thiết bị.`,
+            'Tiếp tục',
+            () => {
+                if (session.type === 'quiz') restoreQuizSession(session);
+                else restoreFlashcardSession(session);
+                resolve();
+            },
+            'Bỏ phiên',
+            async () => {
+                await window.EdTechDB.delete('activeSessions', session.id).catch(() => {});
+                resolve();
+            }
+        );
+    });
+}
+
+function restoreQuizSession(session) {
+    quizData = Array.isArray(session.quizData) ? clone(session.quizData) : [];
+    if (!quizData.length) return;
+    quizAnswers = Array.isArray(session.quizAnswers) ? clone(session.quizAnswers) : Array(quizData.length).fill(null);
+    while (quizAnswers.length < quizData.length) quizAnswers.push(null);
+    flaggedQuestions = new Set(session.flaggedQuestions || []);
+    currentQuizIndex = Math.max(0, Math.min(quizData.length - 1, Number(session.currentQuizIndex) || 0));
+    quizNavPage = Math.floor(currentQuizIndex / QUIZ_NAV_PAGE_SIZE);
+    quizStartedAt = Number(session.quizStartedAt) || Date.now();
+    quizDeadline = Number(session.quizDeadline) || 0;
+    quizTimeLimitSeconds = Number(session.quizTimeLimitSeconds) || 0;
+    quizSubmitted = false;
+    currentFileName = session.fileName || 'Bộ đề trắc nghiệm';
+    lastQuizSource = session.lastQuizSource || null;
+    document.getElementById('quiz-title').textContent = currentFileName;
+    clearInterval(quizTimer);
+    renderQuizUI();
+    showScreen('quiz-app');
+    quizTimer = setInterval(updateQuizTimer, 500);
+    updateQuizTimer();
+    showToast('Đã khôi phục bài đang làm.', 'success');
+}
+
+function restoreFlashcardSession(session) {
+    if (!session.state?.cards?.length) return;
+    fcState = clone(session.state);
+    currentFileName = session.fileName || fcState.fileName || 'Bộ Flashcard';
+    lastFlashcardSource = session.source || null;
+    document.getElementById('fc-title').textContent = currentFileName;
+    showScreen('flashcard-app');
+    renderFlashcard();
+    showToast('Đã khôi phục phiên flashcard.', 'success');
+}
+
+async function renderLocalQuestionSets() {
+    const container = document.getElementById('local-question-set-list');
+    if (!container || !window.EdTechDB) return;
+    container.innerHTML = '<span class="empty-inline">Đang đọc thư viện…</span>';
+    try {
+        const items = (await window.EdTechDB.listQuestionSets()).slice(0, 12);
+        if (!items.length) {
+            container.innerHTML = '<span class="empty-inline">Chưa có bộ đề được lưu.</span>';
+            return;
+        }
+        container.innerHTML = items.map(item => `<article class="local-set-item">
+            <button type="button" class="local-set-main" onclick="loadLocalQuestionSet('${escapeHTML(item.id)}')">
+                <span class="local-set-icon ${item.type}"><svg><use href="#${item.type === 'flashcard' ? 'i-cards' : 'i-quiz'}"></use></svg></span>
+                <span><strong>${escapeHTML(item.name)}</strong><small>${item.count || Math.max(0, (item.rows?.length || 1) - 1)} mục · ${timeAgo(item.updatedAt)}</small></span>
+            </button>
+            <button type="button" class="local-set-delete" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button>
+        </article>`).join('');
+    } catch (error) {
+        container.innerHTML = '<span class="empty-inline">Không thể đọc thư viện trên thiết bị.</span>';
+    }
+}
+
+async function loadLocalQuestionSet(id) {
+    const item = await window.EdTechDB.get('questionSets', id).catch(() => null);
+    if (!item?.rows?.length) {
+        showToast('Bộ đề này không còn dữ liệu.', 'error');
+        return;
+    }
+    selectedWorkbookData = clone(item.rows);
+    currentFileName = item.name || 'Bộ đề';
+    selectStudyMode(item.type || studyMode, false);
+    const pill = document.getElementById('selected-file-pill');
+    if (pill) {
+        pill.hidden = false;
+        pill.textContent = `${currentFileName} · Đã lưu`;
+    }
+    document.getElementById('drop-title').textContent = 'Đã chọn bộ đề trên thiết bị';
+    document.getElementById('drop-subtitle').textContent = `${item.count || Math.max(0, item.rows.length - 1)} mục sẵn sàng`;
+    updateSetupSummary();
+    playSound('navigate');
+}
+
+function deleteLocalQuestionSet(id, event) {
+    event?.stopPropagation();
+    openConfirmModal('Xóa bộ đề đã lưu?', 'Bộ đề sẽ bị xóa khỏi thư viện trên thiết bị. Lịch sử học tập không bị ảnh hưởng.', 'Xóa', async () => {
+        await window.EdTechDB.delete('questionSets', id).catch(() => {});
+        renderLocalQuestionSets();
+        showToast('Đã xóa bộ đề khỏi thiết bị.', 'success');
+    });
+}
+
+function creatorSnapshot() {
+    return { drafts: clone(creatorDrafts), mode: creatorMode, activeId: activeCreatorId };
+}
+
+function pushCreatorHistory() {
+    if (creatorHistoryLock) return;
+    creatorUndoStack.push(creatorSnapshot());
+    if (creatorUndoStack.length > 30) creatorUndoStack.shift();
+    creatorRedoStack = [];
+    updateCreatorHistoryButtons();
+}
+
+function scheduleCreatorHistorySnapshot() {
+    if (creatorEditSnapshotTimer) return;
+    pushCreatorHistory();
+    creatorEditSnapshotTimer = setTimeout(() => { creatorEditSnapshotTimer = null; }, 900);
+}
+
+function applyCreatorSnapshot(snapshot) {
+    if (!snapshot) return;
+    creatorHistoryLock = true;
+    creatorDrafts = clone(snapshot.drafts);
+    creatorMode = snapshot.mode === 'flashcard' ? 'flashcard' : 'quiz';
+    activeCreatorId = snapshot.activeId;
+    ensureCreatorItems();
+    renderCreator();
+    saveCreatorDrafts(true);
+    creatorHistoryLock = false;
+}
+
+function creatorUndo() {
+    const snapshot = creatorUndoStack.pop();
+    if (!snapshot) return;
+    creatorRedoStack.push(creatorSnapshot());
+    applyCreatorSnapshot(snapshot);
+    updateCreatorHistoryButtons();
+    showToast('Đã hoàn tác thao tác gần nhất.', 'info');
+}
+
+function creatorRedo() {
+    const snapshot = creatorRedoStack.pop();
+    if (!snapshot) return;
+    creatorUndoStack.push(creatorSnapshot());
+    applyCreatorSnapshot(snapshot);
+    updateCreatorHistoryButtons();
+    showToast('Đã làm lại thao tác.', 'info');
+}
+
+function updateCreatorHistoryButtons() {
+    const undo = document.getElementById('creator-undo-btn');
+    const redo = document.getElementById('creator-redo-btn');
+    if (undo) undo.disabled = !creatorUndoStack.length;
+    if (redo) redo.disabled = !creatorRedoStack.length;
+}
+
+function toggleCreatorMultiSelect() {
+    creatorMultiSelect = !creatorMultiSelect;
+    if (!creatorMultiSelect) creatorSelectedIds.clear();
+    document.getElementById('creator-multiselect-btn')?.classList.toggle('active', creatorMultiSelect);
+    document.getElementById('creator-bulk-toolbar').hidden = !creatorMultiSelect;
+    renderCreatorList();
+    updateCreatorSelectedCount();
+}
+
+function toggleCreatorSelection(id, event) {
+    event?.stopPropagation();
+    if (creatorSelectedIds.has(id)) creatorSelectedIds.delete(id);
+    else creatorSelectedIds.add(id);
+    renderCreatorList();
+    updateCreatorSelectedCount();
+}
+
+function updateCreatorSelectedCount() {
+    const label = document.getElementById('creator-selected-count');
+    if (label) label.textContent = `${creatorSelectedIds.size} mục đã chọn`;
+}
+
+function selectAllCreatorVisible() {
+    const items = getFilteredCreatorItems();
+    const start = creatorListPage * CREATOR_LIST_PAGE_SIZE;
+    items.slice(start, start + CREATOR_LIST_PAGE_SIZE).forEach(item => creatorSelectedIds.add(item.id));
+    renderCreatorList();
+    updateCreatorSelectedCount();
+}
+
+function deleteSelectedCreatorItems() {
+    if (!creatorSelectedIds.size) return;
+    openConfirmModal('Xóa các mục đã chọn?', `${creatorSelectedIds.size} mục sẽ bị xóa khỏi bộ đề.`, 'Xóa đã chọn', () => {
+        pushCreatorHistory();
+        creatorDrafts[creatorMode] = getCurrentCreatorItems().filter(item => !creatorSelectedIds.has(item.id));
+        creatorSelectedIds.clear();
+        activeCreatorId = creatorDrafts[creatorMode][0]?.id || null;
+        ensureCreatorItems();
+        saveCreatorDrafts(true);
+        renderCreator();
+        updateCreatorSelectedCount();
+    });
+}
+
+function addCreatorOption() {
+    const item = getActiveCreatorItem();
+    if (!item || creatorMode !== 'quiz') return;
+    if (!Array.isArray(item.options)) item.options = ['', ''];
+    if (item.options.length >= 6) return;
+    pushCreatorHistory();
+    item.options.push('');
+    renderCreator();
+    scheduleCreatorSave();
+}
+
+function removeCreatorOption(index) {
+    const item = getActiveCreatorItem();
+    if (!item || creatorMode !== 'quiz' || item.options.length <= 2) return;
+    pushCreatorHistory();
+    item.options.splice(index, 1);
+    if (Number(item.correct) === index) item.correct = null;
+    else if (Number(item.correct) > index) item.correct -= 1;
+    renderCreator();
+    scheduleCreatorSave();
+}
+
+function updateCreatorTags(value) {
+    const item = getActiveCreatorItem();
+    scheduleCreatorHistorySnapshot();
+    item.tags = String(value || '').split(',').map(tag => tag.trim()).filter(Boolean).slice(0, 12);
+    scheduleCreatorSave();
+}
+
+async function optimizeImageFile(file) {
+    if (!file || !file.type.startsWith('image/')) throw new Error('Tệp đã chọn không phải hình ảnh.');
+    if (file.size > 18 * 1024 * 1024) throw new Error('Ảnh quá lớn. Vui lòng chọn ảnh dưới 18 MB.');
+    let source;
+    if ('createImageBitmap' in window) source = await createImageBitmap(file);
+    else {
+        const url = URL.createObjectURL(file);
+        source = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => reject(new Error('Không thể đọc hình ảnh.'));
+            image.src = url;
+        });
+        source.__objectURL = url;
+    }
+    const sourceWidth = source.width || source.naturalWidth;
+    const sourceHeight = source.height || source.naturalHeight;
+    const maxDimension = 1600;
+    const ratio = Math.min(1, maxDimension / Math.max(sourceWidth, sourceHeight));
+    const width = Math.max(1, Math.round(sourceWidth * ratio));
+    const height = Math.max(1, Math.round(sourceHeight * ratio));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d', { alpha: false });
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(source, 0, 0, width, height);
+    source.close?.();
+    if (source.__objectURL) URL.revokeObjectURL(source.__objectURL);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .82));
+    if (!blob) throw new Error('Không thể tối ưu hình ảnh.');
+    const id = `media-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    await window.EdTechDB?.put('media', { id, blob, type: blob.type, width, height, originalName: file.name, updatedAt: new Date().toISOString() });
+    return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+    });
+}
+
+async function analyzeAIJsonResultFinal({ quiet = false } = {}) {
+    const raw = cleanJSONText(document.getElementById('ai-json-import').value);
+    if (!raw) {
+        showToast('Hãy dán JSON do công cụ AI trả về.', 'error');
+        return null;
+    }
+    try {
+        let result;
+        try {
+            result = await window.EdTechWorker.analyzeImport(raw, creatorMode);
+        } catch (workerError) {
+            console.warn('Worker JSON fallback:', workerError);
+            const parsed = JSON.parse(raw);
+            if (!Array.isArray(parsed) || !parsed.length) throw new Error('JSON phải là một mảng có dữ liệu.');
+            const entries = parsed.map((entry, index) => parseImportEntry(entry, index));
+            result = {
+                total: entries.length,
+                valid: entries.filter(entry => !entry.errors.length).map(entry => entry.item),
+                invalid: entries.filter(entry => entry.errors.length)
+            };
+        }
+        result.valid = result.valid.map(item => ({ ...item, id: item.id || makeId(creatorMode === 'quiz' ? 'quiz' : 'fc') }));
+        pendingImportAnalysis = result;
+        const analysis = document.getElementById('import-analysis');
+        if (analysis) {
+            analysis.hidden = false;
+            analysis.innerHTML = `<div class="import-summary"><strong>Tìm thấy ${result.total} ${creatorMode === 'quiz' ? 'câu' : 'thẻ'}</strong><span>${result.valid.length} hợp lệ · ${result.invalid.length} bị bỏ qua</span></div>
+                ${result.invalid.length ? `<div class="import-errors"><strong>Các mục cần kiểm tra</strong>${result.invalid.slice(0, 8).map(entry => `<div><span>Mục ${entry.index + 1}</span><small>${escapeHTML(entry.errors.join(' '))}</small></div>`).join('')}</div>` : '<small>Tất cả dữ liệu đều hợp lệ.</small>'}`;
+        }
+        if (!quiet) playSound(result.valid.length ? 'success' : 'wrong');
+        return result;
+    } catch (error) {
+        pendingImportAnalysis = null;
+        const analysis = document.getElementById('import-analysis');
+        if (analysis) {
+            analysis.hidden = false;
+            analysis.innerHTML = `<div class="import-errors"><strong>JSON chưa đúng định dạng</strong><small>${escapeHTML(error.message || 'Không thể đọc dữ liệu.')}</small></div>`;
+        }
+        showToast(error.message || 'JSON không hợp lệ.', 'error');
+        return null;
+    }
+}
+
+async function importAIJsonResultFinal() {
+    const analysis = await analyzeAIJsonResultFinal({ quiet: true });
+    if (!analysis?.valid?.length) return;
+    const message = `Tìm thấy ${analysis.total} mục: ${analysis.valid.length} hợp lệ${analysis.invalid.length ? `, ${analysis.invalid.length} bị bỏ qua` : ''}.`;
+    openConfirmModal('Nhập dữ liệu hợp lệ?', message, `Nhập ${analysis.valid.length} mục`, () => {
+        pushCreatorHistory();
+        commitAIJsonImport();
+    });
+}
+
+function renderHistoryTablePaged() {
+    const history = Array.isArray(appData.history) ? [...appData.history] : [];
+    const filter = document.getElementById('history-filter')?.value || 'all';
+    const query = (document.getElementById('history-search')?.value || '').trim().toLowerCase();
+    const filtered = history.filter(item => filter === 'all' || item.mode === filter).filter(item => !query || String(item.file || '').toLowerCase().includes(query)).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    const pages = Math.max(1, Math.ceil(filtered.length / HISTORY_PAGE_SIZE));
+    historyPage = Math.max(0, Math.min(pages - 1, historyPage));
+    document.getElementById('history-total-sessions').textContent = history.length;
+    document.getElementById('history-total-quizzes').textContent = history.filter(item => item.mode === 'quiz').length;
+    document.getElementById('history-total-flashcards').textContent = history.filter(item => item.mode === 'flashcard').length;
+    document.getElementById('history-total-xp').textContent = `${Number(appData.xp) || 0} XP`;
+    const tbody = document.getElementById('history-table-body');
+    const pageItems = filtered.slice(historyPage * HISTORY_PAGE_SIZE, (historyPage + 1) * HISTORY_PAGE_SIZE);
+    if (!pageItems.length) tbody.innerHTML = '<tr><td colspan="7" class="history-empty-cell">Không có hoạt động phù hợp.</td></tr>';
+    else tbody.innerHTML = pageItems.map(item => {
+        const isQuiz = item.mode === 'quiz';
+        const result = isQuiz ? `${item.correct || 0}/${item.total || 0} (${item.accuracy || 0}%)` : `${item.good || 0}/${item.total || 0} nhớ tốt`;
+        const hasSource = Array.isArray(item.sourceRows) && item.sourceRows.length > 1;
+        const hasFocusRows = isQuiz ? Array.isArray(item.wrongRows) && item.wrongRows.length > 1 : Array.isArray(item.hardRows) && item.hardRows.length > 1;
+        return `<tr><td>${formatDate(item.timestamp)}</td><td><span class="history-mode-chip ${item.mode}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td><td><strong>${escapeHTML(item.file || 'Không tên')}</strong></td><td>${escapeHTML(result)}</td><td>${formatLongDuration(item.duration || 0)}</td><td><strong>+${Number(item.xp) || 0} XP</strong></td><td><div class="history-actions"><button ${hasSource ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}')">${isQuiz ? 'Làm lại' : 'Ôn lại'}</button>${isQuiz && Array.isArray(item.review) ? `<button onclick="reviewHistoryQuiz('${item.id}')">Xem lại</button>` : ''}<button ${hasFocusRows ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}', true)">${isQuiz ? 'Câu sai' : 'Thẻ khó'}</button><button class="danger" onclick="deleteHistoryItem('${item.id}')">Xóa</button></div></td></tr>`;
+    }).join('');
+    let pager = document.getElementById('history-pagination');
+    if (!pager) {
+        pager = document.createElement('div');
+        pager.id = 'history-pagination';
+        pager.className = 'history-pagination';
+        tbody.closest('.table-wrap')?.after(pager);
+    }
+    pager.hidden = filtered.length <= HISTORY_PAGE_SIZE;
+    pager.innerHTML = `<button type="button" onclick="changeHistoryPage(-1)" ${historyPage <= 0 ? 'disabled' : ''}>‹</button><span>Trang <strong>${historyPage + 1}</strong> / ${pages}</span><button type="button" onclick="changeHistoryPage(1)" ${historyPage >= pages - 1 ? 'disabled' : ''}>›</button>`;
+}
+
+function changeHistoryPage(delta) {
+    historyPage += Number(delta) || 0;
+    renderHistoryTablePaged();
+}
+
+function initInstallPrompt() {
+    window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        installPromptEvent = event;
+        const button = document.getElementById('install-app-btn');
+        if (button) button.hidden = false;
+    });
+}
+
+async function installApp() {
+    if (!installPromptEvent) {
+        showToast('Trên iPhone, mở menu Chia sẻ rồi chọn “Thêm vào Màn hình chính”.', 'info');
+        return;
+    }
+    await installPromptEvent.prompt();
+    installPromptEvent = null;
+}
+
+// Wrap core mutations with history and persistence.
+const coreRenderCreatorList = renderCreatorList;
+renderCreatorList = function renderCreatorListEnhanced() {
+    coreRenderCreatorList();
+    const allItems = getCurrentCreatorItems();
+    document.querySelectorAll('.creator-grid-tile').forEach(tile => {
+        const button = tile.querySelector('.creator-grid-select');
+        const index = Number(button?.textContent?.trim()) - 1;
+        const item = allItems[index];
+        if (!item) return;
+        tile.classList.toggle('multi-select-mode', creatorMultiSelect);
+        tile.classList.toggle('selected-multi', creatorSelectedIds.has(item.id));
+        if (creatorMultiSelect) {
+            button.onclick = event => toggleCreatorSelection(item.id, event);
+            const mark = document.createElement('span');
+            mark.className = 'creator-multi-check';
+            mark.textContent = creatorSelectedIds.has(item.id) ? '✓' : '';
+            tile.appendChild(mark);
+        }
+    });
+    updateCreatorHistoryButtons();
+    updateCreatorSelectedCount();
+};
+
+createBlankCreatorItem = function createBlankCreatorItemEnhanced(mode) {
+    if (mode === 'flashcard') return { id: makeId('fc'), front: '', back: '', explanation: '', tags: [], difficulty: 'medium', reversible: true };
+    return { id: makeId('quiz'), question: '', options: ['', '', '', ''], correct: null, explanation: '', tags: [], difficulty: 'medium' };
+};
+
+validateCreatorItem = function validateCreatorItemEnhanced(item, mode = creatorMode) {
+    const errors = [];
+    if (mode === 'quiz') {
+        const question = String(item?.question || '').trim();
+        const options = Array.isArray(item?.options) ? item.options.slice(0, 6).map(value => String(value || '').trim()) : [];
+        const nonEmpty = options.filter(Boolean);
+        if (!question) errors.push('Câu hỏi đang để trống.');
+        if (nonEmpty.length < 2) errors.push(`Cần ít nhất 2 đáp án, hiện có ${nonEmpty.length}.`);
+        if (options.length > 6) errors.push('Chỉ hỗ trợ tối đa 6 đáp án.');
+        const normalized = nonEmpty.map(value => normalizeAnswerText(value));
+        if (new Set(normalized).size !== normalized.length) errors.push('Có đáp án bị trùng nhau.');
+        const correct = Number(item?.correct);
+        if (!Number.isInteger(correct) || correct < 0 || correct >= options.length) errors.push('Chưa chọn đáp án đúng.');
+        else if (!options[correct]) errors.push('Đáp án đúng đang để trống.');
+    } else {
+        if (!String(item?.front || '').trim()) errors.push('Mặt trước đang để trống.');
+        if (!String(item?.back || '').trim()) errors.push('Mặt sau đang để trống.');
+    }
+    return errors;
+};
+
+const coreRenderCreatorEditor = renderCreatorEditor;
+renderCreatorEditor = function renderCreatorEditorEnhanced() {
+    const item = getActiveCreatorItem();
+    if (item) {
+        item.tags = Array.isArray(item.tags) ? item.tags : [];
+        item.difficulty = ['easy', 'medium', 'hard'].includes(item.difficulty) ? item.difficulty : 'medium';
+        if (creatorMode === 'quiz') {
+            item.options = Array.isArray(item.options) ? item.options.slice(0, 6) : ['', '', '', ''];
+            while (item.options.length < 2) item.options.push('');
+        } else if (item.reversible === undefined) item.reversible = true;
+    }
+    coreRenderCreatorEditor();
+    const editor = document.getElementById('creator-editor');
+    if (!editor || !item) return;
+    if (creatorMode === 'quiz') {
+        const answerGrid = editor.querySelector('.editor-grid');
+        if (answerGrid) {
+            answerGrid.innerHTML = item.options.map((option, optionIndex) => {
+                const letter = String.fromCharCode(65 + optionIndex);
+                return `<label><span>Đáp án ${letter}</span><div class="answer-editor"><button class="answer-radio ${Number(item.correct) === optionIndex ? 'selected' : ''}" onclick="setCreatorCorrect(${optionIndex})">${letter}</button><textarea class="editor-textarea" rows="2" oninput="updateCreatorOption(${optionIndex}, this.value)" onpaste="handleCreatorPaste(event, 'option-${optionIndex}')">${escapeHTML(option)}</textarea><button class="remove-option-btn" type="button" onclick="removeCreatorOption(${optionIndex})" ${item.options.length <= 2 ? 'disabled' : ''} aria-label="Xóa đáp án ${letter}">×</button><input id="creator-file-option-${optionIndex}" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'option-${optionIndex}')"></div><span class="field-tools"><button onclick="triggerCreatorImage('option-${optionIndex}')">Chèn ảnh vào đáp án ${letter}</button></span></label>`;
+            }).join('') + `<button class="add-option-btn" type="button" onclick="addCreatorOption()" ${item.options.length >= 6 ? 'disabled' : ''}><svg><use href="#i-plus"></use></svg>Thêm đáp án (${item.options.length}/6)</button>`;
+        }
+    }
+    const meta = document.createElement('div');
+    meta.className = 'editor-section creator-meta-grid';
+    meta.innerHTML = `<label>Nhãn phân loại<input type="text" value="${escapeHTML((item.tags || []).join(', '))}" oninput="updateCreatorTags(this.value)" placeholder="Ví dụ: sinh học, chương 2"></label>
+        <label>Độ khó<select onchange="updateCreatorField('difficulty', this.value)"><option value="easy" ${item.difficulty === 'easy' ? 'selected' : ''}>Dễ</option><option value="medium" ${item.difficulty === 'medium' ? 'selected' : ''}>Trung bình</option><option value="hard" ${item.difficulty === 'hard' ? 'selected' : ''}>Khó</option></select></label>
+        ${creatorMode === 'flashcard' ? `<label class="creator-inline-toggle"><input type="checkbox" ${item.reversible !== false ? 'checked' : ''} onchange="updateCreatorField('reversible', this.checked)"><span>Cho phép học đảo chiều riêng thẻ này</span></label>` : ''}`;
+    editor.appendChild(meta);
+};
+
+const originalUpdateCreatorField = updateCreatorField;
+updateCreatorField = function updateCreatorFieldTracked(field, value) {
+    scheduleCreatorHistorySnapshot();
+    originalUpdateCreatorField(field, value);
+};
+const originalUpdateCreatorOption = updateCreatorOption;
+updateCreatorOption = function updateCreatorOptionTracked(index, value) {
+    scheduleCreatorHistorySnapshot();
+    originalUpdateCreatorOption(index, value);
+};
+const originalSetCreatorCorrect = setCreatorCorrect;
+setCreatorCorrect = function setCreatorCorrectTracked(index) { pushCreatorHistory(); originalSetCreatorCorrect(index); };
+['addCreatorItem', 'duplicateCreatorItem', 'moveCreatorItem', 'deleteCreatorItem', 'clearCreatorItems'].forEach(name => {
+    const original = window[name];
+    if (typeof original !== 'function') return;
+    window[name] = function trackedCreatorMutation(...args) { pushCreatorHistory(); return original(...args); };
+});
+fileToDataURL = optimizeImageFile;
+analyzeAIJsonResult = analyzeAIJsonResultFinal;
+importAIJsonResult = importAIJsonResultFinal;
+renderHistoryTable = renderHistoryTablePaged;
+
+const coreFinalizeQuiz = finalizeQuiz;
+finalizeQuiz = function finalizeQuizEnhanced() {
+    coreFinalizeQuiz();
+    clearActiveQuizSession();
+};
+const coreStartFlashcards = startFlashcardMode;
+startFlashcardMode = function startFlashcardsEnhanced(rows) {
+    coreStartFlashcards(rows);
+    persistActiveFlashcardSession();
+};
+const coreRateFlashcard = rateFlashcard;
+rateFlashcard = function rateFlashcardEnhanced(rating) {
+    coreRateFlashcard(rating);
+    persistActiveFlashcardSession();
+};
+const coreUndoFlashcard = undoFlashcardRating;
+undoFlashcardRating = function undoFlashcardEnhanced() {
+    coreUndoFlashcard();
+    persistActiveFlashcardSession();
+};
+const coreFinishFlashcards = finishFlashcardSession;
+finishFlashcardSession = function finishFlashcardsEnhanced() {
+    coreFinishFlashcards();
+    clearActiveFlashcardSession();
+};
+
+window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    installPromptEvent = event;
+});
+window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled promise rejection:', event.reason);
+    if (!/AbortError/i.test(String(event.reason))) showToast('Có thao tác chưa hoàn tất. Dữ liệu đã được giữ an toàn.', 'error');
+});
+window.addEventListener('error', event => console.error('Application error:', event.error || event.message));
+
+function trapActiveModalFocus(event) {
+    if (event.key !== 'Tab') return;
+    const modal = [...document.querySelectorAll('.modal-overlay:not([hidden])')].pop();
+    if (!modal) return;
+    const focusable = [...modal.querySelectorAll('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])')].filter(element => element.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const version = document.getElementById('app-version-label');
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.0.0'}`;
+    document.getElementById('data-center-modal')?.addEventListener('click', event => { if (event.target.id === 'data-center-modal') closeDataCenter(); });
+    document.addEventListener('keydown', event => {
+        trapActiveModalFocus(event);
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && document.querySelector('.app-screen.active')?.id === 'creator-screen') {
+            event.preventDefault();
+            event.shiftKey ? creatorRedo() : creatorUndo();
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y' && document.querySelector('.app-screen.active')?.id === 'creator-screen') {
+            event.preventDefault();
+            creatorRedo();
+        }
+    });
+    updateCreatorHistoryButtons();
+});
+
+Object.assign(window, {
+    persistActiveQuizSession,
+    clearActiveQuizSession,
+    persistActiveFlashcardSession,
+    clearActiveFlashcardSession,
+    offerRestoreActiveSession,
+    renderLocalQuestionSets,
+    loadLocalQuestionSet,
+    deleteLocalQuestionSet,
+    creatorUndo,
+    creatorRedo,
+    toggleCreatorMultiSelect,
+    toggleCreatorSelection,
+    selectAllCreatorVisible,
+    deleteSelectedCreatorItems,
+    addCreatorOption,
+    removeCreatorOption,
+    updateCreatorTags,
+    changeHistoryPage,
+    installApp
+});

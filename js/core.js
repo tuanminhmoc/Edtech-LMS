@@ -141,6 +141,9 @@ let quizTimer = null;
 let quizElapsed = 0;
 let quizTimeLimitSeconds = 0;
 let quizNavPage = 0;
+let currentQuizIndex = 0;
+let quizStartedAt = 0;
+let quizDeadline = 0;
 const QUIZ_NAV_PAGE_SIZE = 20;
 let lastQuizResult = null;
 
@@ -150,7 +153,7 @@ let lastFlashcardHardSource = null;
 
 let creatorMode = 'quiz';
 const loadedCreatorDrafts = loadCreatorDrafts();
-let recoveryCreatorDrafts = localStorage.getItem(CREATOR_RECOVERY_KEY) === '1' && hasMeaningfulCreatorContent(loadedCreatorDrafts) ? clone(loadedCreatorDrafts) : null;
+let recoveryCreatorDrafts = safeStorageGet(CREATOR_RECOVERY_KEY) === '1' && hasMeaningfulCreatorContent(loadedCreatorDrafts) ? clone(loadedCreatorDrafts) : null;
 let creatorDrafts = recoveryCreatorDrafts ? { quiz: [], flashcard: [] } : loadedCreatorDrafts;
 let activeCreatorId = null;
 let creatorSearchQuery = '';
@@ -161,6 +164,11 @@ let promptMode = 'new';
 let pendingImportAnalysis = null;
 let draggedCreatorId = null;
 let creatorListPage = 0;
+let creatorUndoStack = [];
+let creatorRedoStack = [];
+let creatorMultiSelect = false;
+let creatorSelectedIds = new Set();
+let creatorHistoryLock = false;
 const CREATOR_LIST_PAGE_SIZE = 25;
 
 let audioContext = null;
@@ -168,6 +176,19 @@ let soundUnlocked = false;
 let introSoundPlayed = false;
 let mobileQuizNavTimer = null;
 var mobileResultReviewTimer = null;
+
+function safeStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (_) { return null; }
+}
+
+function safeStorageSet(key, value) {
+    try { localStorage.setItem(key, value); return true; } catch (_) { return false; }
+}
+
+function safeStorageRemove(key) {
+    try { localStorage.removeItem(key); return true; } catch (_) { return false; }
+}
+
 
 function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -195,9 +216,12 @@ function saveLearningData() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     } catch (error) {
-        console.error('Không thể lưu dữ liệu học tập:', error);
-        showToast('Không thể lưu dữ liệu trên trình duyệt.', 'error');
+        console.warn('Bản sao LocalStorage không thể cập nhật:', error);
     }
+    window.EdTechDB?.syncLearning(clone(appData)).catch(error => {
+        console.error('Không thể lưu IndexedDB:', error);
+        showToast('Không thể lưu dữ liệu trên thiết bị.', 'error');
+    });
 }
 
 function savePreferences() {
@@ -209,6 +233,7 @@ function savePreferences() {
     preferences.dueFirst = Boolean(document.getElementById('fc-due-first')?.checked);
     try {
         localStorage.setItem(PREF_KEY, JSON.stringify(preferences));
+        window.EdTechDB?.savePreferences(clone(preferences)).catch(() => {});
     } catch (error) {
         console.warn('Không thể lưu tùy chọn:', error);
     }
@@ -238,7 +263,13 @@ function setCreatorSaveStatus(text, state = 'saved') {
 function saveCreatorDrafts(markRecovery = true) {
     try {
         localStorage.setItem(CREATOR_KEY, JSON.stringify(creatorDrafts));
-        if (markRecovery && hasMeaningfulCreatorContent(creatorDrafts)) localStorage.setItem(CREATOR_RECOVERY_KEY, '1');
+        const recovery = Boolean(markRecovery && hasMeaningfulCreatorContent(creatorDrafts));
+        if (recovery) localStorage.setItem(CREATOR_RECOVERY_KEY, '1');
+        else if (!markRecovery) localStorage.removeItem(CREATOR_RECOVERY_KEY);
+        window.EdTechDB?.saveCreatorDrafts(clone(creatorDrafts), recovery).catch(error => {
+            console.warn('Không thể lưu bản nháp vào IndexedDB:', error);
+            setCreatorSaveStatus('Không thể lưu', 'error');
+        });
         setCreatorSaveStatus('Đã lưu', 'saved');
     } catch (error) {
         console.warn('Không thể lưu bản nháp:', error);
@@ -249,7 +280,7 @@ function saveCreatorDrafts(markRecovery = true) {
 function scheduleCreatorSave() {
     clearTimeout(creatorSaveTimer);
     setCreatorSaveStatus('Có thay đổi chưa lưu', 'unsaved');
-    localStorage.setItem(CREATOR_RECOVERY_KEY, '1');
+    safeStorageSet(CREATOR_RECOVERY_KEY, '1');
     window.setTimeout(() => {
         if (creatorSaveTimer) setCreatorSaveStatus('Đang lưu…', 'saving');
     }, 90);
@@ -260,7 +291,7 @@ function scheduleCreatorSave() {
 }
 
 function markCreatorDraftComplete() {
-    localStorage.removeItem(CREATOR_RECOVERY_KEY);
+    safeStorageRemove(CREATOR_RECOVERY_KEY);
     setCreatorSaveStatus('Đã xuất và lưu', 'saved');
 }
 
@@ -293,7 +324,8 @@ function parseRichText(value) {
     safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     safe = safe.replace(/\[img\]([\s\S]*?)\[\/img\]/gi, (_, source) => {
         const url = source.trim().replace(/\s/g, '');
-        if (/^(data:image\/|https?:\/\/)/i.test(url)) {
+        if (url.length > 6_000_000) return '<em>[Ảnh vượt giới hạn dung lượng]</em>';
+        if (/^(data:image\/(?:png|jpeg|webp|gif);base64,|blob:)/i.test(url)) {
             return `<img class="rendered-img" src="${url}" alt="Hình minh họa">`;
         }
         return '<em>[Ảnh không hợp lệ]</em>';
@@ -398,7 +430,7 @@ function closeConfirmModal(runCancel = false) {
     if (runCancel && typeof cancel === 'function') cancel();
 }
 
-function showScreen(screenId) {
+function showScreen(screenId, options = {}) {
     document.querySelectorAll('.app-screen').forEach(screen => screen.classList.remove('active'));
     const target = document.getElementById(screenId);
     if (!target) return;
@@ -610,26 +642,48 @@ async function handleWorkbookFile(file) {
         showToast('Vui lòng chọn file Excel .xlsx hoặc .xls.', 'error');
         return;
     }
-
+    const dropTitle = document.getElementById('drop-title');
+    const dropSubtitle = document.getElementById('drop-subtitle');
     try {
+        if (dropTitle) dropTitle.textContent = 'Đang đọc bộ đề…';
+        if (dropSubtitle) dropSubtitle.textContent = 'Ứng dụng vẫn hoạt động trong khi xử lý file.';
+        let rows;
         const arrayBuffer = await file.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+        try {
+            rows = await window.EdTechWorker.parseExcel(arrayBuffer, progress => {
+                if (dropSubtitle) dropSubtitle.textContent = `${progress.message || 'Đang xử lý'} ${progress.percent || 0}%`;
+            });
+        } catch (workerError) {
+            console.warn('Worker Excel fallback:', workerError);
+            const XLSX = await window.EdTechLibraries.loadXLSX();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+        }
         if (!Array.isArray(rows) || rows.length < 2) throw new Error('File không có dữ liệu hợp lệ.');
 
         selectedWorkbookData = rows;
         currentFileName = file.name.replace(/\.(xlsx|xls)$/i, '');
         document.getElementById('selected-file-pill').hidden = false;
         document.getElementById('selected-file-pill').textContent = file.name;
-        document.getElementById('drop-title').textContent = 'Đã chọn bộ đề';
-        document.getElementById('drop-subtitle').textContent = `${Math.max(0, rows.length - 1)} dòng dữ liệu được phát hiện`;
+        if (dropTitle) dropTitle.textContent = 'Đã chọn bộ đề';
+        if (dropSubtitle) dropSubtitle.textContent = `${Math.max(0, rows.length - 1)} dòng dữ liệu được phát hiện`;
         updateSetupSummary();
+        const stored = await window.EdTechDB?.saveQuestionSet({
+            id: `set-${simpleHash(`${currentFileName}|${rows.length}|${JSON.stringify(rows.slice(0, 3))}`)}`,
+            name: currentFileName,
+            type: studyMode,
+            rows: clone(rows),
+            source: 'excel'
+        });
+        if (stored) window.renderLocalQuestionSets?.();
         playSound('upload');
-        showToast('Đã đọc file Excel thành công.', 'success');
+        showToast('Đã đọc và lưu bộ đề trên thiết bị.', 'success');
     } catch (error) {
         selectedWorkbookData = null;
         currentFileName = '';
+        if (dropTitle) dropTitle.textContent = 'Kéo thả file vào đây hoặc bấm để chọn';
+        if (dropSubtitle) dropSubtitle.textContent = 'Hỗ trợ .xlsx và .xls';
         updateSetupSummary();
         showToast(error.message || 'Không thể đọc file Excel.', 'error');
     }
@@ -646,23 +700,50 @@ function startSelectedStudy() {
     else startFlashcardMode(selectedWorkbookData);
 }
 
+function normalizeHeader(value) {
+    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function detectWorkbookColumns(rows) {
+    const headers = (rows?.[0] || []).map(normalizeHeader);
+    const find = (...terms) => headers.findIndex(header => terms.some(term => header.includes(term)));
+    const question = Math.max(0, find('cau hoi', 'question', 'mat truoc', 'front'));
+    let optionColumns = headers.map((header, index) => ({ header, index })).filter(item => /dap an [1-6]|option [1-6]/.test(item.header)).map(item => item.index);
+    if (!optionColumns.length) optionColumns = [1, 2, 3, 4].filter(index => index < (rows?.[0]?.length || 7));
+    return {
+        question,
+        optionColumns,
+        correct: find('dap an dung', 'correct'),
+        explanation: find('giai thich', 'explanation', 'ghi chu', 'note'),
+        tags: find('nhan', 'tags'),
+        difficulty: find('do kho', 'difficulty'),
+        reversible: find('dao chieu', 'reversible')
+    };
+}
+
 function parseQuizRows(rows) {
     const parsed = [];
+    const columns = detectWorkbookColumns(rows);
     for (let index = 1; index < rows.length; index += 1) {
         const row = rows[index] || [];
-        const question = String(row[0] ?? '').trim();
+        const question = String(row[columns.question] ?? '').trim();
         if (!question) continue;
-        const answerIndex = Math.min(3, Math.max(0, (Number.parseInt(row[5], 10) || 1) - 1));
-        const options = [row[1], row[2], row[3], row[4]].map(value => String(value ?? '').trim());
-        const optionObjects = options.map((text, optionIndex) => ({ text, correct: optionIndex === answerIndex })).filter(option => option.text);
-        if (optionObjects.length < 2) continue;
+        const rawOptions = columns.optionColumns.map(column => String(row[column] ?? '').trim()).filter(Boolean).slice(0, 6);
+        if (rawOptions.length < 2) continue;
+        const rawCorrect = columns.correct >= 0 ? row[columns.correct] : row[5];
+        let answerIndex = normalizeCorrectIndex(rawCorrect);
+        if (Number.isInteger(Number(rawCorrect)) && Number(rawCorrect) >= 1 && Number(rawCorrect) <= rawOptions.length) answerIndex = Number(rawCorrect) - 1;
+        if (answerIndex === null || answerIndex >= rawOptions.length) answerIndex = 0;
+        const optionObjects = rawOptions.map((text, optionIndex) => ({ text, correct: optionIndex === answerIndex }));
         if (preferences.shuffleOptions) shuffleArray(optionObjects);
         parsed.push({
             id: `q-${index}-${simpleHash(question)}`,
             question,
             options: optionObjects.map(option => option.text),
             correct: optionObjects.findIndex(option => option.correct),
-            explanation: String(row[6] ?? '').trim()
+            explanation: String(columns.explanation >= 0 ? row[columns.explanation] ?? '' : row[6] ?? '').trim(),
+            tags: columns.tags >= 0 ? String(row[columns.tags] || '').split(',').map(tag => tag.trim()).filter(Boolean) : [],
+            difficulty: columns.difficulty >= 0 ? String(row[columns.difficulty] || 'medium').trim().toLowerCase() : 'medium'
         });
     }
     if (preferences.shuffleQuestions) shuffleArray(parsed);
@@ -670,16 +751,17 @@ function parseQuizRows(rows) {
 }
 
 function quizQuestionsToRows(questions) {
-    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích']];
+    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó']];
     (questions || []).forEach(question => {
+        const options = (question.options || []).slice(0, 6);
         rows.push([
             question.question || '',
-            question.options?.[0] || '',
-            question.options?.[1] || '',
-            question.options?.[2] || '',
-            question.options?.[3] || '',
+            ...options,
+            ...Array(Math.max(0, 6 - options.length)).fill(''),
             (Number(question.correct) || 0) + 1,
-            question.explanation || ''
+            question.explanation || '',
+            (question.tags || []).join(', '),
+            question.difficulty || 'medium'
         ]);
     });
     return rows;
@@ -697,64 +779,87 @@ function startQuizMode(rows) {
     flaggedQuestions = new Set();
     quizSubmitted = false;
     quizNavPage = 0;
+    currentQuizIndex = 0;
     quizElapsed = 0;
     quizTimeLimitSeconds = Math.max(0, Number(preferences.timeLimit) || 0) * 60;
+    quizStartedAt = Date.now();
+    quizDeadline = quizTimeLimitSeconds > 0 ? quizStartedAt + quizTimeLimitSeconds * 1000 : 0;
     clearInterval(quizTimer);
 
     document.getElementById('quiz-title').textContent = currentFileName || 'Bộ đề trắc nghiệm';
     renderQuizUI();
     showScreen('quiz-app');
+    persistActiveQuizSession();
 
-    quizTimer = window.setInterval(() => {
-        quizElapsed += 1;
-        updateQuizTimer();
-        if (quizTimeLimitSeconds > 0 && quizElapsed >= quizTimeLimitSeconds) {
-            clearInterval(quizTimer);
-            showToast('Đã hết thời gian. Bài được nộp tự động.', 'info');
-            gradeQuiz(true);
-        }
-    }, 1000);
+    quizTimer = window.setInterval(updateQuizTimer, 500);
     updateQuizTimer();
     playSound('start');
 }
 
 function updateQuizTimer() {
     const display = document.getElementById('timer-display');
-    if (!display) return;
+    if (!display || quizSubmitted) return;
+    const now = Date.now();
+    quizElapsed = Math.max(0, Math.floor((now - (quizStartedAt || now)) / 1000));
     if (quizTimeLimitSeconds > 0) {
-        display.textContent = formatDuration(Math.max(0, quizTimeLimitSeconds - quizElapsed));
+        const remaining = Math.max(0, Math.ceil((quizDeadline - now) / 1000));
+        display.textContent = formatDuration(remaining);
+        if (remaining <= 0) {
+            clearInterval(quizTimer);
+            showToast('Đã hết thời gian. Bài được nộp tự động.', 'info');
+            gradeQuiz(true);
+        }
     } else {
         display.textContent = formatDuration(quizElapsed);
     }
 }
 
 function renderQuizUI() {
-    const questionsContainer = document.getElementById('questions-container');
-    const navGrid = document.getElementById('nav-grid');
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-
-    questionsContainer.innerHTML = quizData.map((question, questionIndex) => {
-        const options = question.options.map((option, optionIndex) => `
-            <label class="option-item" id="opt-${questionIndex}-${optionIndex}">
-                <input type="radio" name="q-${questionIndex}" value="${optionIndex}" onchange="selectQuizAnswer(${questionIndex}, ${optionIndex})">
-                <span class="radio-custom"></span>
-                <span class="option-letter">${letters[optionIndex]}</span>
-                <span class="option-text">${parseRichText(option)}</span>
-            </label>`).join('');
-        return `<article class="question-card" id="question-card-${questionIndex}">
-            <div class="q-title-row">
-                <span class="q-number">Câu ${questionIndex + 1}</span>
-                <button class="flag-btn" id="flag-btn-${questionIndex}" onclick="toggleQuizFlag(${questionIndex})"><svg><use href="#i-flag"></use></svg>Đánh dấu</button>
-            </div>
-            <div class="q-content">${parseRichText(question.question)}</div>
-            <div class="options-list">${options}</div>
-            ${question.explanation ? `<div class="expl-box" id="expl-${questionIndex}"><strong>Giải thích</strong><br>${parseRichText(question.explanation)}</div>` : ''}
-        </article>`;
-    }).join('');
-
+    renderCurrentQuizQuestion();
     renderQuizNavigator();
     updateQuizProgress();
+}
+
+function renderCurrentQuizQuestion() {
+    const questionsContainer = document.getElementById('questions-container');
+    if (!questionsContainer || !quizData.length) return;
+    currentQuizIndex = Math.max(0, Math.min(quizData.length - 1, Number(currentQuizIndex) || 0));
+    const question = quizData[currentQuizIndex];
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const selected = quizAnswers[currentQuizIndex];
+    const options = question.options.map((option, optionIndex) => `
+        <label class="option-item ${selected === optionIndex ? 'selected' : ''}" id="opt-${currentQuizIndex}-${optionIndex}">
+            <input type="radio" name="q-${currentQuizIndex}" value="${optionIndex}" onchange="selectQuizAnswer(${currentQuizIndex}, ${optionIndex})" ${selected === optionIndex ? 'checked' : ''}>
+            <span class="radio-custom"></span>
+            <span class="option-letter">${letters[optionIndex]}</span>
+            <span class="option-text">${parseRichText(option)}</span>
+        </label>`).join('');
+    questionsContainer.innerHTML = `<article class="question-card question-card-virtual" id="question-card-${currentQuizIndex}">
+        <div class="q-title-row">
+            <span class="q-number">Câu ${currentQuizIndex + 1} / ${quizData.length}</span>
+            <button class="flag-btn ${flaggedQuestions.has(currentQuizIndex) ? 'active' : ''}" id="flag-btn-${currentQuizIndex}" onclick="toggleQuizFlag(${currentQuizIndex})"><svg><use href="#i-flag"></use></svg>${flaggedQuestions.has(currentQuizIndex) ? 'Đã đánh dấu' : 'Đánh dấu'}</button>
+        </div>
+        <div class="q-content">${parseRichText(question.question)}</div>
+        <div class="options-list">${options}</div>
+        <div class="quiz-question-controls">
+            <button class="btn btn-secondary quiz-step-btn quiz-step-prev" type="button" onclick="moveQuizQuestion(-1)" ${currentQuizIndex <= 0 ? 'disabled' : ''}><svg><use href="#i-back"></use></svg><span>Câu trước</span></button>
+            <span><strong>${currentQuizIndex + 1}</strong><small>trên ${quizData.length}</small></span>
+            <button class="btn btn-secondary quiz-step-btn quiz-step-next" type="button" onclick="moveQuizQuestion(1)" ${currentQuizIndex >= quizData.length - 1 ? 'disabled' : ''}><span>Câu tiếp</span><svg><use href="#i-chevron-right"></use></svg></button>
+        </div>
+    </article>`;
     typesetMath(questionsContainer);
+    updateQuizProgress();
+}
+
+function moveQuizQuestion(direction) {
+    const next = Math.max(0, Math.min(quizData.length - 1, currentQuizIndex + Number(direction || 0)));
+    if (next === currentQuizIndex) return;
+    currentQuizIndex = next;
+    quizNavPage = Math.floor(currentQuizIndex / QUIZ_NAV_PAGE_SIZE);
+    renderQuizUI();
+    persistActiveQuizSession();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    playSound('navigate');
 }
 
 function renderQuizNavigator() {
@@ -767,7 +872,11 @@ function renderQuizNavigator() {
 
     navGrid.innerHTML = quizData.slice(start, end).map((_, offset) => {
         const index = start + offset;
-        return `<button class="nav-item" id="nav-${index}" onclick="scrollToQuizQuestion(${index})">${index + 1}</button>`;
+        const classes = ['nav-item'];
+        if (index === currentQuizIndex) classes.push('current');
+        if (flaggedQuestions.has(index)) classes.push('flagged');
+        else if (quizAnswers[index] !== null) classes.push('done');
+        return `<button class="${classes.join(' ')}" id="nav-${index}" onclick="scrollToQuizQuestion(${index})" aria-current="${index === currentQuizIndex ? 'step' : 'false'}">${index + 1}</button>`;
     }).join('');
 
     const label = document.getElementById('quiz-nav-page-label');
@@ -791,7 +900,9 @@ function changeQuizNavPage(direction) {
 function selectQuizAnswer(questionIndex, optionIndex) {
     if (quizSubmitted) return;
     quizAnswers[questionIndex] = optionIndex;
+    document.querySelectorAll(`input[name="q-${questionIndex}"]`).forEach(input => input.closest('.option-item')?.classList.toggle('selected', Number(input.value) === optionIndex));
     updateQuizProgress();
+    persistActiveQuizSession();
     playSound('select');
 }
 
@@ -799,41 +910,38 @@ function toggleQuizFlag(questionIndex) {
     if (quizSubmitted) return;
     if (flaggedQuestions.has(questionIndex)) flaggedQuestions.delete(questionIndex);
     else flaggedQuestions.add(questionIndex);
-    document.getElementById(`flag-btn-${questionIndex}`).classList.toggle('active', flaggedQuestions.has(questionIndex));
+    const button = document.getElementById(`flag-btn-${questionIndex}`);
+    button?.classList.toggle('active', flaggedQuestions.has(questionIndex));
+    if (button) button.lastChild.textContent = flaggedQuestions.has(questionIndex) ? 'Đã đánh dấu' : 'Đánh dấu';
     updateQuizProgress();
+    persistActiveQuizSession();
     playSound('flag');
 }
 
 function updateQuizProgress() {
     const answered = quizAnswers.filter(answer => answer !== null).length;
     const total = quizData.length || 1;
-    document.getElementById('progress-text').textContent = `${answered} / ${quizData.length}`;
-    document.getElementById('progress-bar').style.width = `${(answered / total) * 100}%`;
+    const progressText = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress-bar');
+    if (progressText) progressText.textContent = `${answered} / ${quizData.length}`;
+    if (progressBar) progressBar.style.width = `${(answered / total) * 100}%`;
     updateMobileQuizProgress(answered, quizData.length);
-
-    quizData.forEach((_, index) => {
-        const nav = document.getElementById(`nav-${index}`);
-        if (!nav || quizSubmitted) return;
+    document.querySelectorAll('.quiz-nav-grid .nav-item').forEach(nav => {
+        const index = Number(nav.id.replace('nav-', ''));
         nav.className = 'nav-item';
+        if (index === currentQuizIndex) nav.classList.add('current');
         if (flaggedQuestions.has(index)) nav.classList.add('flagged');
         else if (quizAnswers[index] !== null) nav.classList.add('done');
     });
 }
 
 function scrollToQuizQuestion(index) {
-    const targetPage = Math.floor(Number(index) / QUIZ_NAV_PAGE_SIZE);
-    if (targetPage !== quizNavPage) {
-        quizNavPage = targetPage;
-        renderQuizNavigator();
-        updateQuizProgress();
-    }
-    const target = document.getElementById(`question-card-${index}`);
-    if (window.matchMedia('(max-width: 900px)').matches && document.body.classList.contains('quiz-nav-open')) {
-        closeMobileQuizNavigator();
-        window.setTimeout(() => target?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 210);
-    } else {
-        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    currentQuizIndex = Math.max(0, Math.min(quizData.length - 1, Number(index) || 0));
+    quizNavPage = Math.floor(currentQuizIndex / QUIZ_NAV_PAGE_SIZE);
+    if (window.matchMedia('(max-width: 900px)').matches && document.body.classList.contains('quiz-nav-open')) closeMobileQuizNavigator();
+    renderQuizUI();
+    persistActiveQuizSession();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function gradeQuiz(autoSubmit = false) {
@@ -1010,7 +1118,7 @@ function confirmLeaveQuiz() {
         showScreen('dashboard-screen');
         return;
     }
-    openConfirmModal('Rời bài đang làm?', 'Tiến độ hiện tại của bài này sẽ không được lưu.', 'Rời bài', () => {
+    openConfirmModal('Rời bài đang làm?', 'Tiến độ hiện tại đã được tự động lưu. Bạn có thể tiếp tục bài này sau khi mở lại trang.', 'Rời bài', () => {
         clearInterval(quizTimer);
         showScreen('dashboard-screen');
     });
@@ -1018,20 +1126,22 @@ function confirmLeaveQuiz() {
 
 function parseFlashcardRows(rows) {
     const cards = [];
+    const columns = detectWorkbookColumns(rows);
     for (let index = 1; index < rows.length; index += 1) {
         const row = rows[index] || [];
-        const front = String(row[0] ?? '').trim();
+        const front = String(row[columns.question] ?? row[0] ?? '').trim();
         if (!front) continue;
-        const answerIndex = Number.parseInt(row[5], 10);
-        let back = '';
-        if (Number.isInteger(answerIndex) && answerIndex >= 1 && answerIndex <= 4) back = String(row[answerIndex] ?? '').trim();
-        if (!back) back = String(row[1] ?? '').trim();
+        const backColumn = columns.optionColumns[0] ?? 1;
+        const back = String(row[backColumn] ?? '').trim();
         if (!back) continue;
         cards.push({
             id: `fc-${simpleHash(`${front}|${back}`)}`,
             front,
             back,
-            explanation: String(row[6] ?? '').trim()
+            explanation: String(columns.explanation >= 0 ? row[columns.explanation] ?? '' : row[6] ?? '').trim(),
+            tags: columns.tags >= 0 ? String(row[columns.tags] || '').split(',').map(tag => tag.trim()).filter(Boolean) : [],
+            difficulty: columns.difficulty >= 0 ? String(row[columns.difficulty] || 'medium').trim().toLowerCase() : 'medium',
+            reversible: columns.reversible >= 0 ? !/^(khong|no|false|0)$/i.test(normalizeHeader(row[columns.reversible])) : true
         });
     }
     return cards;
@@ -1048,8 +1158,8 @@ function getCardMeta(deckKey, cardId) {
 }
 
 function flashcardsToRows(cards) {
-    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích']];
-    (cards || []).forEach(card => rows.push([card.front || '', card.back || '', '', '', '', 1, card.explanation || '']));
+    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
+    (cards || []).forEach(card => rows.push([card.front || '', card.back || '', '', '', '', '', '', 1, card.explanation || '', (card.tags || []).join(', '), card.difficulty || 'medium', card.reversible === false ? 'Không' : 'Có']));
     return rows;
 }
 
@@ -1113,9 +1223,11 @@ function renderFlashcard() {
     fcState.typedChecked = false;
     const cardElement = document.getElementById('fc-card');
     cardElement.classList.remove('is-flipped');
-    const frontText = fcState.reverse ? fcState.current.back : fcState.current.front;
-    const backText = fcState.reverse ? fcState.current.front : fcState.current.back;
-    document.getElementById('fc-side-label').textContent = fcState.reverse ? 'Mặt sau → mặt trước' : 'Mặt trước';
+    const canReverseCurrent = fcState.current.reversible !== false;
+    const reversedCurrent = fcState.reverse && canReverseCurrent;
+    const frontText = reversedCurrent ? fcState.current.back : fcState.current.front;
+    const backText = reversedCurrent ? fcState.current.front : fcState.current.back;
+    document.getElementById('fc-side-label').textContent = reversedCurrent ? 'Mặt sau → mặt trước' : 'Mặt trước';
     document.getElementById('fc-front-text').innerHTML = parseRichText(frontText);
     document.getElementById('fc-back-text').innerHTML = parseRichText(backText);
     document.getElementById('fc-explanation').hidden = true;
@@ -1133,7 +1245,11 @@ function renderFlashcard() {
         if (fcState?.typing && document.querySelector('.app-screen.active')?.id === 'flashcard-app') typedInput.focus();
     }, 40);
 
-    document.getElementById('fc-reverse-toggle').classList.toggle('active', fcState.reverse);
+    const reverseToggle = document.getElementById('fc-reverse-toggle');
+    reverseToggle.classList.toggle('active', reversedCurrent);
+    reverseToggle.disabled = !canReverseCurrent;
+    reverseToggle.setAttribute('aria-disabled', String(!canReverseCurrent));
+    reverseToggle.title = canReverseCurrent ? 'Đảo chiều mặt trước và mặt sau' : 'Thẻ này đã tắt học đảo chiều';
     document.getElementById('fc-type-toggle').classList.toggle('active', fcState.typing);
     document.getElementById('fc-undo-btn').disabled = !fcState.lastAction;
 
@@ -1151,16 +1267,21 @@ function flipCard() {
     if (!fcState?.current) return;
     fcState.flipped = !fcState.flipped;
     document.getElementById('fc-card').classList.toggle('is-flipped', fcState.flipped);
+    const reversedCurrent = fcState.reverse && fcState.current.reversible !== false;
     document.getElementById('fc-side-label').textContent = fcState.flipped
-        ? (fcState.reverse ? 'Mặt trước' : 'Mặt sau')
-        : (fcState.reverse ? 'Mặt sau → mặt trước' : 'Mặt trước');
+        ? (reversedCurrent ? 'Mặt trước' : 'Mặt sau')
+        : (reversedCurrent ? 'Mặt sau → mặt trước' : 'Mặt trước');
     document.getElementById('fc-rating-wrap').hidden = !fcState.flipped;
     document.getElementById('fc-explanation').hidden = !(fcState.flipped && fcState.current.explanation);
     playSound('flip');
 }
 
 function toggleFlashcardReverse() {
-    if (!fcState) return;
+    if (!fcState?.current) return;
+    if (fcState.current.reversible === false) {
+        showToast('Thẻ này đã được đặt chỉ học theo chiều mặt trước → mặt sau.', 'info');
+        return;
+    }
     fcState.reverse = !fcState.reverse;
     renderFlashcard();
     showToast(fcState.reverse ? 'Đang học đảo chiều: mặt sau → mặt trước.' : 'Đã trở về chiều học thông thường.', 'info');
@@ -1222,7 +1343,7 @@ function checkFlashcardTypedAnswer() {
         showToast('Hãy nhập câu trả lời trước khi kiểm tra.', 'info');
         return;
     }
-    const expected = fcState.reverse ? fcState.current.front : fcState.current.back;
+    const expected = fcState.reverse && fcState.current.reversible !== false ? fcState.current.front : fcState.current.back;
     const score = answerSimilarity(input, expected);
     const feedback = document.getElementById('fc-type-feedback');
     const percent = Math.round(score * 100);
@@ -1440,7 +1561,7 @@ function confirmLeaveFlashcards() {
         showScreen('dashboard-screen');
         return;
     }
-    openConfirmModal('Rời phiên flashcard?', 'Lịch ôn của các thẻ đã đánh giá vẫn được lưu, nhưng phiên hiện tại sẽ kết thúc.', 'Rời phiên', () => showScreen('dashboard-screen'));
+    openConfirmModal('Rời phiên flashcard?', 'Tiến độ phiên hiện tại và lịch ôn đã được tự động lưu. Bạn có thể tiếp tục sau khi mở lại trang.', 'Rời phiên', () => showScreen('dashboard-screen'));
 }
 
 function openCreator(mode) {
@@ -1461,7 +1582,7 @@ function openCreator(mode) {
                 activeCreatorId = null;
                 ensureCreatorItems();
                 renderCreator();
-                localStorage.setItem(CREATOR_RECOVERY_KEY, '1');
+                safeStorageSet(CREATOR_RECOVERY_KEY, '1');
                 showToast('Đã khôi phục bản nháp.', 'success');
             },
             'Bỏ qua',
@@ -1469,7 +1590,7 @@ function openCreator(mode) {
                 recoveryCreatorDrafts = null;
                 creatorDrafts = { quiz: [createBlankCreatorItem('quiz')], flashcard: [createBlankCreatorItem('flashcard')] };
                 activeCreatorId = creatorDrafts[creatorMode][0].id;
-                localStorage.removeItem(CREATOR_RECOVERY_KEY);
+                safeStorageRemove(CREATOR_RECOVERY_KEY);
                 saveCreatorDrafts(false);
                 renderCreator();
             }
@@ -1697,7 +1818,7 @@ function renderCreatorEditor() {
     const moveActions = `<button class="icon-btn small" onclick="moveCreatorItem(-1)" title="Di chuyển lên" ${index <= 1 ? 'disabled' : ''}>↑</button><button class="icon-btn small" onclick="moveCreatorItem(1)" title="Di chuyển xuống" ${index >= items.length ? 'disabled' : ''}>↓</button>`;
 
     if (creatorMode === 'quiz') {
-        const optionLetters = ['A', 'B', 'C', 'D'];
+        const optionLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
         editor.innerHTML = `<div class="editor-header"><div><span class="section-kicker">Trắc nghiệm</span><h2>Câu hỏi ${index}</h2></div><div class="editor-actions">${moveActions}<button class="icon-btn small" onclick="duplicateCreatorItem()" title="Nhân bản"><svg><use href="#i-copy"></use></svg></button><button class="icon-btn small danger-soft" onclick="deleteCreatorItem()" title="Xóa"><svg><use href="#i-trash"></use></svg></button></div></div>
             ${validation}
             <div class="editor-section"><label><span class="field-label-row"><span>Nội dung câu hỏi</span><span class="field-tools"><button onclick="triggerCreatorImage('question')">Chèn ảnh</button></span></span><textarea class="editor-textarea" rows="5" data-creator-field="question" oninput="updateCreatorField('question', this.value)" onpaste="handleCreatorPaste(event, 'question')" placeholder="Nhập câu hỏi, hỗ trợ công thức $...$">${escapeHTML(item.question)}</textarea><input id="creator-file-question" type="file" accept="image/*" hidden onchange="insertCreatorImage(event, 'question')"></label></div>
@@ -1716,7 +1837,7 @@ function renderCreatorPreview() {
     const item = getActiveCreatorItem();
     const preview = document.getElementById('creator-preview');
     if (creatorMode === 'quiz') {
-        const letters = ['A', 'B', 'C', 'D'];
+        const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
         preview.innerHTML = `<div class="preview-question">${parseRichText(item.question || 'Nội dung câu hỏi sẽ xuất hiện tại đây.')}</div>${item.options.map((option, index) => `<div class="preview-option ${item.correct !== null && item.correct !== undefined && Number(item.correct) === index ? 'correct' : ''}"><span>${letters[index]}</span><span>${parseRichText(option || `Đáp án ${letters[index]}`)}</span></div>`).join('')}${item.explanation ? `<div class="review-explanation"><small>Giải thích</small>${parseRichText(item.explanation)}</div>` : ''}`;
     } else {
         preview.innerHTML = `<div class="preview-flashcard"><small>Mặt trước</small><strong>${parseRichText(item.front || 'Nội dung mặt trước')}</strong><span style="color:var(--text-soft);font-size:.65rem">Bấm thẻ khi học để xem mặt sau</span></div><div class="preview-flashcard back-preview"><small>Mặt sau</small><strong>${parseRichText(item.back || 'Nội dung mặt sau')}</strong></div>${item.explanation ? `<div class="review-explanation"><small>Ghi chú</small>${parseRichText(item.explanation)}</div>` : ''}`;
@@ -1796,7 +1917,7 @@ function deleteCreatorItem() {
         creatorDrafts[creatorMode] = [createBlankCreatorItem(creatorMode)];
         activeCreatorId = creatorDrafts[creatorMode][0].id;
         saveCreatorDrafts(false);
-        localStorage.removeItem(CREATOR_RECOVERY_KEY);
+        safeStorageRemove(CREATOR_RECOVERY_KEY);
         renderCreator();
         return;
     }
@@ -1846,7 +1967,7 @@ function clearCreatorItems() {
         creatorDrafts[creatorMode] = [createBlankCreatorItem(creatorMode)];
         activeCreatorId = creatorDrafts[creatorMode][0].id;
         saveCreatorDrafts(false);
-        localStorage.removeItem(CREATOR_RECOVERY_KEY);
+        safeStorageRemove(CREATOR_RECOVERY_KEY);
         renderCreator();
         playSound('delete');
     });
@@ -1857,7 +1978,7 @@ function openCreatorPreview() {
     const container = document.getElementById('creator-full-preview');
     document.getElementById('creator-full-preview-title').textContent = creatorMode === 'quiz' ? `Xem trước ${items.length} câu trắc nghiệm` : `Xem trước ${items.length} flashcard`;
     if (creatorMode === 'quiz') {
-        const letters = ['A', 'B', 'C', 'D'];
+        const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
         container.innerHTML = items.map((item, index) => {
             const errors = validateCreatorItem(item);
             return `<article class="full-preview-item ${errors.length ? 'invalid' : ''}"><div class="full-preview-head"><strong>Câu ${index + 1}</strong>${errors.length ? `<span>${errors.length} lỗi</span>` : '<span class="valid">Hoàn chỉnh</span>'}</div><div class="preview-question">${parseRichText(item.question || 'Chưa nhập câu hỏi')}</div>${item.options.map((option, optionIndex) => `<div class="preview-option ${item.correct !== null && item.correct !== undefined && Number(item.correct) === optionIndex ? 'correct' : ''}"><span>${letters[optionIndex]}</span><span>${parseRichText(option || 'Chưa nhập đáp án')}</span></div>`).join('')}${item.explanation ? `<div class="review-explanation"><small>Giải thích</small>${parseRichText(item.explanation)}</div>` : ''}</article>`;
@@ -1926,7 +2047,7 @@ function insertCreatorImageMarkup(field, dataURL) {
     showToast('Đã chèn hình ảnh vào nội dung.', 'success');
 }
 
-function exportCreatorToExcel() {
+async function exportCreatorToExcel() {
     const items = getCurrentCreatorItems();
     const validation = getCreatorValidationSummary();
     if (validation.invalid.length) {
@@ -1936,32 +2057,37 @@ function exportCreatorToExcel() {
         showToast(`Không thể xuất: còn ${validation.invalid.length} ${noun} chưa hoàn chỉnh.`, 'error');
         return;
     }
-
-    const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích']];
-    if (creatorMode === 'quiz') {
-        items.forEach(item => rows.push([
-            item.question,
-            item.options[0],
-            item.options[1],
-            item.options[2],
-            item.options[3],
-            Number(item.correct) + 1,
-            item.explanation || ''
-        ]));
-    } else {
-        items.forEach(item => rows.push([item.front, item.back, '', '', '', 1, item.explanation || '']));
+    try {
+        const XLSX = await window.EdTechLibraries.loadXLSX();
+        const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án 5', 'Đáp án 6', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
+        if (creatorMode === 'quiz') {
+            items.forEach(item => rows.push([
+                item.question,
+                ...(item.options || []).slice(0, 6),
+                ...Array(Math.max(0, 6 - (item.options || []).length)).fill(''),
+                Number(item.correct) + 1,
+                item.explanation || '',
+                (item.tags || []).join(', '),
+                item.difficulty || 'medium',
+                ''
+            ]));
+        } else {
+            items.forEach(item => rows.push([item.front, item.back, '', '', '', '', '', 1, item.explanation || '', (item.tags || []).join(', '), item.difficulty || 'medium', item.reversible === false ? 'Không' : 'Có']));
+        }
+        const worksheet = XLSX.utils.aoa_to_sheet(rows);
+        worksheet['!cols'] = [{ wch: 48 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 48 }, { wch: 24 }, { wch: 14 }, { wch: 12 }];
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard');
+        const typeName = creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard';
+        XLSX.writeFile(workbook, `EdTech_LMS_Pro_${typeName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        await window.EdTechDB?.saveQuestionSet({ name: `Bộ ${typeName} ${new Date().toLocaleDateString('vi-VN')}`, type: creatorMode, rows: clone(rows), source: 'creator' });
+        saveCreatorDrafts(false);
+        markCreatorDraftComplete();
+        playSound('success');
+        showToast('Đã xuất Excel và lưu bộ đề trên thiết bị.', 'success');
+    } catch (error) {
+        showToast(error.message || 'Không thể xuất file Excel.', 'error');
     }
-
-    const worksheet = XLSX.utils.aoa_to_sheet(rows);
-    worksheet['!cols'] = [{ wch: 48 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 48 }];
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard');
-    const typeName = creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard';
-    XLSX.writeFile(workbook, `EdTech_LMS_Pro_${typeName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
-    saveCreatorDrafts(false);
-    markCreatorDraftComplete();
-    playSound('success');
-    showToast('Đã xuất file Excel.', 'success');
 }
 
 function openPromptPanel() {
@@ -2122,9 +2248,9 @@ function cleanJSONText(text) {
 }
 
 function normalizeCorrectIndex(value) {
-    if (value !== null && value !== undefined && value !== '' && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 3) return Number(value);
+    if (value !== null && value !== undefined && value !== '' && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 5) return Number(value);
     const letter = String(value || '').trim().toUpperCase();
-    if (/^[A-D]$/.test(letter)) return letter.charCodeAt(0) - 65;
+    if (/^[A-F]$/.test(letter)) return letter.charCodeAt(0) - 65;
     return null;
 }
 
@@ -2135,11 +2261,11 @@ function parseImportEntry(entry, index) {
         const item = {
             id: makeId('quiz'),
             question: String(entry.question ?? '').trim(),
-            options: Array.isArray(entry.options) ? entry.options.slice(0, 4).map(value => String(value ?? '').trim()) : [],
+            options: Array.isArray(entry.options) ? entry.options.slice(0, 6).map(value => String(value ?? '').trim()) : [],
             correct: normalizeCorrectIndex(entry.correct ?? entry.correctAnswer),
             explanation: String(entry.explanation ?? '').trim()
         };
-        while (item.options.length < 4) item.options.push('');
+        while (item.options.length < 2) item.options.push('');
         errors.push(...validateCreatorItem(item, 'quiz'));
         return { index, errors, item };
     }
@@ -2147,7 +2273,10 @@ function parseImportEntry(entry, index) {
         id: makeId('fc'),
         front: String(entry.front ?? '').trim(),
         back: String(entry.back ?? '').trim(),
-        explanation: String(entry.explanation ?? entry.note ?? '').trim()
+        explanation: String(entry.explanation ?? entry.note ?? '').trim(),
+        tags: Array.isArray(entry.tags) ? entry.tags.map(value => String(value || '').trim()).filter(Boolean).slice(0, 12) : [],
+        difficulty: ['easy', 'medium', 'hard'].includes(entry.difficulty) ? entry.difficulty : 'medium',
+        reversible: entry.reversible !== false
     };
     errors.push(...validateCreatorItem(item, 'flashcard'));
     return { index, errors, item };
@@ -2240,11 +2369,9 @@ function initAudio() {
     return audioContext;
 }
 
-function unlockAudio() {
-    const context = initAudio();
-    if (!context) return;
-    if (context.state === 'suspended') context.resume();
-    soundUnlocked = true;
+async function unlockAudio() {
+    soundUnlocked = await (window.EdTechAudio?.unlock?.() ?? Promise.resolve(false));
+    if (!window.EdTechAudio) { const context = initAudio(); if (context?.state === 'suspended') await context.resume(); soundUnlocked = Boolean(context); }
 }
 
 function tone(frequency, duration, volume, type = 'sine', delay = 0) {
@@ -2284,73 +2411,25 @@ function sweepTone(fromFrequency, toFrequency, duration, volume, type = 'sine', 
 
 function playIntroSequenceSound() {
     if (introSoundPlayed || !preferences.sound || !soundUnlocked) return false;
-    const context = initAudio();
-    if (!context || context.state !== 'running') return false;
     introSoundPlayed = true;
-    sweepTone(155, 360, .28, .052, 'sine');
-    tone(480, .11, .042, 'triangle', .19);
-    sweepTone(420, 820, .24, .047, 'sine', .38);
-    tone(980, .18, .034, 'sine', .54);
-    return true;
+    return window.EdTechAudio?.play('intro', { force: true }) || false;
 }
 
 function playSound(name) {
     if (!preferences.sound || !soundUnlocked) return;
-    switch (name) {
-        case 'navigate':
-            tone(330, .08, .025, 'sine');
-            tone(440, .1, .018, 'sine', .04);
-            break;
-        case 'select':
-            tone(520, .07, .022, 'sine');
-            break;
-        case 'flag':
-            tone(420, .08, .02, 'triangle');
-            tone(620, .08, .018, 'triangle', .05);
-            break;
-        case 'flip':
-            tone(240, .09, .022, 'sine');
-            tone(480, .11, .018, 'sine', .045);
-            break;
-        case 'upload':
-            tone(380, .08, .024, 'triangle');
-            tone(570, .1, .022, 'triangle', .06);
-            break;
-        case 'add':
-            tone(460, .06, .022, 'sine');
-            tone(690, .08, .018, 'sine', .035);
-            break;
-        case 'wrong':
-            tone(280, .13, .025, 'triangle');
-            tone(210, .16, .02, 'triangle', .08);
-            break;
-        case 'delete':
-            tone(330, .08, .02, 'triangle');
-            tone(220, .12, .018, 'triangle', .05);
-            break;
-        case 'start':
-            tone(330, .1, .022, 'sine');
-            tone(440, .1, .022, 'sine', .07);
-            tone(660, .14, .018, 'sine', .14);
-            break;
-        case 'success':
-            tone(392, .12, .026, 'sine');
-            tone(523, .13, .024, 'sine', .08);
-            tone(659, .18, .022, 'sine', .16);
-            break;
-        case 'complete':
-            tone(330, .12, .022, 'sine');
-            tone(440, .15, .02, 'sine', .09);
-            break;
-        default:
-            tone(420, .05, .015, 'sine');
+    if (window.EdTechAudio) {
+        window.EdTechAudio.setEnabled(preferences.sound);
+        window.EdTechAudio.play(name);
+        return;
     }
+    tone(420, .05, .015, 'sine');
 }
 
 function toggleSound() {
     preferences.sound = !preferences.sound;
     try {
         localStorage.setItem(PREF_KEY, JSON.stringify(preferences));
+        window.EdTechDB?.savePreferences(clone(preferences)).catch(() => {});
     } catch (error) {
         console.warn('Không thể lưu tùy chọn âm thanh:', error);
     }
@@ -2649,17 +2728,28 @@ async function copyDonationAccount() {
 function setRandomFocusMotivation() {
     const element = document.getElementById('focus-motivation');
     if (!element || !FOCUS_MOTIVATIONS.length) return;
-    const previousIndex = Number(sessionStorage.getItem('edtech_focus_quote_index'));
+    let previousIndex = -1;
+    try { previousIndex = Number(sessionStorage.getItem('edtech_focus_quote_index')); } catch (_) {}
     let index = Math.floor(Math.random() * FOCUS_MOTIVATIONS.length);
     if (FOCUS_MOTIVATIONS.length > 1 && index === previousIndex) {
         index = (index + 1 + Math.floor(Math.random() * (FOCUS_MOTIVATIONS.length - 1))) % FOCUS_MOTIVATIONS.length;
     }
-    sessionStorage.setItem('edtech_focus_quote_index', String(index));
+    try { sessionStorage.setItem('edtech_focus_quote_index', String(index)); } catch (_) {}
     element.textContent = FOCUS_MOTIVATIONS[index];
 }
 
-function initApp() {
+async function initApp() {
     initBrandIntro();
+    try {
+        const persisted = await window.EdTechDB?.bootstrap({ learningKey: STORAGE_KEY, creatorKey: CREATOR_KEY, preferenceKey: PREF_KEY, recoveryKey: CREATOR_RECOVERY_KEY });
+        if (persisted?.learning && typeof persisted.learning === 'object') appData = { ...clone(EMPTY_DATA), ...persisted.learning };
+        if (persisted?.preferences && typeof persisted.preferences === 'object') preferences = { ...preferences, ...persisted.preferences };
+        if (persisted?.creatorDrafts && typeof persisted.creatorDrafts === 'object') {
+            creatorDrafts = { quiz: Array.isArray(persisted.creatorDrafts.quiz) ? persisted.creatorDrafts.quiz : [], flashcard: Array.isArray(persisted.creatorDrafts.flashcard) ? persisted.creatorDrafts.flashcard : [] };
+        }
+    } catch (error) {
+        console.warn('IndexedDB bootstrap fallback:', error);
+    }
     setRandomFocusMotivation();
     if (!Array.isArray(appData.history)) appData.history = [];
     if (!appData.flashcards || typeof appData.flashcards !== 'object') appData.flashcards = {};
@@ -2713,7 +2803,14 @@ function initApp() {
         savePreferences();
         saveLearningData();
         saveCreatorDrafts(false);
+        window.persistActiveQuizSession?.();
     });
+
+    window.EdTechTheme?.init();
+    window.renderLocalQuestionSets?.();
+    await window.offerRestoreActiveSession?.();
+    window.EdTechRouter?.applyRoute();
+    document.documentElement.classList.add('app-ready');
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
