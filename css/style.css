@@ -5318,3 +5318,191 @@ html.intro-pending.intro-app-preview .ambient {
         grid-row: 1;
     }
 }
+
+
+/* ===== v8: compact creator grid, faster intro and calm dashboard mascot ===== */
+.creator-item-list {
+    max-height: none;
+    display: block;
+    overflow: visible;
+    padding: 0;
+    margin: 0 0 12px;
+}
+
+.creator-number-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.creator-grid-tile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+    padding: 0;
+    border-radius: 12px;
+    overflow: visible;
+    cursor: grab;
+}
+
+.creator-grid-tile:active { cursor: grabbing; }
+.creator-grid-tile.active { box-shadow: 0 0 0 2px rgba(67, 107, 140, .14); }
+.creator-grid-tile.invalid { background: #fff9f6; }
+.creator-grid-tile.valid { background: #fbfefc; }
+
+.creator-grid-select {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    color: var(--text);
+    background: transparent;
+}
+
+.creator-grid-select strong {
+    font-size: .76rem;
+    line-height: 1;
+    font-weight: 850;
+}
+
+.creator-grid-select .creator-validity-dot {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 6px;
+    height: 6px;
+}
+
+.creator-grid-delete {
+    position: absolute;
+    z-index: 2;
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #f0d4cc;
+    border-radius: 50%;
+    color: var(--danger);
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(85, 55, 48, .1);
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1;
+    opacity: .72;
+}
+
+.creator-grid-tile:hover .creator-grid-delete,
+.creator-grid-tile.active .creator-grid-delete,
+.creator-grid-delete:focus-visible { opacity: 1; }
+
+.creator-list-pagination {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--surface-soft);
+}
+
+.creator-list-pagination button {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--primary-dark);
+    background: #fff;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.creator-list-pagination button:disabled { opacity: .34; }
+.creator-list-pagination span { min-width: 0; display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+.creator-list-pagination strong { font-size: .64rem; }
+.creator-list-pagination small { color: var(--text-soft); font-size: .54rem; }
+.creator-list-count { margin-top: 9px; color: var(--text-faint); font-size: .57rem; text-align: center; }
+
+.import-actions.single-action { grid-template-columns: 1fr; }
+.import-actions.single-action .btn { width: 100%; }
+
+/* Faster visual rhythm. Sound is synthesized in JS when browser audio policy permits it. */
+.intro-owl-wrap {
+    animation: introOwlArrive .62s cubic-bezier(.2,.75,.2,1) both, introOwlFloat 2.2s .62s ease-in-out infinite alternate;
+}
+.intro-shadow { animation-delay: .62s; }
+.intro-star { animation: introStar .5s .3s cubic-bezier(.2,.8,.2,1) both, introSparkle 1.55s .82s ease-in-out infinite; }
+.intro-book-left { animation: introBookLeft .42s .16s cubic-bezier(.2,.8,.2,1) both; }
+.intro-book-right { animation: introBookRight .42s .16s cubic-bezier(.2,.8,.2,1) both; }
+.intro-eye { animation-delay: .65s; }
+.intro-brand-mini { animation: introTextIn .34s .5s var(--ease) forwards; }
+.intro-wordmark strong { animation: introFocusIn .48s .6s cubic-bezier(.2,.8,.2,1) forwards; }
+.intro-wordmark small { animation: introTextIn .34s .88s var(--ease) forwards; }
+.brand-intro.is-clearing .intro-owl-wrap,
+.brand-intro.is-clearing .intro-wordmark,
+.brand-intro.is-clearing .intro-glow { transition-duration: .25s, .28s; }
+.brand-intro.is-support-stage .intro-support-stage { animation-duration: .44s; animation-delay: .02s; }
+.brand-intro.is-support-stage .intro-donate-demo { animation-duration: .34s; animation-delay: .14s; }
+.brand-intro.is-support-stage .intro-guide-pointer { animation: introGuideIn .34s .22s ease forwards, introGuideBounce 1.15s .62s ease-in-out infinite alternate; }
+.brand-intro.is-ready-to-close .intro-tap-hint { animation-delay: 0s, .4s; }
+
+.brand-illustration svg {
+    transform-box: fill-box;
+    transform-origin: 50% 76%;
+    animation: dashboardOwlFloat 5.4s ease-in-out infinite;
+}
+.dashboard-owl-eyes {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dashboardOwlBlink 6.2s ease-in-out infinite;
+}
+.dashboard-owl-star {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: dashboardOwlSpark 2.5s ease-in-out infinite;
+}
+
+@keyframes dashboardOwlFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(.45deg); }
+}
+@keyframes dashboardOwlBlink {
+    0%, 45%, 51%, 100% { transform: scaleY(1); }
+    48% { transform: scaleY(.12); }
+}
+@keyframes dashboardOwlSpark {
+    0%, 100% { opacity: .64; transform: scale(.86) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.14) rotate(18deg); }
+}
+
+@media (max-width: 900px) {
+    .creator-item-list { max-height: none; }
+    .creator-number-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .creator-number-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }
+    .creator-grid-tile { border-radius: 13px; }
+    .creator-grid-select strong { font-size: .8rem; }
+    .creator-grid-delete { width: 20px; height: 20px; top: -6px; right: -6px; }
+    .creator-list-pagination { margin-top: 14px; }
+    .intro-tap-hint span:last-child { font-size: .55rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-illustration svg,
+    .dashboard-owl-eyes,
+    .dashboard-owl-star { animation: none !important; }
+}

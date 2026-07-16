@@ -76,7 +76,7 @@
             </div>
             <div class="intro-tap-hint" id="intro-tap-hint" aria-hidden="true">
                 <span class="intro-tap-dot"></span>
-                <span>Chạm vào màn hình để tiếp tục</span>
+                <span>Chạm vào vùng trống để tiếp tục</span>
             </div>
         </div>
     </div>
@@ -190,13 +190,13 @@
                                 <circle cx="145" cy="132" r="22" fill="none" stroke="#d8a85c" stroke-width="6"/>
                                 <circle cx="215" cy="132" r="22" fill="none" stroke="#d8a85c" stroke-width="6"/>
                                 <path d="M167 132h26" stroke="#d8a85c" stroke-width="5" stroke-linecap="round"/>
-                                <path d="M136 132c4 7 14 7 18 0M206 132c4 7 14 7 18 0" fill="none" stroke="#34546c" stroke-width="4" stroke-linecap="round"/>
+                                <path class="dashboard-owl-eyes" d="M136 132c4 7 14 7 18 0M206 132c4 7 14 7 18 0" fill="none" stroke="#34546c" stroke-width="4" stroke-linecap="round"/>
                                 <path d="m180 143-9 9h18z" fill="#e3aa55"/>
                                 <path d="M150 178c18 18 42 18 60 0" fill="none" stroke="#d9c7a7" stroke-width="3" stroke-linecap="round"/>
                                 <path d="M94 207c23-20 54-19 86 5v48c-34-24-62-27-86-8z" fill="url(#bookCover)"/>
                                 <path d="M266 207c-23-20-54-19-86 5v48c34-24 62-27 86-8z" fill="url(#bookCover)"/>
                                 <path d="M180 212v48" stroke="#f4ead7" stroke-width="4"/>
-                                <path d="m222 224 4 11 11 4-11 4-4 11-4-11-11-4 11-4z" fill="#f2c56c"/>
+                                <path class="dashboard-owl-star" d="m222 224 4 11 11 4-11 4-4 11-4-11-11-4 11-4z" fill="#f2c56c"/>
                                 <path d="M120 70c18-14 36-18 56-13M240 70c-18-14-36-18-56-13" stroke="#34546c" stroke-width="8" stroke-linecap="round" fill="none"/>
                                 <path d="M91 213c-17 8-29 22-34 42M269 213c17 8 29 22 34 42" stroke="#8ca58e" stroke-width="5" stroke-linecap="round"/>
                                 <path d="M67 237c-10-2-17-8-21-17M293 237c10-2 17-8 21-17" stroke="#8ca58e" stroke-width="4" stroke-linecap="round"/>
@@ -487,7 +487,7 @@
             <button class="modal-close" onclick="closePromptPanel()" aria-label="Đóng">×</button>
             <span class="section-kicker">Dùng AI bên ngoài, không tích hợp API</span>
             <h2>Copy prompt chuẩn</h2>
-            <p>Copy prompt, gửi vào ChatGPT/Gemini/Claude, sau đó dán JSON trả về để kiểm tra và nhập vào bộ đề.</p>
+            <p>Copy prompt, gửi vào ChatGPT/Gemini/Claude, sau đó dán JSON trả về. Ứng dụng sẽ tự kiểm tra và chỉ nhập dữ liệu hợp lệ.</p>
             <div class="prompt-mode-tabs"><button id="prompt-tab-new" class="active" onclick="setPromptMode('new')">Tạo câu hỏi từ tài liệu</button><button id="prompt-tab-existing" onclick="setPromptMode('existing')">Chuẩn hóa file có câu hỏi sẵn</button></div>
             <div id="prompt-new-panel" class="prompt-mode-panel">
                 <div class="prompt-options"><label>Số lượng<input type="number" id="prompt-count" min="1" max="100" value="10"></label><label>Độ khó<select id="prompt-difficulty"><option value="cơ bản">Cơ bản</option><option value="trung bình" selected>Trung bình</option><option value="nâng cao">Nâng cao</option><option value="trộn đều">Trộn đều</option></select></label></div>
@@ -504,11 +504,11 @@
                 </div>
             </div>
             <div class="modal-actions"><button class="btn btn-secondary" onclick="copyCreatorPrompt()"><svg><use href="#i-copy"></use></svg>Copy prompt</button></div>
-            <div class="import-divider"><span>Kiểm tra JSON trước khi nhập</span></div>
+            <div class="import-divider"><span>Dán JSON và nhập trực tiếp</span></div>
             <label class="modal-field">Dán JSON tại đây<textarea id="ai-json-import" rows="7" oninput="resetImportAnalysis()" placeholder='[{"question":"...","options":["..."],"correct":0,"explanation":"..."}]'></textarea></label>
             <div class="import-mode-row"><span>Cách nhập</span><label><input type="radio" name="json-import-mode" value="append" checked>Thêm vào bộ hiện tại</label><label><input type="radio" name="json-import-mode" value="replace">Thay thế toàn bộ</label></div>
             <div id="import-analysis" class="import-analysis" hidden></div>
-            <div class="modal-actions import-actions"><button class="btn btn-secondary" onclick="analyzeAIJsonResult()"><svg><use href="#i-eye"></use></svg>Kiểm tra JSON</button><button class="btn btn-primary" id="commit-json-import" onclick="commitAIJsonImport()" disabled><svg><use href="#i-upload"></use></svg>Nhập dữ liệu hợp lệ</button></div>
+            <div class="modal-actions import-actions single-action"><button class="btn btn-primary" id="commit-json-import" onclick="importAIJsonResult()" disabled><svg><use href="#i-upload"></use></svg>Nhập dữ liệu hợp lệ</button></div>
         </div>
     </div>
 

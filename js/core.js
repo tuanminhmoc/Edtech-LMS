@@ -160,9 +160,12 @@ let creatorRecoveryOffered = false;
 let promptMode = 'new';
 let pendingImportAnalysis = null;
 let draggedCreatorId = null;
+let creatorListPage = 0;
+const CREATOR_LIST_PAGE_SIZE = 25;
 
 let audioContext = null;
 let soundUnlocked = false;
+let introSoundPlayed = false;
 let mobileQuizNavTimer = null;
 var mobileResultReviewTimer = null;
 
@@ -1520,6 +1523,7 @@ function setCreatorMode(mode) {
     activeCreatorId = null;
     creatorSearchQuery = '';
     creatorFilter = 'all';
+    creatorListPage = 0;
     const search = document.getElementById('creator-search');
     const filter = document.getElementById('creator-filter');
     if (search) search.value = '';
@@ -1563,11 +1567,13 @@ function renderCreatorValidationState() {
 
 function setCreatorSearch(value) {
     creatorSearchQuery = String(value || '').trim().toLowerCase();
+    creatorListPage = 0;
     renderCreatorList();
 }
 
 function setCreatorFilter(value) {
     creatorFilter = ['invalid', 'valid'].includes(value) ? value : 'all';
+    creatorListPage = 0;
     renderCreatorList();
 }
 
@@ -1584,25 +1590,62 @@ function getFilteredCreatorItems() {
     });
 }
 
+function setCreatorListPage(page) {
+    const items = getFilteredCreatorItems();
+    const pageCount = Math.max(1, Math.ceil(items.length / CREATOR_LIST_PAGE_SIZE));
+    creatorListPage = Math.max(0, Math.min(pageCount - 1, Number(page) || 0));
+    renderCreatorList();
+}
+
+function focusCreatorListOnActive() {
+    const filtered = getFilteredCreatorItems();
+    const index = filtered.findIndex(item => item.id === activeCreatorId);
+    if (index >= 0) creatorListPage = Math.floor(index / CREATOR_LIST_PAGE_SIZE);
+}
+
+function resetCreatorListView() {
+    creatorSearchQuery = '';
+    creatorFilter = 'all';
+    const search = document.getElementById('creator-search');
+    const filter = document.getElementById('creator-filter');
+    if (search) search.value = '';
+    if (filter) filter.value = 'all';
+}
+
 function renderCreatorList() {
     const allItems = getCurrentCreatorItems();
     const items = getFilteredCreatorItems();
     const container = document.getElementById('creator-item-list');
     if (!items.length) {
+        creatorListPage = 0;
         container.innerHTML = '<div class="creator-list-empty">Không có mục phù hợp với bộ lọc.</div>';
         return;
     }
-    container.innerHTML = items.map(item => {
+
+    const pageCount = Math.max(1, Math.ceil(items.length / CREATOR_LIST_PAGE_SIZE));
+    creatorListPage = Math.max(0, Math.min(pageCount - 1, creatorListPage));
+    const startIndex = creatorListPage * CREATOR_LIST_PAGE_SIZE;
+    const visibleItems = items.slice(startIndex, startIndex + CREATOR_LIST_PAGE_SIZE);
+    const tiles = visibleItems.map(item => {
         const index = allItems.findIndex(entry => entry.id === item.id);
         const title = creatorMode === 'quiz' ? item.question : item.front;
         const errors = validateCreatorItem(item);
-        return `<div class="creator-list-item ${item.id === activeCreatorId ? 'active' : ''} ${errors.length ? 'invalid' : 'valid'}" draggable="true" ondragstart="beginCreatorDrag(event, '${item.id}')" ondragover="allowCreatorDrop(event)" ondrop="dropCreatorItem(event, '${item.id}')">
-            <button class="creator-list-select" type="button" onclick="selectCreatorItem('${item.id}')">
-                <span>${index + 1}</span><span><strong>${escapeHTML(title || (creatorMode === 'quiz' ? 'Câu hỏi chưa nhập' : 'Thẻ chưa nhập'))}</strong><small>${errors.length ? `${errors.length} lỗi cần sửa` : (creatorMode === 'quiz' ? 'Trắc nghiệm 4 đáp án' : 'Mặt trước / mặt sau')}</small></span><span class="creator-validity-dot" title="${errors.length ? escapeHTML(errors.join(' ')) : 'Hoàn chỉnh'}"></span>
+        const fallback = creatorMode === 'quiz' ? 'Câu hỏi chưa nhập' : 'Thẻ chưa nhập';
+        const tooltip = `${creatorMode === 'quiz' ? 'Câu' : 'Thẻ'} ${index + 1}: ${title || fallback}${errors.length ? ` · ${errors.length} lỗi cần sửa` : ' · Hoàn chỉnh'}`;
+        return `<div class="creator-list-item creator-grid-tile ${item.id === activeCreatorId ? 'active' : ''} ${errors.length ? 'invalid' : 'valid'}" draggable="true" title="${escapeHTML(tooltip)}" ondragstart="beginCreatorDrag(event, '${item.id}')" ondragover="allowCreatorDrop(event)" ondrop="dropCreatorItem(event, '${item.id}')">
+            <button class="creator-list-select creator-grid-select" type="button" onclick="selectCreatorItem('${item.id}')" aria-label="Mở ${creatorMode === 'quiz' ? 'câu hỏi' : 'thẻ'} ${index + 1}">
+                <strong>${index + 1}</strong><span class="creator-validity-dot" aria-hidden="true"></span>
             </button>
-            <button class="creator-list-delete" type="button" onclick="deleteCreatorItemById('${item.id}', event)" title="Xóa riêng mục này" aria-label="Xóa riêng mục ${index + 1}"><svg><use href="#i-trash"></use></svg></button>
+            <button class="creator-list-delete creator-grid-delete" type="button" onclick="deleteCreatorItemById('${item.id}', event)" title="Xóa mục ${index + 1}" aria-label="Xóa riêng mục ${index + 1}">×</button>
         </div>`;
     }).join('');
+
+    const rangeStart = startIndex + 1;
+    const rangeEnd = Math.min(startIndex + visibleItems.length, items.length);
+    const pagination = pageCount > 1
+        ? `<div class="creator-list-pagination"><button type="button" onclick="setCreatorListPage(${creatorListPage - 1})" ${creatorListPage <= 0 ? 'disabled' : ''} aria-label="Trang trước">‹</button><span><strong>${creatorListPage + 1} / ${pageCount}</strong><small>${rangeStart}–${rangeEnd} / ${items.length}</small></span><button type="button" onclick="setCreatorListPage(${creatorListPage + 1})" ${creatorListPage >= pageCount - 1 ? 'disabled' : ''} aria-label="Trang sau">›</button></div>`
+        : `<div class="creator-list-count">${items.length} ${creatorMode === 'quiz' ? 'câu hỏi' : 'flashcard'}</div>`;
+    container.innerHTML = `<div class="creator-number-grid">${tiles}</div>${pagination}`;
 }
 
 function beginCreatorDrag(event, id) {
@@ -1637,6 +1680,7 @@ function dropCreatorItem(event, targetId) {
 
 function selectCreatorItem(id) {
     activeCreatorId = id;
+    focusCreatorListOnActive();
     renderCreator();
     playSound('navigate');
 }
@@ -1712,6 +1756,8 @@ function addCreatorItem() {
     const item = createBlankCreatorItem(creatorMode);
     creatorDrafts[creatorMode].push(item);
     activeCreatorId = item.id;
+    resetCreatorListView();
+    creatorListPage = Math.floor((creatorDrafts[creatorMode].length - 1) / CREATOR_LIST_PAGE_SIZE);
     saveCreatorDrafts(true);
     renderCreator();
     playSound('add');
@@ -1724,6 +1770,8 @@ function duplicateCreatorItem() {
     const index = items.findIndex(item => item.id === activeCreatorId);
     items.splice(index + 1, 0, source);
     activeCreatorId = source.id;
+    resetCreatorListView();
+    focusCreatorListOnActive();
     saveCreatorDrafts(true);
     renderCreator();
     playSound('add');
@@ -1736,6 +1784,7 @@ function moveCreatorItem(direction) {
     const target = index + Number(direction);
     if (index < 0 || target < 0 || target >= items.length) return;
     [items[index], items[target]] = [items[target], items[index]];
+    focusCreatorListOnActive();
     saveCreatorDrafts(true);
     renderCreator();
     playSound('navigate');
@@ -2108,18 +2157,19 @@ function resetImportAnalysis() {
     pendingImportAnalysis = null;
     const analysis = document.getElementById('import-analysis');
     const commit = document.getElementById('commit-json-import');
+    const textarea = document.getElementById('ai-json-import');
     if (analysis) {
         analysis.hidden = true;
         analysis.innerHTML = '';
     }
-    if (commit) commit.disabled = true;
+    if (commit) commit.disabled = !String(textarea?.value || '').trim();
 }
 
-function analyzeAIJsonResult() {
+function analyzeAIJsonResult({ quiet = false } = {}) {
     const raw = cleanJSONText(document.getElementById('ai-json-import').value);
     if (!raw) {
         showToast('Hãy dán JSON do công cụ AI trả về.', 'error');
-        return;
+        return null;
     }
     try {
         const parsed = JSON.parse(raw);
@@ -2129,23 +2179,34 @@ function analyzeAIJsonResult() {
         const invalid = entries.filter(entry => entry.errors.length);
         pendingImportAnalysis = { total: entries.length, valid, invalid };
         const analysis = document.getElementById('import-analysis');
-        analysis.hidden = false;
-        analysis.innerHTML = `<div class="import-summary"><strong>Đã tìm thấy ${entries.length} ${creatorMode === 'quiz' ? 'câu' : 'thẻ'}</strong><span>${valid.length} hợp lệ · ${invalid.length} cần kiểm tra</span></div>${invalid.length ? `<div class="import-errors"><strong>Các mục cần sửa</strong>${invalid.slice(0, 8).map(entry => `<div><span>Mục ${entry.index + 1}</span><small>${escapeHTML(entry.errors.join(' '))}</small></div>`).join('')}${invalid.length > 8 ? `<small>Và ${invalid.length - 8} mục khác…</small>` : ''}</div>` : '<div class="import-all-good">✓ Tất cả dữ liệu đều đúng cấu trúc.</div>'}`;
-        document.getElementById('commit-json-import').disabled = valid.length === 0;
-        playSound(valid.length ? 'success' : 'wrong');
+        if (analysis) {
+            analysis.hidden = invalid.length === 0;
+            analysis.innerHTML = invalid.length
+                ? `<div class="import-summary"><strong>Đã đọc ${entries.length} ${creatorMode === 'quiz' ? 'câu' : 'thẻ'}</strong><span>${valid.length} hợp lệ · ${invalid.length} bị bỏ qua</span></div><div class="import-errors"><strong>Các mục không thể nhập</strong>${invalid.slice(0, 8).map(entry => `<div><span>Mục ${entry.index + 1}</span><small>${escapeHTML(entry.errors.join(' '))}</small></div>`).join('')}${invalid.length > 8 ? `<small>Và ${invalid.length - 8} mục khác…</small>` : ''}</div>`
+                : '';
+        }
+        if (!quiet) playSound(valid.length ? 'success' : 'wrong');
+        return pendingImportAnalysis;
     } catch (error) {
-        resetImportAnalysis();
+        pendingImportAnalysis = null;
+        const analysis = document.getElementById('import-analysis');
+        if (analysis) {
+            analysis.hidden = false;
+            analysis.innerHTML = `<div class="import-errors"><strong>JSON chưa đúng định dạng</strong><small>${escapeHTML(error.message || 'Không thể đọc dữ liệu.')}</small></div>`;
+        }
         showToast(error.message || 'JSON không hợp lệ.', 'error');
+        return null;
     }
 }
 
 function commitAIJsonImport() {
-    if (!pendingImportAnalysis?.valid?.length) {
-        showToast('Hãy kiểm tra JSON trước khi nhập.', 'info');
+    const analyzed = pendingImportAnalysis?.valid?.length ? pendingImportAnalysis : analyzeAIJsonResult({ quiet: true });
+    if (!analyzed?.valid?.length) {
+        showToast('Không tìm thấy dữ liệu hợp lệ để nhập.', 'error');
         return;
     }
     const importMode = document.querySelector('input[name="json-import-mode"]:checked')?.value || 'append';
-    const imported = clone(pendingImportAnalysis.valid);
+    const imported = clone(analyzed.valid);
     if (importMode === 'replace') {
         creatorDrafts[creatorMode] = imported;
     } else {
@@ -2153,17 +2214,22 @@ function commitAIJsonImport() {
         const onlyBlank = current.length === 1 && validateCreatorItem(current[0]).length && !hasMeaningfulCreatorContent({ [creatorMode]: current });
         creatorDrafts[creatorMode] = onlyBlank ? imported : [...current, ...imported];
     }
-    const skipped = pendingImportAnalysis?.invalid?.length || 0;
+    const skipped = analyzed.invalid?.length || 0;
     activeCreatorId = imported[0].id;
+    resetCreatorListView();
+    focusCreatorListOnActive();
     saveCreatorDrafts(true);
     closePromptPanel();
     renderCreator();
     playSound('success');
-    showToast(`Đã nhập ${imported.length} ${creatorMode === 'quiz' ? 'câu hỏi' : 'flashcard'}${skipped ? `, bỏ qua ${skipped} mục lỗi` : ''}.`, 'success');
+    showToast(`Đã nhập ${imported.length} ${creatorMode === 'quiz' ? 'câu hỏi' : 'flashcard'}${skipped ? `, tự động bỏ qua ${skipped} mục lỗi` : ''}.`, 'success');
 }
 
 function importAIJsonResult() {
-    analyzeAIJsonResult();
+    pendingImportAnalysis = null;
+    const analysis = analyzeAIJsonResult({ quiet: true });
+    if (!analysis?.valid?.length) return;
+    commitAIJsonImport();
 }
 
 function initAudio() {
@@ -2196,6 +2262,36 @@ function tone(frequency, duration, volume, type = 'sine', delay = 0) {
     gain.connect(context.destination);
     oscillator.start(start);
     oscillator.stop(start + duration + 0.03);
+}
+
+function sweepTone(fromFrequency, toFrequency, duration, volume, type = 'sine', delay = 0) {
+    const context = initAudio();
+    if (!context || !preferences.sound || !soundUnlocked) return;
+    const start = context.currentTime + delay;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(Math.max(1, fromFrequency), start);
+    oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, toFrequency), start + duration);
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, volume), start + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start + duration + 0.04);
+}
+
+function playIntroSequenceSound() {
+    if (introSoundPlayed || !preferences.sound || !soundUnlocked) return false;
+    const context = initAudio();
+    if (!context || context.state !== 'running') return false;
+    introSoundPlayed = true;
+    sweepTone(155, 360, .28, .052, 'sine');
+    tone(480, .11, .042, 'triangle', .19);
+    sweepTone(420, 820, .24, .047, 'sine', .38);
+    tone(980, .18, .034, 'sine', .54);
+    return true;
 }
 
 function playSound(name) {
@@ -2388,11 +2484,31 @@ function initBrandIntro() {
     const timers = [];
     const clearTimers = () => timers.splice(0).forEach(timer => clearTimeout(timer));
 
+    const tryIntroSound = () => {
+        if (introSoundPlayed || !preferences.sound) return;
+        const context = initAudio();
+        if (!context) return;
+        const playWhenReady = () => {
+            if (context.state !== 'running') return;
+            soundUnlocked = true;
+            playIntroSequenceSound();
+        };
+        if (context.state === 'running') playWhenReady();
+        else context.resume().then(playWhenReady).catch(() => {});
+    };
+
     const clearGuide = () => {
         root.classList.remove('intro-app-preview');
         topbar?.classList.remove('intro-guide-layer');
         target?.classList.remove('intro-guide-target');
         window.removeEventListener('resize', positionIntroDonateGuide);
+    };
+
+    const allowClose = () => {
+        if (finished || readyToClose) return;
+        readyToClose = true;
+        intro.classList.add('is-ready-to-close');
+        intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro. Chạm vào vùng trống để tiếp tục.');
     };
 
     const showSupportStage = () => {
@@ -2408,14 +2524,8 @@ function initBrandIntro() {
             positionIntroDonateGuide();
             window.addEventListener('resize', positionIntroDonateGuide, { passive: true });
             playSound('soft');
-        }, reduceMotion ? 60 : 460));
-    };
-
-    const allowClose = () => {
-        if (finished || readyToClose) return;
-        readyToClose = true;
-        intro.classList.add('is-ready-to-close');
-        intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro. Chạm vào màn hình để tiếp tục.');
+            timers.push(window.setTimeout(allowClose, reduceMotion ? 20 : 240));
+        }, reduceMotion ? 30 : 260));
     };
 
     const finish = ({ instant = false } = {}) => {
@@ -2424,14 +2534,12 @@ function initBrandIntro() {
         clearTimers();
         clearGuide();
         root.classList.remove('intro-pending');
+        intro.removeEventListener('pointerdown', tryIntroSound);
         intro.removeEventListener('pointerup', handleIntroTap);
         document.removeEventListener('keydown', handleIntroKey);
         intro.classList.add('is-leaving');
-        if (instant || reduceMotion) {
-            intro.hidden = true;
-        } else {
-            window.setTimeout(() => { intro.hidden = true; }, 460);
-        }
+        if (instant || reduceMotion) intro.hidden = true;
+        else window.setTimeout(() => { intro.hidden = true; }, 320);
     };
 
     const handleIntroTap = event => {
@@ -2447,11 +2555,12 @@ function initBrandIntro() {
         }
     };
 
+    intro.addEventListener('pointerdown', tryIntroSound, { passive: true });
     intro.addEventListener('pointerup', handleIntroTap);
     document.addEventListener('keydown', handleIntroKey);
+    tryIntroSound();
 
-    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 420 : 2300));
-    timers.push(window.setTimeout(allowClose, reduceMotion ? 3000 : 7600));
+    timers.push(window.setTimeout(showSupportStage, reduceMotion ? 300 : 1350));
 }
 
 function openMobileQuizNavigator() {
