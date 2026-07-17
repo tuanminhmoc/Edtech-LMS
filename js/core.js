@@ -719,6 +719,7 @@ function showScreen(screenId, options = {}) {
     document.body.dataset.screen = screenId;
     document.body.classList.toggle('quiz-screen-active', screenId === 'quiz-app');
     document.body.classList.toggle('quiz-result-active', screenId === 'quiz-result-screen');
+    document.body.classList.toggle('study-focus', screenId === 'quiz-app' || screenId === 'flashcard-app');
     if (screenId !== 'quiz-app') closeMobileQuizNavigator(true);
     if (screenId !== 'quiz-result-screen') closeMobileResultReview(true);
 
@@ -802,7 +803,7 @@ function renderHistoryTable() {
             : Array.isArray(item.hardRows) && item.hardRows.length > 1;
         return `<tr>
             <td>${formatDate(item.timestamp)}</td>
-            <td><span class="history-mode-chip ${item.mode}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td>
+            <td><span class="history-mode-chip ${isQuiz ? 'mode-quiz' : 'mode-flashcard'}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td>
             <td><strong>${escapeHTML(item.file || 'Không tên')}</strong></td>
             <td>${escapeHTML(result)}</td>
             <td>${formatLongDuration(item.duration || 0)}</td>
@@ -920,62 +921,92 @@ function updateSetupSummary() {
     document.getElementById('start-study-btn').disabled = !selectedWorkbookData;
 }
 
+
+async function parseWorkbookInput(file, progressCallback) {
+    const name = String(file?.name || '');
+    if (/\.(edtech)$/i.test(name)) {
+        const payload = JSON.parse(await file.text());
+        const rawRows = Array.isArray(payload?.rows) ? payload.rows : Array.isArray(payload?.data?.rows) ? payload.data.rows : null;
+        if (!Array.isArray(rawRows) || rawRows.length < 2) throw new Error('File .edtech không chứa dữ liệu hợp lệ.');
+        progressCallback?.({ percent: 100, message: 'Đã đọc file EdTech' });
+        return {
+            rows: rawRows,
+            detectedName: String(payload?.name || name.replace(/\.(edtech)$/i, '')),
+            source: 'edtech',
+            detectedType: payload?.type === 'flashcard' ? 'flashcard' : 'quiz'
+        };
+    }
+    if (!/\.(xlsx|xls)$/i.test(name)) {
+        throw new Error('Vui lòng chọn file Excel .xlsx / .xls hoặc file .edtech.');
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    let rows;
+    try {
+        rows = await window.EdTechWorker.parseExcel(arrayBuffer, progress => {
+            progressCallback?.(progress);
+        });
+    } catch (workerError) {
+        console.warn('Worker Excel fallback:', workerError);
+        const XLSX = await window.EdTechLibraries.loadXLSX();
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+    }
+    if (!Array.isArray(rows) || rows.length < 2) throw new Error('File không có dữ liệu hợp lệ.');
+    return {
+        rows,
+        detectedName: name.replace(/\.(xlsx|xls)$/i, ''),
+        source: 'excel',
+        detectedType: studyMode
+    };
+}
+
 async function handleWorkbookFile(file) {
     if (!file) return;
-    if (!/\.(xlsx|xls)$/i.test(file.name)) {
-        showToast('Vui lòng chọn file Excel .xlsx hoặc .xls.', 'error');
-        return;
-    }
     const dropTitle = document.getElementById('drop-title');
     const dropSubtitle = document.getElementById('drop-subtitle');
     try {
         if (dropTitle) dropTitle.textContent = 'Đang đọc bộ đề…';
         if (dropSubtitle) dropSubtitle.textContent = 'Ứng dụng vẫn hoạt động trong khi xử lý file.';
-        let rows;
-        const arrayBuffer = await file.arrayBuffer();
-        try {
-            rows = await window.EdTechWorker.parseExcel(arrayBuffer, progress => {
-                if (dropSubtitle) dropSubtitle.textContent = `${progress.message || 'Đang xử lý'} ${progress.percent || 0}%`;
-            });
-        } catch (workerError) {
-            console.warn('Worker Excel fallback:', workerError);
-            const XLSX = await window.EdTechLibraries.loadXLSX();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
-        }
-        if (!Array.isArray(rows) || rows.length < 2) throw new Error('File không có dữ liệu hợp lệ.');
-
-        selectedWorkbookData = rows;
-        currentFileName = file.name.replace(/\.(xlsx|xls)$/i, '');
+        const parsed = await parseWorkbookInput(file, progress => {
+            if (dropSubtitle) dropSubtitle.textContent = `${progress.message || 'Đang xử lý'} ${progress.percent || 0}%`;
+        });
+        selectedWorkbookData = parsed.rows;
+        currentFileName = parsed.detectedName;
+        if (parsed.detectedType) selectStudyMode(parsed.detectedType, false);
         document.getElementById('selected-file-pill').hidden = false;
         document.getElementById('selected-file-pill').textContent = file.name;
         if (dropTitle) dropTitle.textContent = 'Đã chọn bộ đề';
-        if (dropSubtitle) dropSubtitle.textContent = `${Math.max(0, rows.length - 1)} dòng dữ liệu được phát hiện`;
+        if (dropSubtitle) dropSubtitle.textContent = `${Math.max(0, parsed.rows.length - 1)} dòng dữ liệu được phát hiện`;
         updateSetupSummary();
         const stored = await window.EdTechDB?.saveQuestionSet({
-            id: `set-${simpleHash(`${currentFileName}|${rows.length}|${JSON.stringify(rows.slice(0, 3))}`)}`,
+            id: `set-${simpleHash(`${currentFileName}|${parsed.rows.length}|${JSON.stringify(parsed.rows.slice(0, 3))}`)}`,
             name: currentFileName,
-            type: studyMode,
-            rows: clone(rows),
-            source: 'excel'
+            type: parsed.detectedType || studyMode,
+            rows: clone(parsed.rows),
+            source: parsed.source
         });
-        if (stored) window.renderLocalQuestionSets?.();
+        if (stored) {
+            window.currentStudySetId = stored.id;
+            window.renderLocalQuestionSets?.();
+            window.renderQuestionLibrary?.();
+        }
         playSound('upload');
-        showToast('Đã đọc và lưu bộ đề trên thiết bị.', 'success');
+        showToast(parsed.source === 'edtech' ? 'Đã nhập file EdTech và lưu trên thiết bị.' : 'Đã đọc và lưu bộ đề trên thiết bị.', 'success');
     } catch (error) {
         selectedWorkbookData = null;
         currentFileName = '';
         if (dropTitle) dropTitle.textContent = 'Kéo thả file vào đây hoặc bấm để chọn';
-        if (dropSubtitle) dropSubtitle.textContent = 'Hỗ trợ .xlsx và .xls';
+        if (dropSubtitle) dropSubtitle.textContent = 'Hỗ trợ .xlsx, .xls và .edtech';
         updateSetupSummary();
-        showToast(error.message || 'Không thể đọc file Excel.', 'error');
+        showToast(error.message || 'Không thể đọc file.', 'error');
     }
 }
 
+
 function startSelectedStudy() {
     if (!selectedWorkbookData) {
-        showToast('Bạn chưa chọn file Excel.', 'error');
+        showToast('Bạn chưa chọn bộ đề hoặc file để bắt đầu.', 'error');
         return;
     }
     savePreferences();
@@ -1288,6 +1319,7 @@ function finalizeQuiz() {
     };
     appData.history.push(historyItem);
     saveLearningData();
+    window.recordDeckActivity?.(window.currentStudySetId, { mode: 'quiz', accuracy, wrongCount: wrong, completedAt: historyItem.timestamp });
 
     lastQuizResult = { correct, wrong, empty, total, accuracy, xp, duration: quizElapsed, review, fileName: currentFileName, completedAt: historyItem.timestamp };
     renderQuizResult(lastQuizResult);
@@ -1811,6 +1843,7 @@ function finishFlashcardSession() {
         hardRows
     });
     saveLearningData();
+    window.recordDeckActivity?.(window.currentStudySetId, { mode: 'flashcard', accuracy: uniqueReviewed ? Math.round((good / uniqueReviewed) * 100) : 0, wrongCount: again, completedAt: new Date().toISOString() });
 
     lastFlashcardHardSource = hardCards.length ? { rows: hardRows, fileName: `${fcState.fileName} · Thẻ khó` } : null;
     document.getElementById('fc-result-total').textContent = uniqueReviewed;

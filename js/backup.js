@@ -28,6 +28,83 @@
         return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
     }
 
+
+    async function refreshDiagnostics() {
+        const totalEl = document.getElementById('diag-total-storage');
+        const mediaEl = document.getElementById('diag-media-storage');
+        const largestEl = document.getElementById('diag-largest-set');
+        const lastBackupEl = document.getElementById('diag-last-backup');
+        const cleanableEl = document.getElementById('diag-cleanable');
+        if (!totalEl && !mediaEl && !largestEl && !lastBackupEl && !cleanableEl) return;
+        try {
+            const [estimate, questionSets, media] = await Promise.all([
+                window.EdTechDB.storageEstimate(),
+                window.EdTechDB.listQuestionSets(),
+                window.EdTechDB.listMedia ? window.EdTechDB.listMedia() : Promise.resolve([])
+            ]);
+            const totalUsage = Number(estimate.usage) || 0;
+            const mediaBytes = (media || []).reduce((sum, item) => sum + (Number(item.size) || Number(item.blob?.size) || 0), 0);
+            const largestSet = (questionSets || []).slice().sort((a, b) => Number(b.sizeBytes || 0) - Number(a.sizeBytes || 0))[0];
+            const cleanable = mediaBytes * 0.15;
+            if (totalEl) totalEl.textContent = formatBytes(totalUsage);
+            if (mediaEl) mediaEl.textContent = formatBytes(mediaBytes);
+            if (largestEl) largestEl.textContent = largestSet ? `${largestSet.name} · ${formatBytes(largestSet.sizeBytes || 0)}` : 'Chưa có';
+            if (lastBackupEl) lastBackupEl.textContent = localStorage.getItem('edtech_last_backup_at') || 'Chưa có';
+            if (cleanableEl) cleanableEl.textContent = formatBytes(cleanable);
+        } catch (error) {
+            if (totalEl) totalEl.textContent = 'Không đọc được';
+            if (mediaEl) mediaEl.textContent = 'Không đọc được';
+            if (largestEl) largestEl.textContent = 'Không đọc được';
+            if (cleanableEl) cleanableEl.textContent = 'Không đọc được';
+        }
+    }
+
+    async function optimizeStoredImages() {
+        if (!window.EdTechDB?.listMedia) return window.showToast?.('Chưa hỗ trợ tối ưu ảnh trên trình duyệt này.', 'info');
+        try {
+            const items = await window.EdTechDB.listMedia();
+            if (!items.length) {
+                window.showToast?.('Không có ảnh nào để tối ưu.', 'info');
+                return;
+            }
+            let saved = 0;
+            for (const item of items) {
+                if (!(item.blob instanceof Blob) || !/^image\//.test(item.type || '')) continue;
+                const bitmap = await createImageBitmap(item.blob);
+                const canvas = document.createElement('canvas');
+                canvas.width = bitmap.width;
+                canvas.height = bitmap.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(bitmap, 0, 0);
+                const nextBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.82));
+                bitmap.close?.();
+                if (nextBlob && nextBlob.size && nextBlob.size < item.blob.size * 0.96) {
+                    saved += item.blob.size - nextBlob.size;
+                    await window.EdTechDB.saveMedia({ ...item, blob: nextBlob, type: 'image/webp', size: nextBlob.size, width: canvas.width, height: canvas.height, createdAt: item.createdAt });
+                }
+            }
+            window.showToast?.(saved > 0 ? `Đã tối ưu ảnh cũ, tiết kiệm ${formatBytes(saved)}.` : 'Ảnh hiện tại đã khá tối ưu.', saved > 0 ? 'success' : 'info');
+            refreshStorageStatus();
+            refreshDiagnostics();
+        } catch (error) {
+            window.showToast?.('Không thể tối ưu ảnh cũ.', 'error');
+        }
+    }
+
+    async function clearAppCachesKeepData() {
+        try {
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                await Promise.all(keys.map(key => caches.delete(key)));
+            }
+            window.showToast?.('Đã xóa cache ứng dụng, dữ liệu học vẫn được giữ lại.', 'success');
+            refreshStorageStatus();
+            refreshDiagnostics();
+        } catch (error) {
+            window.showToast?.('Không thể xóa cache ứng dụng.', 'error');
+        }
+    }
+
     async function refreshStorageStatus() {
         const usage = document.getElementById('data-storage-usage');
         const persistent = document.getElementById('data-storage-persistent');
@@ -44,6 +121,7 @@
             usage.textContent = 'Không thể đọc dung lượng';
             persistent.textContent = error.message;
         }
+        refreshDiagnostics();
     }
 
     function openDataCenter() {
@@ -70,6 +148,7 @@
             const backup = await window.EdTechDB.exportAll();
             const date = new Date().toISOString().slice(0, 10);
             downloadJSON(backup, `EdTech-LMS-Pro-Backup-${date}.json`);
+            try { localStorage.setItem('edtech_last_backup_at', new Date().toLocaleString('vi-VN')); } catch (_) {}
             window.playSound?.('success');
             window.showToast?.('Đã xuất bản sao lưu toàn bộ dữ liệu.', 'success');
         } catch (error) {
@@ -163,7 +242,10 @@
         confirmRestore,
         requestStoragePersistence,
         refreshStorageStatus,
-        resetRestorePreview
+        resetRestorePreview,
+        refreshDiagnostics,
+        optimizeStoredImages,
+        clearAppCachesKeepData
     };
-    Object.assign(window, { openDataCenter, closeDataCenter, exportFullBackup, handleRestoreFile, confirmRestore, requestStoragePersistence });
+    Object.assign(window, { openDataCenter, closeDataCenter, exportFullBackup, handleRestoreFile, confirmRestore, requestStoragePersistence, optimizeStoredImages, clearAppCachesKeepData });
 })();

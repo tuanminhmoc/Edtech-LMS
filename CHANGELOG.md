@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.4
+
+- Rà soát toàn bộ giao diện ở các mốc 320, 390, 430, 768 và 1440 px.
+- Sửa thanh tiến độ bị nổi sai vị trí trong chế độ làm bài và học Flashcard.
+- Sửa hướng dẫn lật thẻ bị lệch, cắt chữ và tràn khỏi thẻ trên mobile.
+- Cân lại Flashcard mobile, toolbar, trạng thái, nút đánh giá, điều hướng và kết quả.
+- Sửa cụm nút trình soạn bị tràn ở tablet và chuẩn hóa bố cục lịch sử.
+- Cân lại hero Thư viện, nút nhập file, modal, toast và vùng an toàn trên mobile.
+- Tăng khả năng hiển thị nội dung dài, ảnh, công thức và trường nhập trên iOS/Android.
+- Cập nhật hướng dẫn nhập để phản ánh cả Excel và định dạng EdTech.
+
 ## 1.2.5
 
 - Sửa xung đột class Flashcard làm kéo giãn thống kê và card trong Thư viện đề.

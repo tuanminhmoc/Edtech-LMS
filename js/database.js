@@ -199,15 +199,25 @@
     }
 
     async function saveQuestionSet(record) {
+        const rows = Array.isArray(record.rows) ? record.rows : [];
+        const estimatedSize = Number(record.sizeBytes) || new Blob([JSON.stringify(rows)]).size;
         const normalized = {
             id: record.id || `set-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
             name: String(record.name || 'Bộ đề chưa đặt tên'),
             type: record.type === 'flashcard' ? 'flashcard' : 'quiz',
-            rows: Array.isArray(record.rows) ? record.rows : [],
-            count: Math.max(0, (record.rows?.length || 1) - 1),
+            rows,
+            count: Number.isFinite(Number(record.count)) ? Number(record.count) : Math.max(0, (rows?.length || 1) - 1),
             createdAt: record.createdAt || new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            source: record.source || 'local'
+            source: record.source || 'local',
+            pinned: Boolean(record.pinned),
+            favorite: Boolean(record.favorite),
+            archived: Boolean(record.archived),
+            playCount: Math.max(0, Number(record.playCount) || 0),
+            bestScore: Math.max(0, Number(record.bestScore) || 0),
+            wrongCount: Math.max(0, Number(record.wrongCount) || 0),
+            lastPlayed: record.lastPlayed || '',
+            sizeBytes: estimatedSize
         };
         await put('questionSets', normalized);
         return normalized;

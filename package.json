@@ -1,6 +1,6 @@
 {
   "name": "edtech-lms-pro",
-  "version": "1.2.5",
+  "version": "1.3.4",
   "private": true,
   "description": "Static-first learning app",
   "scripts": {

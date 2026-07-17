@@ -301,12 +301,12 @@
                         </section>
 
                         <section class="panel setup-section">
-                            <div class="step-title"><span>2</span><div><h2>Chọn bộ đề Excel</h2><p>Dùng file xuất từ công cụ Soạn đề để tương thích tốt nhất.</p></div></div>
+                            <div class="step-title"><span>2</span><div><h2>Chọn bộ đề</h2><p>Nhập file Excel hoặc EdTech đã xuất từ ứng dụng.</p></div></div>
                             <label class="dropzone" id="dropzone" for="excel-file">
-                                <input type="file" id="excel-file" accept=".xlsx,.xls" hidden>
+                                <input type="file" id="excel-file" accept=".xlsx,.xls,.edtech" hidden>
                                 <span class="drop-icon"><svg><use href="#i-upload"></use></svg></span>
                                 <strong id="drop-title">Kéo thả file vào đây hoặc bấm để chọn</strong>
-                                <small id="drop-subtitle">Hỗ trợ .xlsx và .xls</small>
+                                <small id="drop-subtitle">Hỗ trợ .xlsx, .xls và .edtech</small>
                                 <span class="file-pill" id="selected-file-pill" hidden></span>
                             </label>
                             <div class="local-library-block">
@@ -348,7 +348,7 @@
                 <div class="quiz-topline">
                     <button class="back-btn" onclick="confirmLeaveQuiz()"><svg><use href="#i-back"></use></svg></button>
                     <div class="quiz-file-title"><small>Đang làm bài</small><strong id="quiz-title">Bộ đề</strong></div>
-                    <div class="quiz-top-stats"><span><svg><use href="#i-clock"></use></svg><strong id="timer-display">00:00</strong></span><span><strong id="progress-text">0 / 0</strong> câu</span></div>
+                    <div class="quiz-top-stats"><span><svg><use href="#i-clock"></use></svg><strong id="timer-display">00:00</strong></span><span><strong id="progress-text">0 / 0</strong> câu</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình">⛶</button><button class="study-exit-btn" type="button" onclick="confirmLeaveQuiz()" title="Thoát bài làm" aria-label="Thoát bài làm">×</button></div>
                 </div>
                 <div class="progress-track"><div id="progress-bar"></div></div>
 
@@ -420,7 +420,7 @@
                 <div class="quiz-topline">
                     <button class="back-btn" onclick="confirmLeaveFlashcards()"><svg><use href="#i-back"></use></svg></button>
                     <div class="quiz-file-title"><small>Flashcard thông minh</small><strong id="fc-title">Bộ thẻ</strong></div>
-                    <div class="quiz-top-stats"><span><strong id="fc-counter">1 / 10</strong> thẻ</span><span><strong id="fc-due-label">0</strong> cần ôn</span></div>
+                    <div class="quiz-top-stats"><span><strong id="fc-counter">1 / 10</strong> thẻ</span><span><strong id="fc-due-label">0</strong> cần ôn</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình">⛶</button><button class="study-exit-btn" type="button" onclick="confirmLeaveFlashcards()" title="Thoát buổi học" aria-label="Thoát buổi học">×</button></div>
                 </div>
                 <div class="progress-track"><div id="fc-progress-bar"></div></div>
 
@@ -494,7 +494,7 @@
                             <span class="library-local-badge"><i aria-hidden="true"></i>Dữ liệu được lưu riêng trên thiết bị này</span>
                         </div>
                         <div class="library-heading-actions">
-                            <button class="btn btn-secondary" type="button" onclick="openPracticeSetup()"><svg><use href="#i-upload"></use></svg>Nhập Excel</button>
+                            <button class="btn btn-secondary" type="button" onclick="openPracticeSetup()"><svg><use href="#i-upload"></use></svg>Nhập Excel / EdTech</button>
                             <button class="btn btn-primary" type="button" onclick="openCreator()"><svg><use href="#i-plus"></use></svg>Tạo bộ đề</button>
                         </div>
                     </header>
@@ -531,7 +531,7 @@
                         </div>
                         <label class="library-sort-field">
                             <span>Sắp xếp</span>
-                            <select id="library-sort" onchange="setQuestionLibrarySort(this.value)"><option value="updated">Mới cập nhật</option><option value="name">Theo tên</option><option value="count">Nhiều nội dung nhất</option></select>
+                            <select id="library-sort" onchange="setQuestionLibrarySort(this.value)"><option value="updated">Mới cập nhật</option><option value="name">Theo tên</option><option value="count">Nhiều nội dung nhất</option><option value="plays">Làm nhiều nhất</option></select>
                         </label>
                     </section>
 
@@ -681,13 +681,35 @@
                 <label class="data-action-card" for="restore-file-input"><svg><use href="#i-upload"></use></svg><span><strong>Chọn file khôi phục</strong><small>Đọc và xem trước trước khi nhập.</small></span><input id="restore-file-input" type="file" accept="application/json,.json" hidden onchange="handleRestoreFile(this.files[0])"></label>
                 <button class="data-action-card" id="install-app-btn" type="button" onclick="installApp()"><svg><use href="#i-download"></use></svg><span><strong>Cài ứng dụng</strong><small>Mở EdTech như ứng dụng độc lập và dùng offline.</small></span></button>
             </div>
+            <section class="data-diagnostics-card">
+                <div class="diagnostic-grid">
+                    <article><small>Tổng dung lượng ứng dụng</small><strong id="diag-total-storage">Đang tính…</strong></article>
+                    <article><small>Ảnh đang chiếm</small><strong id="diag-media-storage">Đang tính…</strong></article>
+                    <article><small>Bộ đề lớn nhất</small><strong id="diag-largest-set">Đang tính…</strong></article>
+                    <article><small>Backup gần nhất</small><strong id="diag-last-backup">Chưa có</strong></article>
+                    <article><small>Dữ liệu có thể dọn</small><strong id="diag-cleanable">Đang tính…</strong></article>
+                </div>
+                <div class="data-action-inline">
+                    <button class="btn btn-secondary btn-small" type="button" onclick="optimizeStoredImages()">Nén lại ảnh cũ</button>
+                    <button class="btn btn-secondary btn-small" type="button" onclick="clearAppCachesKeepData()">Xóa cache giữ dữ liệu học</button>
+                </div>
+            </section>
             <div class="restore-preview" id="restore-preview" hidden></div>
             <div class="restore-options">
                 <label><input type="radio" name="restore-mode" value="merge" checked><span><strong>Gộp dữ liệu</strong><small>Giữ dữ liệu hiện có và thêm bản sao lưu.</small></span></label>
                 <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
             </div>
             <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
-            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.2.5</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.3.4</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="library-preview-modal" hidden>
+        <div class="modal-box library-preview-box">
+            <button class="modal-close" type="button" onclick="closeLibraryPreview()" aria-label="Đóng"><svg><use href="#i-close"></use></svg></button>
+            <span class="section-kicker">Xem nhanh trước khi học</span>
+            <h2>Thông tin bộ đề</h2>
+            <div id="library-preview-body"></div>
         </div>
     </div>
 
@@ -702,7 +724,7 @@
 
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script>window.EDTECH_APP_VERSION = '1.2.5';</script>
+    <script>window.EDTECH_APP_VERSION = '1.3.4';</script>
     <script src="js/database.js"></script>
     <script src="js/lazy-libs.js"></script>
     <script src="js/worker-client.js"></script>
