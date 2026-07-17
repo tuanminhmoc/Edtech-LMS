@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.2.5
+
+- Sửa xung đột class Flashcard làm kéo giãn thống kê và card trong Thư viện đề.
+- Thu bốn thẻ thống kê thành dải ngang thấp, gọn và cân đối trên desktop.
+- Tối ưu thống kê 2×2 trên mobile và một cột trên màn hình rất nhỏ.
+- Khóa chiều cao thống kê, tránh bị kéo theo chiều cao viewport.
+
+
+## 1.2.4
+
+- Xây lại hoàn toàn giao diện Thư viện đề cho desktop và mobile.
+- Sửa lỗi các thẻ thống kê bị kéo cao bất thường.
+- Thêm hero, thống kê gọn, bộ lọc dạng tab, tìm kiếm và sắp xếp rõ ràng.
+- Làm mới card bộ đề với cover riêng, số nội dung, metadata và hành động nhanh.
+- Hoàn thiện empty state, loading state và error state.
+- Tối ưu Dark Theme, màn hình nhỏ và thao tác một tay.
+
+
+## 1.2.3
+
+- Đồng bộ hoàn toàn nút Câu trước và Câu tiếp trên mobile.
+- Làm lại bố cục kết quả trắc nghiệm mobile, không còn vòng điểm che nội dung.
+- Giữ bottom navigation ổn định, không ẩn/hiện hoặc chớp khi cuộn nhanh.
+- Hiển thị đầy đủ chữ DONATE trên mobile.
+- Thêm màn Thư viện đề với tìm kiếm, bộ lọc, thống kê, đổi tên, tải Excel và học lại.
+- Bổ sung trường đặt tên bộ đề/tên file trong công cụ Soạn đề.
+
+
 ## 1.2.2
 
 - Sửa triệt để ô số câu bằng component riêng, không còn chịu ảnh hưởng CSS danh sách cũ.

@@ -4,6 +4,7 @@
     const SCREEN_TO_ROUTE = {
         'dashboard-screen': 'home',
         'upload-screen': 'practice',
+        'library-screen': 'library',
         'quiz-app': 'quiz',
         'quiz-result-screen': 'result',
         'flashcard-app': 'flashcards',
@@ -36,6 +37,7 @@
             if (screen === 'creator-screen' && typeof window.openCreator === 'function') window.openCreator();
             else if (screen === 'history-screen' && typeof window.showHistoryScreen === 'function') window.showHistoryScreen();
             else if (screen === 'upload-screen' && typeof window.openPracticeSetup === 'function') window.openPracticeSetup();
+            else if (screen === 'library-screen' && typeof window.openQuestionLibrary === 'function') window.openQuestionLibrary();
             else if (['quiz-app', 'flashcard-app'].includes(screen)) {
                 // Active study screens are restored from IndexedDB; do not open an empty shell.
                 const active = document.querySelector('.app-screen.active')?.id;

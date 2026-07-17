@@ -1,6 +1,6 @@
 'use strict';
 
-const APP_VERSION = '1.2.2';
+const APP_VERSION = '1.2.5';
 const CACHE_NAME = `edtech-lms-pro-${APP_VERSION}`;
 const RUNTIME_CACHE = `edtech-lms-runtime-${APP_VERSION}`;
 const BASE = new URL('./', self.location.href);

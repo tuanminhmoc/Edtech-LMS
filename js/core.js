@@ -4,6 +4,7 @@ const STORAGE_KEY = 'edtech_lms_pro_learning_v3';
 const CREATOR_KEY = 'edtech_lms_pro_creator_v3';
 const PREF_KEY = 'edtech_lms_pro_preferences_v3';
 const CREATOR_RECOVERY_KEY = 'edtech_lms_pro_creator_recovery_v3';
+const CREATOR_NAME_KEY = 'edtech_lms_pro_creator_names_v1';
 
 const FOCUS_MOTIVATIONS = [
     "Bắt đầu nhẹ nhàng, tiến bộ rõ ràng.",
@@ -152,6 +153,7 @@ let lastFlashcardSource = null;
 let lastFlashcardHardSource = null;
 
 let creatorMode = 'quiz';
+let creatorFileNames = loadCreatorFileNames();
 const loadedCreatorDrafts = loadCreatorDrafts();
 let recoveryCreatorDrafts = safeStorageGet(CREATOR_RECOVERY_KEY) === '1' && hasMeaningfulCreatorContent(loadedCreatorDrafts) ? clone(loadedCreatorDrafts) : null;
 let creatorDrafts = recoveryCreatorDrafts ? { quiz: [], flashcard: [] } : loadedCreatorDrafts;
@@ -182,6 +184,29 @@ const creatorMediaMeta = new Map();
 const MEDIA_TOKEN_PATTERN = /\[media:([a-zA-Z0-9_-]+)\]/g;
 const MAX_CREATOR_IMAGE_BYTES = 12 * 1024 * 1024;
 const TARGET_CREATOR_IMAGE_BYTES = 650 * 1024;
+
+function loadCreatorFileNames() {
+    const fallback = { quiz: 'Bộ trắc nghiệm mới', flashcard: 'Bộ flashcard mới' };
+    try {
+        const parsed = JSON.parse(localStorage.getItem(CREATOR_NAME_KEY) || 'null');
+        return {
+            quiz: String(parsed?.quiz || fallback.quiz).slice(0, 90),
+            flashcard: String(parsed?.flashcard || fallback.flashcard).slice(0, 90)
+        };
+    } catch (_) {
+        return fallback;
+    }
+}
+
+function getCreatorFileName(mode = creatorMode) {
+    const fallback = mode === 'flashcard' ? 'Bộ flashcard mới' : 'Bộ trắc nghiệm mới';
+    return String(creatorFileNames?.[mode] || fallback).trim().slice(0, 90);
+}
+
+function updateCreatorFileName(value) {
+    creatorFileNames[creatorMode] = String(value || '').slice(0, 90);
+    try { localStorage.setItem(CREATOR_NAME_KEY, JSON.stringify(creatorFileNames)); } catch (_) {}
+}
 
 function safeStorageGet(key) {
     try { return localStorage.getItem(key); } catch (_) { return null; }
@@ -707,6 +732,7 @@ function showScreen(screenId, options = {}) {
 
     if (screenId === 'dashboard-screen') renderDashboard();
     if (screenId === 'history-screen') renderHistoryTable();
+    if (screenId === 'library-screen') window.renderQuestionLibrary?.();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     playSound('navigate');
 }
@@ -1930,6 +1956,8 @@ function renderCreator() {
     document.getElementById('creator-tab-flashcard').classList.toggle('active', creatorMode === 'flashcard');
     document.getElementById('creator-list-title').textContent = creatorMode === 'quiz' ? 'Câu hỏi' : 'Thẻ học';
     document.getElementById('preview-title').textContent = creatorMode === 'quiz' ? 'Câu hỏi hiện tại' : 'Flashcard hiện tại';
+    const fileNameInput = document.getElementById('creator-file-name');
+    if (fileNameInput && fileNameInput !== document.activeElement) fileNameInput.value = getCreatorFileName();
     renderCreatorList();
     renderCreatorEditor();
     renderCreatorPreview();
@@ -2342,8 +2370,15 @@ async function exportCreatorToExcel() {
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard');
         const typeName = creatorMode === 'quiz' ? 'TracNghiem' : 'Flashcard';
-        XLSX.writeFile(workbook, `EdTech_LMS_Pro_${typeName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
-        await window.EdTechDB?.saveQuestionSet({ name: `Bộ ${typeName} ${new Date().toLocaleDateString('vi-VN')}`, type: creatorMode, rows: clone(rows), source: 'creator' });
+        const creatorName = getCreatorFileName();
+        if (!creatorName) {
+            showToast('Hãy đặt tên bộ đề trước khi xuất.', 'error');
+            document.getElementById('creator-file-name')?.focus();
+            return;
+        }
+        const safeFileName = creatorName.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '_').replace(/^\.+|\.+$/g, '').slice(0, 90) || `EdTech_${typeName}`;
+        XLSX.writeFile(workbook, `${safeFileName}.xlsx`);
+        await window.EdTechDB?.saveQuestionSet({ name: creatorName, type: creatorMode, rows: clone(rows), source: 'creator' });
         saveCreatorDrafts(false);
         markCreatorDraftComplete();
         playSound('success');

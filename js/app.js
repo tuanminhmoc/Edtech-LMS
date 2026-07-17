@@ -7,6 +7,9 @@ const HISTORY_PAGE_SIZE = 20;
 let activeSessionSaveTimer = null;
 let creatorEditSnapshotTimer = null;
 let installPromptEvent = window.__edtechInstallPrompt || null;
+let questionLibrarySearch = '';
+let questionLibraryFilter = 'all';
+let questionLibrarySort = 'updated';
 function captureInstallPrompt(event) {
     event.preventDefault?.();
     installPromptEvent = event;
@@ -179,8 +182,190 @@ function deleteLocalQuestionSet(id, event) {
     openConfirmModal('Xóa bộ đề đã lưu?', 'Bộ đề sẽ bị xóa khỏi thư viện trên thiết bị. Lịch sử học tập không bị ảnh hưởng.', 'Xóa', async () => {
         await window.EdTechDB.delete('questionSets', id).catch(() => {});
         renderLocalQuestionSets();
+        renderQuestionLibrary();
         showToast('Đã xóa bộ đề khỏi thiết bị.', 'success');
     });
+}
+
+
+function openQuestionLibrary() {
+    showScreen('library-screen');
+    renderQuestionLibrary();
+}
+
+function updateQuestionLibraryFilterUI() {
+    document.querySelectorAll('[data-library-filter]').forEach(button => {
+        const active = button.dataset.libraryFilter === questionLibraryFilter;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+    });
+}
+
+function setQuestionLibrarySearch(value) {
+    questionLibrarySearch = String(value || '').trim().toLowerCase();
+    renderQuestionLibrary();
+}
+
+function setQuestionLibraryFilter(value) {
+    questionLibraryFilter = ['quiz', 'flashcard'].includes(value) ? value : 'all';
+    updateQuestionLibraryFilterUI();
+    renderQuestionLibrary();
+}
+
+function setQuestionLibrarySort(value) {
+    questionLibrarySort = ['name', 'count'].includes(value) ? value : 'updated';
+    renderQuestionLibrary();
+}
+
+function formatLibraryDate(value) {
+    const date = new Date(value || 0);
+    if (Number.isNaN(date.getTime())) return 'Chưa rõ thời gian';
+    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function getLibraryVisibleTitle() {
+    if (questionLibrarySearch) return 'Kết quả tìm kiếm';
+    if (questionLibraryFilter === 'quiz') return 'Bộ đề trắc nghiệm';
+    if (questionLibraryFilter === 'flashcard') return 'Bộ flashcard';
+    return 'Tất cả bộ đề';
+}
+
+function renderLibraryEmptyState(hasLibraryItems) {
+    return `<section class="library-empty-state">
+        <span class="library-empty-visual"><svg><use href="#i-library"></use></svg><i></i></span>
+        <span class="section-kicker">${hasLibraryItems ? 'Không có kết quả' : 'Bắt đầu xây thư viện'}</span>
+        <h2>${hasLibraryItems ? 'Không tìm thấy bộ đề phù hợp' : 'Thư viện của bạn đang trống'}</h2>
+        <p>${hasLibraryItems ? 'Hãy thử đổi từ khóa, loại nội dung hoặc cách sắp xếp.' : 'Nhập một file Excel hoặc tạo bộ đề mới. Dữ liệu sẽ được lưu cục bộ trên thiết bị.'}</p>
+        <div class="library-empty-actions">
+            ${hasLibraryItems ? '<button class="btn btn-secondary" type="button" onclick="resetQuestionLibraryFilters()"><svg><use href="#i-refresh"></use></svg>Xóa bộ lọc</button>' : '<button class="btn btn-secondary" type="button" onclick="openPracticeSetup()"><svg><use href="#i-upload"></use></svg>Nhập Excel</button><button class="btn btn-primary" type="button" onclick="openCreator()"><svg><use href="#i-plus"></use></svg>Tạo bộ đề</button>'}
+        </div>
+    </section>`;
+}
+
+function resetQuestionLibraryFilters() {
+    questionLibrarySearch = '';
+    questionLibraryFilter = 'all';
+    questionLibrarySort = 'updated';
+    const search = document.getElementById('library-search');
+    const sort = document.getElementById('library-sort');
+    if (search) search.value = '';
+    if (sort) sort.value = 'updated';
+    updateQuestionLibraryFilterUI();
+    renderQuestionLibrary();
+}
+
+async function renderQuestionLibrary() {
+    const grid = document.getElementById('question-library-grid');
+    if (!grid || !window.EdTechDB) return;
+    updateQuestionLibraryFilterUI();
+    grid.innerHTML = '<div class="library-loading"><span></span><strong>Đang mở thư viện…</strong><small>Đọc dữ liệu trên thiết bị</small></div>';
+    try {
+        const allItems = await window.EdTechDB.listQuestionSets();
+        const quizItems = allItems.filter(item => item.type === 'quiz');
+        const flashcardItems = allItems.filter(item => item.type === 'flashcard');
+        const totalContent = allItems.reduce((sum, item) => sum + Number(item.count || Math.max(0, (item.rows?.length || 1) - 1)), 0);
+        const statTotal = document.getElementById('library-stat-total');
+        const statQuiz = document.getElementById('library-stat-quiz');
+        const statFlashcard = document.getElementById('library-stat-flashcard');
+        const statItems = document.getElementById('library-stat-items');
+        if (statTotal) statTotal.textContent = allItems.length;
+        if (statQuiz) statQuiz.textContent = quizItems.length;
+        if (statFlashcard) statFlashcard.textContent = flashcardItems.length;
+        if (statItems) statItems.textContent = totalContent;
+
+        let items = allItems.filter(item => questionLibraryFilter === 'all' || item.type === questionLibraryFilter);
+        if (questionLibrarySearch) items = items.filter(item => String(item.name || '').toLowerCase().includes(questionLibrarySearch));
+        items.sort((a, b) => {
+            if (questionLibrarySort === 'name') return String(a.name || '').localeCompare(String(b.name || ''), 'vi');
+            if (questionLibrarySort === 'count') return Number(b.count || 0) - Number(a.count || 0);
+            return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+        });
+
+        const countLabel = document.getElementById('library-result-count');
+        const visibleTitle = document.getElementById('library-visible-title');
+        if (countLabel) countLabel.textContent = `${items.length} bộ đề`;
+        if (visibleTitle) visibleTitle.textContent = getLibraryVisibleTitle();
+
+        if (!items.length) {
+            grid.innerHTML = renderLibraryEmptyState(Boolean(allItems.length));
+            return;
+        }
+
+        grid.innerHTML = items.map((item, index) => {
+            const isFlashcard = item.type === 'flashcard';
+            const count = Number(item.count || Math.max(0, (item.rows?.length || 1) - 1));
+            const sourceLabel = item.source === 'creator' ? 'Tạo trong ứng dụng' : 'Nhập từ Excel';
+            const itemLabel = isFlashcard ? 'thẻ' : 'câu';
+            return `<article class="library-deck-card ${isFlashcard ? 'is-flashcard' : 'is-quiz'}" style="--library-index:${Math.min(index, 10)}">
+                <div class="library-deck-cover" aria-hidden="true">
+                    <span class="library-deck-icon"><svg><use href="#${isFlashcard ? 'i-cards' : 'i-quiz'}"></use></svg></span>
+                    <span class="library-deck-count"><strong>${count}</strong><small>${itemLabel}</small></span>
+                    <i class="library-cover-orbit orbit-one"></i><i class="library-cover-orbit orbit-two"></i>
+                </div>
+                <div class="library-deck-body">
+                    <div class="library-deck-topline">
+                        <span class="library-type-chip">${isFlashcard ? 'Flashcard' : 'Trắc nghiệm'}</span>
+                        <button class="library-card-delete" type="button" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa ${escapeHTML(item.name)}" title="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button>
+                    </div>
+                    <h3 title="${escapeHTML(item.name)}">${escapeHTML(item.name)}</h3>
+                    <p>${sourceLabel}</p>
+                    <div class="library-deck-meta">
+                        <span><svg><use href="#i-clock"></use></svg>${formatLibraryDate(item.updatedAt)}</span>
+                        <span><svg><use href="#i-database"></use></svg>Lưu cục bộ</span>
+                    </div>
+                </div>
+                <div class="library-deck-actions">
+                    <button class="btn btn-primary library-study-btn" type="button" onclick="openLibrarySet('${escapeHTML(item.id)}')"><svg><use href="#i-spark"></use></svg>Học ngay</button>
+                    <button class="library-action-icon" type="button" onclick="downloadLibrarySet('${escapeHTML(item.id)}')" aria-label="Tải Excel" title="Tải Excel"><svg><use href="#i-download"></use></svg></button>
+                    <button class="library-action-icon" type="button" onclick="renameLibrarySet('${escapeHTML(item.id)}')" aria-label="Đổi tên" title="Đổi tên"><svg><use href="#i-create"></use></svg></button>
+                </div>
+            </article>`;
+        }).join('');
+    } catch (error) {
+        console.error('Không thể đọc thư viện:', error);
+        grid.innerHTML = '<section class="library-empty-state error"><span class="library-empty-visual"><svg><use href="#i-library"></use></svg></span><h2>Không thể mở thư viện</h2><p>Dữ liệu vẫn an toàn trên thiết bị. Hãy tải lại trang và thử lại.</p><button class="btn btn-primary" type="button" onclick="renderQuestionLibrary()"><svg><use href="#i-refresh"></use></svg>Thử lại</button></section>';
+    }
+}
+
+async function openLibrarySet(id) {
+    await loadLocalQuestionSet(id);
+    showScreen('upload-screen');
+    document.getElementById('start-study-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function renameLibrarySet(id) {
+    const item = await window.EdTechDB?.get('questionSets', id).catch(() => null);
+    if (!item) return;
+    const nextName = window.prompt('Đặt tên mới cho bộ đề:', item.name || 'Bộ đề');
+    if (nextName === null) return;
+    const cleaned = String(nextName).trim().slice(0, 90);
+    if (!cleaned) {
+        showToast('Tên bộ đề không được để trống.', 'error');
+        return;
+    }
+    await window.EdTechDB.saveQuestionSet({ ...item, id: item.id, name: cleaned, createdAt: item.createdAt });
+    renderQuestionLibrary();
+    renderLocalQuestionSets();
+    showToast('Đã đổi tên bộ đề.', 'success');
+}
+
+async function downloadLibrarySet(id) {
+    const item = await window.EdTechDB?.get('questionSets', id).catch(() => null);
+    if (!item?.rows?.length) {
+        showToast('Bộ đề này không còn dữ liệu để tải.', 'error');
+        return;
+    }
+    try {
+        const XLSX = await window.EdTechLibraries.loadXLSX();
+        const worksheet = XLSX.utils.aoa_to_sheet(item.rows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, item.type === 'flashcard' ? 'Flashcard' : 'TracNghiem');
+        const safeName = String(item.name || 'EdTech-Bo-De').replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '_').slice(0, 80);
+        XLSX.writeFile(workbook, `${safeName}.xlsx`);
+        showToast('Đã chuẩn bị file Excel.', 'success');
+    } catch (error) {
+        showToast(error.message || 'Không thể tải bộ đề.', 'error');
+    }
 }
 
 function creatorSnapshot() {
@@ -700,7 +885,7 @@ function trapActiveModalFocus(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const version = document.getElementById('app-version-label');
-    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.2.2'}`;
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.2.5'}`;
     initInstallPrompt();
     initQuickSettings();
     initMobileViewportPolish();
@@ -731,6 +916,15 @@ Object.assign(window, {
     renderLocalQuestionSets,
     loadLocalQuestionSet,
     deleteLocalQuestionSet,
+    openQuestionLibrary,
+    renderQuestionLibrary,
+    setQuestionLibrarySearch,
+    setQuestionLibraryFilter,
+    setQuestionLibrarySort,
+    resetQuestionLibraryFilters,
+    openLibrarySet,
+    renameLibrarySet,
+    downloadLibrarySet,
     creatorUndo,
     creatorRedo,
     toggleCreatorMultiSelect,
@@ -867,21 +1061,5 @@ function initMobileSwipeGestures() {
 }
 
 function initMobileNavAutoHide() {
-    const nav = document.querySelector('.mobile-bottom-nav');
-    if (!nav) return;
-    let lastY = window.scrollY;
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!window.matchMedia('(max-width: 900px), (max-width: 1180px) and (pointer: coarse)').matches || document.body.classList.contains('keyboard-open')) return;
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-            const currentY = window.scrollY;
-            const delta = currentY - lastY;
-            nav.classList.toggle('is-hidden-by-scroll', delta > 12 && currentY > 160);
-            if (delta < -8 || currentY < 80) nav.classList.remove('is-hidden-by-scroll');
-            lastY = currentY;
-            ticking = false;
-        });
-    }, { passive: true });
+    document.querySelector('.mobile-bottom-nav')?.classList.remove('is-hidden-by-scroll');
 }
