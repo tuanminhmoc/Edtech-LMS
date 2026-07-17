@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.2.2
+
+- Sửa triệt để ô số câu bằng component riêng, không còn chịu ảnh hưởng CSS danh sách cũ.
+- Polish sâu giao diện mobile cho dashboard, cấu hình học, trắc nghiệm, kết quả, flashcard, soạn đề và lịch sử.
+- Thêm xử lý bàn phím bằng Visual Viewport, bottom nav tự ẩn khi cuộn, phản hồi rung nhẹ và swipe có kiểm soát.
+- Tối ưu safe-area, vùng chạm, cỡ chữ và layout cho Android/iPhone nhỏ.
+
+
+## 1.2.1
+
+- Thêm quick settings để gom các nút phụ vào một menu gọn hơn.
+- Bổ sung bottom navigation riêng cho mobile và tăng khả năng thao tác một tay.
+- Cho phép copy/chọn văn bản trở lại trên desktop và mobile.
+- Tối ưu mobile để hạn chế hiện giao diện desktop trên Android.
+- Chặn zoom ngoài ý muốn trên mobile và cân lại kích thước, khoảng cách.
+- Sửa ô số câu trong trình soạn đề trên cả mobile và desktop.
+
+
 ## 1.2.0
 
 - Tách QR donate khỏi HTML Base64 để giảm kích thước HTML và tăng tốc parse/cache.

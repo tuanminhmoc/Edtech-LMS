@@ -691,6 +691,7 @@ function showScreen(screenId, options = {}) {
     const target = document.getElementById(screenId);
     if (!target) return;
     target.classList.add('active');
+    document.body.dataset.screen = screenId;
     document.body.classList.toggle('quiz-screen-active', screenId === 'quiz-app');
     document.body.classList.toggle('quiz-result-active', screenId === 'quiz-result-screen');
     if (screenId !== 'quiz-app') closeMobileQuizNavigator(true);
@@ -699,9 +700,10 @@ function showScreen(screenId, options = {}) {
     const navTarget = ['quiz-app', 'quiz-result-screen', 'flashcard-app', 'flashcard-result-screen'].includes(screenId)
         ? 'upload-screen'
         : screenId;
-    document.querySelectorAll('.nav-link').forEach(button => {
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(button => {
         button.classList.toggle('active', button.dataset.screen === navTarget);
     });
+    window.closeQuickSettings?.();
 
     if (screenId === 'dashboard-screen') renderDashboard();
     if (screenId === 'history-screen') renderHistoryTable();
@@ -2012,11 +2014,11 @@ function renderCreatorList() {
         const errors = validateCreatorItem(item);
         const fallback = creatorMode === 'quiz' ? 'Câu hỏi chưa nhập' : 'Thẻ chưa nhập';
         const tooltip = `${creatorMode === 'quiz' ? 'Câu' : 'Thẻ'} ${index + 1}: ${title || fallback}${errors.length ? ` · ${errors.length} lỗi cần sửa` : ' · Hoàn chỉnh'}`;
-        return `<div class="creator-list-item creator-grid-tile ${item.id === activeCreatorId ? 'active' : ''} ${errors.length ? 'invalid' : 'valid'}" draggable="true" title="${escapeHTML(tooltip)}" ondragstart="beginCreatorDrag(event, '${item.id}')" ondragover="allowCreatorDrop(event)" ondrop="dropCreatorItem(event, '${item.id}')">
-            <button class="creator-list-select creator-grid-select" type="button" onclick="selectCreatorItem('${item.id}')" aria-label="Mở ${creatorMode === 'quiz' ? 'câu hỏi' : 'thẻ'} ${index + 1}">
-                <strong>${index + 1}</strong><span class="creator-validity-dot" aria-hidden="true"></span>
+        return `<div class="creator-grid-tile creator-index-tile ${item.id === activeCreatorId ? 'active' : ''} ${errors.length ? 'invalid' : 'valid'}" draggable="true" title="${escapeHTML(tooltip)}" ondragstart="beginCreatorDrag(event, '${item.id}')" ondragover="allowCreatorDrop(event)" ondrop="dropCreatorItem(event, '${item.id}')">
+            <button class="creator-grid-select creator-index-open" type="button" onclick="selectCreatorItem('${item.id}')" aria-label="Mở ${creatorMode === 'quiz' ? 'câu hỏi' : 'thẻ'} ${index + 1}">
+                <strong>${index + 1}</strong><span class="creator-validity-dot creator-index-dot" aria-hidden="true"></span>
             </button>
-            <button class="creator-list-delete creator-grid-delete" type="button" onclick="deleteCreatorItemById('${item.id}', event)" title="Xóa mục ${index + 1}" aria-label="Xóa riêng mục ${index + 1}">×</button>
+            <button class="creator-grid-delete creator-index-delete" type="button" onclick="deleteCreatorItemById('${item.id}', event)" title="Xóa mục ${index + 1}" aria-label="Xóa riêng mục ${index + 1}">×</button>
         </div>`;
     }).join('');
 
@@ -2987,18 +2989,7 @@ async function initApp() {
         unlockAudio();
         if (event.target.closest('button') && !event.target.closest('.flashcard, .rating')) playSound('select');
     }, { passive: true });
-    document.addEventListener('contextmenu', event => {
-        if (!event.target.closest('input, textarea, [contenteditable="true"]')) event.preventDefault();
-    });
-    document.addEventListener('keydown', event => {
-        const blockedCombo = event.key === 'F12'
-            || ((event.ctrlKey || event.metaKey) && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase()))
-            || ((event.ctrlKey || event.metaKey) && ['U', 'S'].includes(event.key.toUpperCase()));
-        if (blockedCombo) {
-            event.preventDefault();
-            showToast('Phím inspect/devtools đã bị vô hiệu hóa trên giao diện này.', 'info');
-        }
-    });
+    // Cho phép chọn/copy văn bản tự nhiên trên desktop và mobile.
 
     document.getElementById('prompt-modal').addEventListener('click', event => {
         if (event.target.id === 'prompt-modal') closePromptPanel();

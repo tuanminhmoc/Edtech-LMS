@@ -700,8 +700,13 @@ function trapActiveModalFocus(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const version = document.getElementById('app-version-label');
-    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.2.0'}`;
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.2.2'}`;
     initInstallPrompt();
+    initQuickSettings();
+    initMobileViewportPolish();
+    initMobileHaptics();
+    initMobileSwipeGestures();
+    initMobileNavAutoHide();
     document.getElementById('data-center-modal')?.addEventListener('click', event => { if (event.target.id === 'data-center-modal') closeDataCenter(); });
     document.addEventListener('keydown', event => {
         trapActiveModalFocus(event);
@@ -738,3 +743,145 @@ Object.assign(window, {
     changeHistoryPage,
     installApp
 });
+
+
+function closeQuickSettings() {
+    const menu = document.getElementById('quick-settings-menu');
+    const toggle = document.getElementById('settings-toggle');
+    if (!menu) return;
+    menu.hidden = true;
+    menu.classList.remove('is-open');
+    toggle?.setAttribute('aria-expanded', 'false');
+}
+
+function openQuickSettings() {
+    const menu = document.getElementById('quick-settings-menu');
+    const toggle = document.getElementById('settings-toggle');
+    if (!menu) return;
+    menu.hidden = false;
+    menu.classList.add('is-open');
+    toggle?.setAttribute('aria-expanded', 'true');
+}
+
+function toggleQuickSettings(event) {
+    event?.stopPropagation?.();
+    const menu = document.getElementById('quick-settings-menu');
+    if (!menu || !menu.hidden) {
+        closeQuickSettings();
+        return;
+    }
+    openQuickSettings();
+}
+
+function initQuickSettings() {
+    const menu = document.getElementById('quick-settings-menu');
+    const toggle = document.getElementById('settings-toggle');
+    if (!menu || !toggle) return;
+    toggle.setAttribute('aria-expanded', 'false');
+    document.addEventListener('click', event => {
+        if (menu.hidden) return;
+        if (!menu.contains(event.target) && !toggle.contains(event.target)) closeQuickSettings();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeQuickSettings();
+    });
+    menu.addEventListener('click', event => {
+        const actionButton = event.target.closest('.quick-settings-btn');
+        if (actionButton && !actionButton.classList.contains('install-shortcut-btn')) {
+            setTimeout(closeQuickSettings, 60);
+        }
+    });
+}
+
+
+function initMobileViewportPolish() {
+    const viewport = window.visualViewport;
+    const updateViewport = () => {
+        const height = viewport?.height || window.innerHeight;
+        document.documentElement.style.setProperty('--visual-viewport-height', `${Math.round(height)}px`);
+        const keyboardOpen = Boolean(viewport && window.innerHeight - viewport.height > 120);
+        document.body.classList.toggle('keyboard-open', keyboardOpen);
+    };
+    updateViewport();
+    viewport?.addEventListener('resize', updateViewport, { passive: true });
+    viewport?.addEventListener('scroll', updateViewport, { passive: true });
+    window.addEventListener('orientationchange', () => setTimeout(updateViewport, 180), { passive: true });
+
+    document.addEventListener('focusin', event => {
+        if (!window.matchMedia('(max-width: 900px), (max-width: 1180px) and (pointer: coarse)').matches) return;
+        if (!event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+        setTimeout(() => event.target.scrollIntoView({ block: 'center', behavior: 'smooth' }), 260);
+    });
+}
+
+function mobileHaptic(pattern = 8) {
+    if (!window.matchMedia('(pointer: coarse)').matches) return;
+    try { navigator.vibrate?.(pattern); } catch (_) {}
+}
+
+function initMobileHaptics() {
+    document.addEventListener('click', event => {
+        if (!window.matchMedia('(pointer: coarse)').matches) return;
+        const target = event.target.closest('button, .option-item, .mode-card');
+        if (!target) return;
+        if (target.matches('.danger, .danger-soft, .text-danger-btn, .creator-index-delete')) mobileHaptic([12, 30, 12]);
+        else if (target.matches('.rating, .option-item, .mode-card')) mobileHaptic(8);
+        else mobileHaptic(5);
+    }, { passive: true });
+}
+
+function initMobileSwipeGestures() {
+    if (!window.matchMedia('(pointer: coarse), (max-width: 900px)').matches) return;
+    const bindSwipe = (element, handlers) => {
+        if (!element || element.dataset.swipeBound === '1') return;
+        element.dataset.swipeBound = '1';
+        let startX = 0;
+        let startY = 0;
+        let startedAt = 0;
+        element.addEventListener('touchstart', event => {
+            if (event.touches.length !== 1 || event.target.closest('input, textarea, select, button')) return;
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+            startedAt = performance.now();
+        }, { passive: true });
+        element.addEventListener('touchend', event => {
+            if (!startedAt || !event.changedTouches?.length) return;
+            const dx = event.changedTouches[0].clientX - startX;
+            const dy = event.changedTouches[0].clientY - startY;
+            const elapsed = performance.now() - startedAt;
+            startedAt = 0;
+            if (elapsed > 650 || Math.abs(dx) < 72 || Math.abs(dy) > 46) return;
+            if (dx < 0) handlers.left?.();
+            else handlers.right?.();
+        }, { passive: true });
+    };
+
+    bindSwipe(document.getElementById('questions-container'), {
+        left: () => { window.moveQuizQuestion?.(1); mobileHaptic(6); },
+        right: () => { window.moveQuizQuestion?.(-1); mobileHaptic(6); }
+    });
+    bindSwipe(document.getElementById('fc-card'), {
+        left: () => { window.skipFlashcard?.(); mobileHaptic(6); },
+        right: () => { window.undoFlashcardRating?.(); mobileHaptic(6); }
+    });
+}
+
+function initMobileNavAutoHide() {
+    const nav = document.querySelector('.mobile-bottom-nav');
+    if (!nav) return;
+    let lastY = window.scrollY;
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!window.matchMedia('(max-width: 900px), (max-width: 1180px) and (pointer: coarse)').matches || document.body.classList.contains('keyboard-open')) return;
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            const currentY = window.scrollY;
+            const delta = currentY - lastY;
+            nav.classList.toggle('is-hidden-by-scroll', delta > 12 && currentY > 160);
+            if (delta < -8 || currentY < 80) nav.classList.remove('is-hidden-by-scroll');
+            lastY = currentY;
+            ticking = false;
+        });
+    }, { passive: true });
+}
