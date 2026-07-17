@@ -1825,6 +1825,9 @@ function openCreator(mode) {
     ensureCreatorItems();
     renderCreator();
     showScreen('creator-screen');
+    window.__creatorMediaReadyPromise?.then(() => {
+        if (document.querySelector('.app-screen.active')?.id === 'creator-screen') renderCreator();
+    });
 
     if (recoveryCreatorDrafts && !creatorRecoveryOffered) {
         creatorRecoveryOffered = true;
@@ -2706,21 +2709,8 @@ function updateSoundButton() {
 }
 
 function initCustomCursor() {
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    const cursor = document.getElementById('custom-cursor');
-    if (!cursor) return;
-    document.addEventListener('pointermove', event => {
-        cursor.style.setProperty('--x', `${event.clientX}px`);
-        cursor.style.setProperty('--y', `${event.clientY}px`);
-        const interactive = event.target.closest('button, a, label, input, textarea, select, [role="button"]');
-        cursor.classList.toggle('is-hovering', Boolean(interactive));
-    });
-    document.addEventListener('pointerdown', () => cursor.classList.add('is-clicking'));
-    document.addEventListener('pointerup', () => cursor.classList.remove('is-clicking'));
-    document.addEventListener('pointerleave', () => {
-        cursor.style.setProperty('--x', '-100px');
-        cursor.style.setProperty('--y', '-100px');
-    });
+    // Native owl cursors are used via CSS for smoother desktop performance.
+    return;
 }
 
 function initFileDropzone() {
@@ -2964,12 +2954,19 @@ async function initApp() {
     } catch (error) {
         console.warn('IndexedDB bootstrap fallback:', error);
     }
-    try {
-        await hydrateCreatorMediaCache();
-        await migrateEmbeddedCreatorMedia();
-    } catch (error) {
-        console.warn('Không thể chuẩn bị toàn bộ dữ liệu ảnh:', error);
-    }
+    const prepareCreatorMedia = async () => {
+        try {
+            await hydrateCreatorMediaCache();
+            await migrateEmbeddedCreatorMedia();
+        } catch (error) {
+            console.warn('Không thể chuẩn bị toàn bộ dữ liệu ảnh:', error);
+        }
+    };
+    window.__creatorMediaReadyPromise = new Promise(resolve => {
+        const run = () => prepareCreatorMedia().finally(resolve);
+        if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 1400 });
+        else window.setTimeout(run, 120);
+    });
     setRandomFocusMotivation();
     if (!Array.isArray(appData.history)) appData.history = [];
     if (!appData.flashcards || typeof appData.flashcards !== 'object') appData.flashcards = {};

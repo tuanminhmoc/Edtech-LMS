@@ -4,20 +4,23 @@ chcp 65001 >nul
 
 title Cài đặt EdTech LMS Pro
 set "APP_NAME=EdTech LMS Pro"
-set "APP_URL=https://tuanminhmoc.github.io/#home"
-set "APP_HOME=https://tuanminhmoc.github.io/"
+set "APP_URL=https://tuanminhmoc.github.io/Edtech-LMS/#home"
+set "APP_HOME=https://tuanminhmoc.github.io/Edtech-LMS/"
 set "APP_DIR=%LOCALAPPDATA%\EdTech LMS Pro"
 set "ICON_FILE=%APP_DIR%\EdTech LMS Pro.ico"
-set "ICON_URL=https://tuanminhmoc.github.io/assets/icons/EdTech-LMS-Pro.ico"
+set "ICON_URL=https://tuanminhmoc.github.io/Edtech-LMS/assets/icons/EdTech-LMS-Pro.ico"
 
 if not exist "%APP_DIR%" mkdir "%APP_DIR%" >nul 2>&1
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "try { Invoke-WebRequest -UseBasicParsing '%ICON_URL%' -OutFile '%ICON_FILE%' -ErrorAction Stop } catch { exit 0 }" >nul 2>&1
+rem Tải icon riêng. Nếu mạng lỗi, shortcut vẫn được tạo bằng icon trình duyệt.
+powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ^
+  "$ProgressPreference='SilentlyContinue'; try { Invoke-WebRequest -UseBasicParsing -Uri $env:ICON_URL -OutFile $env:ICON_FILE -TimeoutSec 15 -ErrorAction Stop } catch {}" ^
+  >nul 2>&1
 
 set "BROWSER="
 set "PROFILE_ARG="
 
+rem Ưu tiên Brave, sau đó Edge và Chrome.
 if exist "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe" (
   set "BROWSER=%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
   set "PROFILE_ARG=--profile-directory=Default"
@@ -46,33 +49,31 @@ if not defined BROWSER if exist "%ProgramFiles(x86)%\Google\Chrome\Application\c
 )
 
 if not defined BROWSER (
-  echo Khong tim thay Brave, Microsoft Edge hoac Google Chrome.
-  echo Dang mo trang EdTech bang trinh duyet mac dinh...
+  rem Windows 10/11 gần như luôn có Edge. Nếu không có, mở URL bằng trình duyệt mặc định rồi tự đóng.
   start "" "%APP_HOME%"
-  pause
-  exit /b 1
+  exit /b 0
 )
 
-set "APP_ARGS=%PROFILE_ARG% --app=%APP_URL% --start-maximized"
-
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+rem PowerShell tạo shortcut .lnk thật trên Desktop và Start Menu, rồi mở app ở cửa sổ riêng.
+powershell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ^
   "$ErrorActionPreference='Stop';" ^
   "$shell=New-Object -ComObject WScript.Shell;" ^
   "$desktop=[Environment]::GetFolderPath('Desktop');" ^
   "$startMenu=Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs';" ^
-  "$targets=@((Join-Path $desktop '%APP_NAME%.lnk'),(Join-Path $startMenu '%APP_NAME%.lnk'));" ^
-  "foreach($target in $targets){$shortcut=$shell.CreateShortcut($target);$shortcut.TargetPath='%BROWSER%';$shortcut.Arguments='%APP_ARGS%';$shortcut.WorkingDirectory=(Split-Path '%BROWSER%');if(Test-Path '%ICON_FILE%'){$shortcut.IconLocation='%ICON_FILE%,0'};$shortcut.Description='EdTech LMS Pro';$shortcut.WindowStyle=1;$shortcut.Save()}" ^
+  "$arguments=@(); if($env:PROFILE_ARG){$arguments+=$env:PROFILE_ARG}; $arguments+=('--app=' + [char]34 + $env:APP_URL + [char]34); $arguments+='--start-maximized'; $argLine=$arguments -join ' ';" ^
+  "$targets=@((Join-Path $desktop ($env:APP_NAME+'.lnk')),(Join-Path $startMenu ($env:APP_NAME+'.lnk')));" ^
+  "foreach($target in $targets){" ^
+  "  $shortcut=$shell.CreateShortcut($target);" ^
+  "  $shortcut.TargetPath=$env:BROWSER;" ^
+  "  $shortcut.Arguments=$argLine;" ^
+  "  $shortcut.WorkingDirectory=(Split-Path $env:BROWSER);" ^
+  "  if(Test-Path $env:ICON_FILE){$shortcut.IconLocation=$env:ICON_FILE+',0'};" ^
+  "  $shortcut.Description='EdTech LMS Pro';" ^
+  "  $shortcut.WindowStyle=1;" ^
+  "  $shortcut.Save();" ^
+  "}" ^
+  "Start-Process -FilePath $env:BROWSER -ArgumentList $argLine" ^
   >nul 2>&1
 
-if errorlevel 1 (
-  echo Khong the tao shortcut. Hay bam chuot phai va chon Run as administrator, sau do thu lai.
-  pause
-  exit /b 1
-)
-
-start "" "%BROWSER%" %APP_ARGS%
-
-echo.
-echo Da cai EdTech LMS Pro vao Desktop va Start Menu.
-timeout /t 2 >nul
+rem Không pause: cài xong cửa sổ BAT tự đóng ngay.
 exit /b 0

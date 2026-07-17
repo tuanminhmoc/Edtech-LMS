@@ -67,13 +67,13 @@ a,
 label[for],
 select,
 input[type="checkbox"] {
-    cursor: none;
+    cursor: var(--cursor-pointer, pointer);
 }
 
 body,
 input,
 textarea {
-    cursor: none;
+    cursor: var(--cursor-default, auto);
 }
 
 button:focus-visible,
@@ -128,78 +128,10 @@ svg {
     background: radial-gradient(circle, rgba(203, 220, 202, 0.72), rgba(203, 220, 202, 0));
 }
 
-.custom-cursor {
-    --x: -100px;
-    --y: -100px;
-    position: fixed;
-    z-index: 99999;
-    left: 0;
-    top: 0;
-    width: 1px;
-    height: 1px;
-    pointer-events: none;
-    transform: translate3d(var(--x), var(--y), 0);
-}
-
+.custom-cursor { display: none !important; }
 .cursor-dot,
 .cursor-ring,
-.cursor-spark {
-    position: absolute;
-    left: 0;
-    top: 0;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
-
-.cursor-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--primary-dark);
-    box-shadow: 0 0 0 3px rgba(255,255,255,.75);
-    transition: width .18s ease, height .18s ease, background .18s ease;
-}
-
-.cursor-ring {
-    width: 30px;
-    height: 30px;
-    border: 1.5px solid rgba(67, 107, 140, .58);
-    border-radius: 50% 50% 50% 15%;
-    transform: translate(-50%, -50%) rotate(-18deg);
-    transition: width .2s ease, height .2s ease, border-color .2s ease, background .2s ease;
-}
-
-.cursor-spark {
-    color: var(--gold);
-    font-size: 10px;
-    opacity: 0;
-    margin: -15px 0 0 14px;
-    transition: opacity .18s ease, transform .18s ease;
-}
-
-.custom-cursor.is-hovering .cursor-dot {
-    width: 9px;
-    height: 9px;
-    background: var(--gold);
-}
-
-.custom-cursor.is-hovering .cursor-ring {
-    width: 42px;
-    height: 42px;
-    border-color: rgba(67, 107, 140, .34);
-    background: rgba(220, 232, 241, .28);
-}
-
-.custom-cursor.is-hovering .cursor-spark {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(35deg) scale(1.12);
-}
-
-.custom-cursor.is-clicking .cursor-ring {
-    width: 24px;
-    height: 24px;
-    background: rgba(230, 173, 81, .22);
-}
+.cursor-spark { display: none !important; }
 
 .app-shell {
     width: min(1540px, calc(100% - 32px));
@@ -8641,5 +8573,292 @@ html[data-theme="dark"] .donate-header-btn::before {
     ) {
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
+    }
+}
+
+/* ===== v1.1.9 desktop cursor polish + mobile sizing ===== */
+@media (hover: hover) and (pointer: fine) and (min-width: 901px) {
+    :root {
+        --cursor-default: url('../assets/cursors/owl-cursor.png') 8 6, auto;
+        --cursor-pointer: url('../assets/cursors/owl-pointer.png') 15 6, pointer;
+    }
+
+    html,
+    body,
+    input,
+    textarea,
+    select {
+        cursor: var(--cursor-default, auto) !important;
+    }
+
+    :is(button, a, label[for], select, input[type="checkbox"], input[type="radio"], summary, [role="button"], .nav-link, .btn, .icon-btn, .creator-grid-tile, .option-item, .flashcard, .rating button) {
+        cursor: var(--cursor-pointer, pointer) !important;
+    }
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        font-size: 16px;
+        line-height: 1.68;
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    .app-shell {
+        width: min(100%, calc(100% - 12px));
+        margin: 6px auto 24px;
+    }
+
+    .topbar {
+        top: 6px;
+        gap: 12px;
+        padding: 12px;
+        min-height: 84px;
+        border-radius: 24px;
+    }
+
+    .brand-copy strong {
+        font-size: 1.02rem;
+    }
+
+    .brand-copy small,
+    .focus-motivation,
+    .helper-note,
+    .creator-sidebar small,
+    .activity-copy small,
+    .history-item small,
+    .summary-list dd,
+    .summary-list dt {
+        font-size: .96rem;
+    }
+
+    .main-nav {
+        padding: 6px;
+        gap: 8px;
+    }
+
+    .nav-link,
+    .icon-btn,
+    .btn,
+    .toggle-row,
+    .mode-card,
+    .dropzone,
+    .summary-list div,
+    .summary-visual,
+    .activity-item,
+    .data-action-card,
+    .question-card,
+    .review-item,
+    .review-answer-row > div,
+    .option-item,
+    .prompt-options label,
+    .restore-options label,
+    .history-summary-grid article,
+    .full-preview-item,
+    input,
+    select,
+    textarea {
+        min-height: 52px;
+        font-size: 1rem;
+    }
+
+    .hero-card,
+    .surface-card,
+    .step-card,
+    .creator-sidebar,
+    .creator-editor,
+    .creator-preview-panel,
+    .history-panel,
+    .result-card,
+    .flashcard-card,
+    .setup-card,
+    .stats-card,
+    .panel-card,
+    .modal-box,
+    .prompt-modal-box,
+    .donate-modal-box {
+        border-radius: 24px;
+    }
+
+    h1, .focus-title {
+        font-size: clamp(2rem, 8vw, 2.8rem);
+        line-height: 1.08;
+    }
+
+    h2 {
+        font-size: clamp(1.35rem, 5vw, 1.85rem);
+    }
+
+    .hero-actions {
+        gap: 10px;
+    }
+
+    .hero-actions .btn,
+    .top-actions .icon-btn,
+    .top-actions .donate-header-btn,
+    .top-actions .install-shortcut-btn {
+        min-height: 50px;
+    }
+
+    .top-actions .icon-btn,
+    .top-actions .install-shortcut-btn {
+        min-width: 50px;
+    }
+
+    .question-title,
+    .quiz-question,
+    .flashcard-front,
+    .flashcard-back {
+        font-size: 1.05rem;
+    }
+
+    .option-item,
+    .review-answer-row > div,
+    .dropzone,
+    .mode-card,
+    .summary-list div,
+    .toggle-row {
+        padding: 14px 16px;
+    }
+
+    .creator-number-grid {
+        gap: 12px !important;
+    }
+
+    .creator-grid-tile,
+    .creator-list-item.creator-grid-tile {
+        min-height: 48px !important;
+    }
+
+    .creator-grid-select strong,
+    .creator-list-item .creator-grid-select strong {
+        font-size: .9rem !important;
+    }
+}
+
+/* ===== v1.2.0 performance pass ===== */
+@supports (content-visibility: auto) {
+    :is(
+        .activity-item,
+        .review-item,
+        .full-preview-item,
+        .history-card,
+        .history-item,
+        .local-question-set-item,
+        .creator-media-card,
+        .data-action-card
+    ) {
+        content-visibility: auto;
+        contain-intrinsic-size: 96px;
+    }
+
+    .review-item,
+    .full-preview-item {
+        contain-intrinsic-size: 180px;
+    }
+}
+
+:is(
+    .activity-item,
+    .review-item,
+    .full-preview-item,
+    .history-card,
+    .history-item,
+    .local-question-set-item,
+    .creator-media-card,
+    .data-action-card,
+    .option-item
+) {
+    contain: layout paint style;
+}
+
+.performance-lite .ambient,
+.performance-lite .intro-cosmos i:nth-child(n+5) {
+    display: none !important;
+}
+
+.performance-lite :is(
+    .brand-illustration,
+    .intro-owl-wrap,
+    .intro-star,
+    .intro-moon,
+    .donate-header-btn,
+    .donate-header-btn::before
+) {
+    animation: none !important;
+}
+
+.performance-lite :is(
+    .topbar,
+    .modal-box,
+    .prompt-modal-box,
+    .donate-modal-box,
+    .toast,
+    .intro-tap-hint
+) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.performance-lite * {
+    scroll-behavior: auto !important;
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+    .ambient {
+        display: none !important;
+    }
+
+    :is(
+        .topbar,
+        .modal-box,
+        .prompt-modal-box,
+        .donate-modal-box,
+        .toast,
+        .intro-tap-hint,
+        .quiz-nav-panel,
+        .result-review-panel
+    ) {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    :is(
+        .hero-card,
+        .surface-card,
+        .step-card,
+        .creator-sidebar,
+        .creator-editor,
+        .creator-preview-panel,
+        .history-panel,
+        .result-card,
+        .flashcard-card,
+        .setup-card,
+        .stats-card,
+        .panel-card,
+        .modal-box,
+        .prompt-modal-box,
+        .donate-modal-box
+    ) {
+        box-shadow: 0 10px 28px rgba(8, 5, 18, .12);
+    }
+
+    .intro-glow {
+        filter: blur(28px) !important;
+        opacity: .44 !important;
+    }
+
+    .intro-cosmos i:nth-child(n+6) {
+        display: none;
+    }
+
+    .brand-illustration,
+    .intro-owl-wrap {
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
 }

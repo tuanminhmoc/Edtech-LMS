@@ -459,9 +459,9 @@ function initInstallPrompt() {
 function getPublicAppUrl() {
     try {
         if (/^https?:$/.test(location.protocol)) return new URL('./#home', location.href).href;
-        return new URL(window.EDTECH_PUBLIC_URL || 'https://tuanminhmoc.github.io/').href.replace(/#.*$/, '') + '#home';
+        return new URL(window.EDTECH_PUBLIC_URL || 'https://tuanminhmoc.github.io/Edtech-LMS/').href.replace(/#.*$/, '') + '#home';
     } catch (_) {
-        return 'https://tuanminhmoc.github.io/#home';
+        return 'https://tuanminhmoc.github.io/Edtech-LMS/#home';
     }
 }
 
@@ -700,7 +700,7 @@ function trapActiveModalFocus(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const version = document.getElementById('app-version-label');
-    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.1.7'}`;
+    if (version) version.textContent = `v${window.EDTECH_APP_VERSION || '1.2.0'}`;
     initInstallPrompt();
     document.getElementById('data-center-modal')?.addEventListener('click', event => { if (event.target.id === 'data-center-modal') closeDataCenter(); });
     document.addEventListener('keydown', event => {

@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.2.0
+
+- Tách QR donate khỏi HTML Base64 để giảm kích thước HTML và tăng tốc parse/cache.
+- Xóa các ảnh concept cursor dung lượng lớn không dùng khi chạy.
+- Chuyển cursor cú sang PNG native, bỏ hoàn toàn tracking chuột bằng JavaScript.
+- Trì hoãn xử lý media của trình soạn đề đến thời gian rảnh để trang mở nhanh hơn.
+- Thêm `content-visibility` và CSS containment cho danh sách dài.
+- Giảm blur, bóng và animation nặng trên mobile/máy cấu hình thấp.
+- Tải font không chặn render và bổ sung chế độ hiệu năng nhẹ tự động.
+- Tối ưu lại PWA cache cho QR và cursor mới.
+
+## 1.1.9
+
+- Tối ưu giao diện mobile trên Android: chữ, nút bấm và khoảng cách lớn hơn, dễ chạm hơn.
+- Thay cursor JavaScript bằng bộ cursor cú mèo native siêu nhẹ để giảm lag trên desktop.
+- Thêm bộ asset cursor riêng cho dự án ở `assets/cursors/`.
+- Giữ Dark Theme mặc định và tiếp tục tinh chỉnh trải nghiệm tổng thể.
+
+
+## 1.1.8
+
+- Sửa bộ cài Windows trỏ đúng GitHub Pages của repository `Edtech-LMS`.
+- Tạo shortcut thật trên Desktop và Start Menu.
+- Mở ứng dụng bằng cửa sổ app riêng trên Brave, Edge hoặc Chrome.
+- Bộ cài tự đóng ngay sau khi tạo shortcut và khởi chạy ứng dụng.
+- Cập nhật URL icon và URL public theo đường dẫn project Pages.
+
 ## 1.1.7
 
 - Khôi phục luồng cài PWA native của Chrome, Edge và Brave.
