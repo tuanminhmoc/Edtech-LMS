@@ -131,6 +131,7 @@
         document.body.classList.add('modal-open');
         resetRestorePreview();
         refreshStorageStatus();
+        window.EdTechDiagnostics?.refreshDiagnosticPanel?.();
         setTimeout(() => modal.querySelector('button, input')?.focus(), 20);
     }
 

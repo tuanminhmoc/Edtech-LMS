@@ -14,10 +14,11 @@
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="shortcut icon" href="assets/icons/EdTech-LMS-Pro.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"></noscript>
     <script>
         (function () {
             try {
@@ -47,11 +48,23 @@
             });
         })();
     </script>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/practice.css">
+    <link rel="stylesheet" href="css/flashcard.css">
+    <link rel="stylesheet" href="css/creator.css">
+    <link rel="stylesheet" href="css/library.css">
+    <link rel="stylesheet" href="css/history.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/themes.css">
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <div class="brand-intro" id="brand-intro" role="dialog" aria-label="Giới thiệu EdTech LMS Pro" aria-live="polite">
         <div class="intro-scene">
+            <div class="intro-generated-backdrop" aria-hidden="true"></div>
             <div class="intro-glow intro-glow-one"></div>
             <div class="intro-glow intro-glow-two"></div>
             <div class="intro-cosmos" aria-hidden="true">
@@ -112,6 +125,7 @@
         <symbol id="i-history" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6"/><path d="M4 4v4.6h4.6M12 7v5l3 2"/></symbol>
         <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 3h6l1 4H8zM7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol>
         <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10z"/><path d="M16 9c1.3 1.6 1.3 4.4 0 6M19 6c3.5 3.4 3.5 8.6 0 12"/></symbol>
+        <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></symbol>
         <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
         <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m0 0-4 4m4-4 4 4"/><path d="M5 14v5h14v-5"/></symbol>
         <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M4 7h3c5 0 5 10 10 10h3M17 4l3 3-3 3M4 17h3c2.2 0 3.5-1.8 4.7-4M17 14l3 3-3 3"/></symbol>
@@ -132,6 +146,10 @@
         <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12 3.8 14 5l2.5-.4 1.5 2-1 2.3 1 2.1-1.5 2 1 2.3-1.5 2-2.5-.4-2 1.2-2-1.2-2.5.4-1.5-2 1-2.3-1-2.1 1.5-2-1-2.3 1.5-2L10 5z"/><circle cx="12" cy="12" r="3.1"/></symbol>
         <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 19h14"/></symbol>
         <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l2 5-3 2v4l-2 2-2-2v-4L7 8z"/><path d="M12 16v5"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.2 1 6-5.2-2.8-5.2 2.8 1-6L3.5 9.2l5.9-.9z"/></symbol>
+        <symbol id="i-archive" viewBox="0 0 24 24"><path d="M4 7h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M3 4h18v3H3zM9 12h6"/></symbol>
+        <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/><path d="M9 3 3 9M15 3l6 6M21 15l-6 6M9 21 3 15"/></symbol>
         <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M5 12h8a6 6 0 1 1 0 12"/></symbol>
         <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 1 0 0 12"/></symbol>
     </svg>
@@ -148,9 +166,9 @@
                     <svg viewBox="0 0 58 58" role="img">
                         <defs>
                             <linearGradient id="brandGradient" x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0" stop-color="#b896ff"/>
-                                <stop offset=".55" stop-color="#7f5ce0"/>
-                                <stop offset="1" stop-color="#3f2b6f"/>
+                                <stop offset="0" stop-color="var(--brand-logo-a, #b896ff)"/>
+                                <stop offset=".55" stop-color="var(--brand-logo-b, #7f5ce0)"/>
+                                <stop offset="1" stop-color="var(--brand-logo-c, #3f2b6f)"/>
                             </linearGradient>
                             <linearGradient id="brandGlass" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="0" stop-color="rgba(255,255,255,.78)"/>
@@ -160,8 +178,8 @@
                         <rect x="4" y="4" width="50" height="50" rx="16" fill="url(#brandGradient)"/>
                         <path d="M10 9h38a10 10 0 0 1 10 10v1.5c-14 5-30 7.5-48 7.5-7.3 0-13.7-.4-19.2-1.2V19A10 10 0 0 1 10 9z" fill="url(#brandGlass)" opacity=".34"/>
                         <path d="M17 18.5c7.2-4.3 16.8-4.3 24 0v23c-7.2-4.3-16.8-4.3-24 0z" fill="#fffdf8" opacity=".98"/>
-                        <path d="M29 19v22M20.5 23.5c3.5-1.6 6-1.4 8.5.1M37.5 23.5c-3.5-1.6-6-1.4-8.5.1" fill="none" stroke="#4d3377" stroke-width="2.4" stroke-linecap="round"/>
-                        <path d="m39 13 .9 2.8 2.8.9-2.8.9-.9 2.8-.9-2.8-2.8-.9 2.8-.9z" fill="#ffd267"/>
+                        <path d="M29 19v22M20.5 23.5c3.5-1.6 6-1.4 8.5.1M37.5 23.5c-3.5-1.6-6-1.4-8.5.1" fill="none" stroke="var(--brand-logo-ink, #4d3377)" stroke-width="2.4" stroke-linecap="round"/>
+                        <path d="m39 13 .9 2.8 2.8.9-2.8.9-.9 2.8-.9-2.8-2.8-.9 2.8-.9z" fill="var(--brand-logo-star, #ffd267)"/>
                     </svg>
                 </span>
                 <span class="brand-copy">
@@ -180,7 +198,7 @@
 
             <div class="top-actions">
                 <button class="donate-header-btn" id="donate-header-btn" type="button" onclick="openDonateModal()" aria-label="Ủng hộ dự án" title="Ủng hộ dự án">
-                    <span class="donate-header-spark" aria-hidden="true">✦</span><span>DONATE</span>
+                    <span class="donate-header-spark" aria-hidden="true"><svg><use href="#i-spark"></use></svg></span><span>DONATE</span>
                 </button>
                 <button class="icon-btn theme-toggle" id="theme-toggle" type="button" onclick="toggleTheme(event)" aria-label="Chuyển giao diện" title="Giao diện">
                     <svg><use href="#i-theme"></use></svg><span class="theme-toggle-label" aria-hidden="true">Dark</span>
@@ -196,14 +214,16 @@
                 </div>
                 <div class="quick-settings-actions">
                     <button class="quick-settings-btn install-shortcut-btn" id="install-shortcut-btn" type="button" onclick="installApp()" hidden><svg><use href="#i-download"></use></svg><span>Cài app</span></button>
-                    <button class="quick-settings-btn" id="sound-toggle" type="button" onclick="toggleSound()"><svg><use href="#i-sound"></use></svg><span>Âm thanh</span></button>
+                    <button class="quick-settings-btn" id="sound-toggle" type="button" onclick="toggleEffectsSound()"><svg><use href="#i-sound"></use></svg><span>Hiệu ứng âm thanh</span><small id="effects-sound-status">Bật</small></button>
+                    <button class="quick-settings-btn" id="music-toggle" type="button" onclick="toggleBackgroundMusic()"><svg><use href="#i-music"></use></svg><span>Nhạc nền piano</span><small id="music-status">Bật</small></button>
+                    <label class="quick-settings-volume" for="music-volume"><span><svg><use href="#i-music"></use></svg>Âm lượng nhạc nền</span><input id="music-volume" type="range" min="0" max="100" step="1" value="18" oninput="setMusicVolume(this.value)"><output id="music-volume-value">18%</output></label>
                     <button class="quick-settings-btn" type="button" onclick="openDataCenter()"><svg><use href="#i-database"></use></svg><span>Dữ liệu</span></button>
                     <button class="quick-settings-btn danger-soft" type="button" onclick="requestClearLearningData()"><svg><use href="#i-trash"></use></svg><span>Xóa dữ liệu</span></button>
                 </div>
             </div>
         </header>
 
-        <main class="main-content">
+        <main class="main-content" id="main-content" tabindex="-1">
             <section class="app-screen active" id="dashboard-screen">
                 <div class="dashboard-grid">
                     <article class="hero-card">
@@ -259,8 +279,8 @@
                         <article class="stat-card"><span class="stat-icon coral"><svg><use href="#i-cards"></use></svg></span><div><small>Thẻ đã ôn</small><strong id="stat-cards">0</strong></div></article>
                     </section>
 
-                    <article class="panel quick-panel">
-                        <div class="panel-heading"><div><span class="section-kicker">Bắt đầu nhanh</span><h2>Hôm nay bạn muốn học gì?</h2></div></div>
+                    <article class="surface-panel quick-panel">
+                        <div class="surface-panel-heading"><div><span class="section-kicker">Bắt đầu nhanh</span><h2>Hôm nay bạn muốn học gì?</h2></div></div>
                         <div class="quick-grid">
                             <button class="quick-action" onclick="openPracticeSetup('quiz')"><span class="quick-icon blue"><svg><use href="#i-quiz"></use></svg></span><span><strong>Làm bài trắc nghiệm</strong><small>Tải Excel, cấu hình và bắt đầu</small></span><svg class="arrow"><use href="#i-chevron-right"></use></svg></button>
                             <button class="quick-action" onclick="openPracticeSetup('flashcard')"><span class="quick-icon green"><svg><use href="#i-cards"></use></svg></span><span><strong>Ôn Flashcard thông minh</strong><small>Ghi nhớ theo mức độ thành thạo</small></span><svg class="arrow"><use href="#i-chevron-right"></use></svg></button>
@@ -269,8 +289,8 @@
                         </div>
                     </article>
 
-                    <article class="panel history-preview-panel">
-                        <div class="panel-heading inline"><div><span class="section-kicker">Hoạt động gần đây</span><h2>Lịch sử học tập</h2></div><button class="text-btn" onclick="showHistoryScreen()">Xem tất cả <svg><use href="#i-chevron-right"></use></svg></button></div>
+                    <article class="surface-panel history-preview-panel">
+                        <div class="surface-panel-heading inline"><div><span class="section-kicker">Hoạt động gần đây</span><h2>Lịch sử học tập</h2></div><button class="text-btn" onclick="showHistoryScreen()">Xem tất cả <svg><use href="#i-chevron-right"></use></svg></button></div>
                         <div id="dashboard-history" class="activity-list"></div>
                     </article>
                 </div>
@@ -284,7 +304,7 @@
 
                 <div class="setup-layout">
                     <div class="setup-main">
-                        <section class="panel setup-section">
+                        <section class="surface-panel setup-section">
                             <div class="step-title"><span>1</span><div><h2>Chọn chế độ</h2><p>Bạn có thể đổi chế độ trước khi tải file.</p></div></div>
                             <div class="mode-grid">
                                 <button class="mode-card active" id="btn-mode-quiz" onclick="selectStudyMode('quiz')">
@@ -300,7 +320,7 @@
                             </div>
                         </section>
 
-                        <section class="panel setup-section">
+                        <section class="surface-panel setup-section">
                             <div class="step-title"><span>2</span><div><h2>Chọn bộ đề</h2><p>Nhập file Excel hoặc EdTech đã xuất từ ứng dụng.</p></div></div>
                             <label class="dropzone" id="dropzone" for="excel-file">
                                 <input type="file" id="excel-file" accept=".xlsx,.xls,.edtech" hidden>
@@ -311,11 +331,11 @@
                             </label>
                             <div class="local-library-block">
                                 <div class="local-library-heading"><div><strong>Bộ đề trên thiết bị</strong><small>Mở lại nhanh mà không cần chọn file lần nữa.</small></div><button class="text-btn" type="button" onclick="renderLocalQuestionSets()">Làm mới</button></div>
-                                <div id="local-question-set-list" class="local-question-set-list"><span class="empty-inline">Chưa có bộ đề được lưu.</span></div>
+                                <div id="setup-local-deck-list" class="setup-local-deck-list"><span class="empty-inline">Chưa có bộ đề được lưu.</span></div>
                             </div>
                         </section>
 
-                        <section class="panel setup-section">
+                        <section class="surface-panel setup-section">
                             <div class="step-title"><span>3</span><div><h2>Tùy chọn buổi học</h2><p>Các lựa chọn được lưu trên trình duyệt này.</p></div></div>
                             <div id="config-quiz" class="config-grid">
                                 <label class="toggle-row"><span><svg><use href="#i-shuffle"></use></svg><span><strong>Trộn câu hỏi</strong><small>Thay đổi thứ tự câu trong mỗi lần học.</small></span></span><input type="checkbox" id="shuffle-questions" checked><i></i></label>
@@ -329,7 +349,7 @@
                         </section>
                     </div>
 
-                    <aside class="panel setup-summary">
+                    <aside class="surface-panel setup-summary">
                         <span class="section-kicker">Tóm tắt</span>
                         <h2>Sẵn sàng bắt đầu?</h2>
                         <div class="summary-visual"><svg><use href="#i-file"></use></svg><span id="summary-file-name">Chưa chọn file</span></div>
@@ -348,7 +368,7 @@
                 <div class="quiz-topline">
                     <button class="back-btn" onclick="confirmLeaveQuiz()"><svg><use href="#i-back"></use></svg></button>
                     <div class="quiz-file-title"><small>Đang làm bài</small><strong id="quiz-title">Bộ đề</strong></div>
-                    <div class="quiz-top-stats"><span><svg><use href="#i-clock"></use></svg><strong id="timer-display">00:00</strong></span><span><strong id="progress-text">0 / 0</strong> câu</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình">⛶</button><button class="study-exit-btn" type="button" onclick="confirmLeaveQuiz()" title="Thoát bài làm" aria-label="Thoát bài làm">×</button></div>
+                    <div class="quiz-top-stats"><span><svg><use href="#i-clock"></use></svg><strong id="timer-display">00:00</strong></span><span><strong id="progress-text">0 / 0</strong> câu</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình" aria-label="Toàn màn hình"><svg><use href="#i-expand"></use></svg></button><button class="study-exit-btn" type="button" onclick="confirmLeaveQuiz()" title="Thoát bài làm" aria-label="Thoát bài làm"><svg><use href="#i-close"></use></svg></button></div>
                 </div>
                 <div class="progress-track"><div id="progress-bar"></div></div>
 
@@ -357,8 +377,8 @@
                         <div id="questions-container" class="questions-column"></div>
                         <div class="quiz-end-submit"><button class="btn btn-primary btn-full" type="button" onclick="gradeQuiz(false)"><svg><use href="#i-check"></use></svg>Nộp bài</button></div>
                     </div>
-                    <aside class="panel quiz-nav-panel" id="quiz-nav-panel" aria-label="Tiến độ và mục lục câu hỏi">
-                        <div class="quiz-mobile-nav-head"><div><span class="section-kicker">Tiến độ bài làm</span><strong id="quiz-mobile-hud-progress">0 / 0 câu</strong></div><button class="icon-btn small" type="button" onclick="closeMobileQuizNavigator()" aria-label="Đóng mục lục">×</button></div>
+                    <aside class="surface-panel quiz-nav-panel" id="quiz-nav-panel" aria-label="Tiến độ và mục lục câu hỏi">
+                        <div class="quiz-mobile-nav-head"><div><span class="section-kicker">Tiến độ bài làm</span><strong id="quiz-mobile-hud-progress">0 / 0 câu</strong></div><button class="icon-btn small" type="button" onclick="closeMobileQuizNavigator()" aria-label="Đóng mục lục"><svg><use href="#i-close"></use></svg></button></div>
                         <span class="section-kicker quiz-desktop-nav-kicker">Mục lục</span>
                         <h2>Câu hỏi</h2>
                         <div id="nav-grid" class="quiz-nav-grid"></div>
@@ -380,7 +400,7 @@
                 </div>
 
                 <div class="result-layout">
-                    <section class="result-hero panel">
+                    <section class="result-hero surface-panel">
                         <div class="result-mobile-meta">
                             <span>Kết quả trắc nghiệm</span>
                             <strong id="result-mobile-file-name">Bộ đề</strong>
@@ -402,12 +422,12 @@
                         </div>
                     </section>
 
-                    <section class="panel review-panel" id="result-review-panel" aria-label="Chi tiết bài làm">
-                        <div class="panel-heading inline">
+                    <section class="surface-panel review-panel" id="result-review-panel" aria-label="Chi tiết bài làm">
+                        <div class="surface-panel-heading inline">
                             <div><span class="section-kicker">Xem lại bài</span><h2>Chi tiết từng câu</h2></div>
                             <div class="review-heading-actions">
                                 <div class="review-filter"><button class="active" data-filter="all" onclick="filterReview('all', this)">Tất cả</button><button data-filter="wrong" onclick="filterReview('wrong', this)">Cần xem lại</button></div>
-                                <button class="icon-btn small result-review-mobile-close" type="button" onclick="closeMobileResultReview()" aria-label="Đóng phần xem lại">×</button>
+                                <button class="icon-btn small result-review-mobile-close" type="button" onclick="closeMobileResultReview()" aria-label="Đóng phần xem lại"><svg><use href="#i-close"></use></svg></button>
                             </div>
                         </div>
                         <div id="result-review-list" class="result-review-list"></div>
@@ -420,23 +440,23 @@
                 <div class="quiz-topline">
                     <button class="back-btn" onclick="confirmLeaveFlashcards()"><svg><use href="#i-back"></use></svg></button>
                     <div class="quiz-file-title"><small>Flashcard thông minh</small><strong id="fc-title">Bộ thẻ</strong></div>
-                    <div class="quiz-top-stats"><span><strong id="fc-counter">1 / 10</strong> thẻ</span><span><strong id="fc-due-label">0</strong> cần ôn</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình">⛶</button><button class="study-exit-btn" type="button" onclick="confirmLeaveFlashcards()" title="Thoát buổi học" aria-label="Thoát buổi học">×</button></div>
+                    <div class="quiz-top-stats"><span><strong id="fc-counter">1 / 10</strong> thẻ</span><span><strong id="fc-due-label">0</strong> cần ôn</span><button class="focus-mode-btn" type="button" onclick="toggleStudyFullscreen()" title="Toàn màn hình" aria-label="Toàn màn hình"><svg><use href="#i-expand"></use></svg></button><button class="study-exit-btn" type="button" onclick="confirmLeaveFlashcards()" title="Thoát buổi học" aria-label="Thoát buổi học"><svg><use href="#i-close"></use></svg></button></div>
                 </div>
                 <div class="progress-track"><div id="fc-progress-bar"></div></div>
 
-                <div class="flashcard-layout">
-                    <section class="flashcard-stage">
+                <div class="study-flashcard-layout">
+                    <section class="study-flashcard-stage">
                         <div class="fc-tabs"><span id="fc-tab-new">Mới 0</span><span id="fc-tab-review">Đang ôn 0</span><span id="fc-tab-mastered">Đã vững 0</span></div>
                         <div class="fc-mode-toolbar" aria-label="Tùy chọn học flashcard">
                             <button id="fc-reverse-toggle" type="button" onclick="toggleFlashcardReverse()"><svg><use href="#i-refresh"></use></svg>Đảo chiều</button>
                             <button id="fc-type-toggle" type="button" onclick="toggleFlashcardTyping()"><svg><use href="#i-create"></use></svg>Gõ đáp án</button>
                             <button type="button" onclick="suspendCurrentFlashcard()"><svg><use href="#i-eye"></use></svg>Tạm dừng thẻ</button>
                         </div>
-                        <button class="flashcard" id="fc-card" onclick="flipCard()" type="button" aria-label="Lật thẻ">
+                        <button class="study-flashcard-card" id="fc-card" onclick="flipCard()" type="button" aria-label="Lật thẻ">
                             <span class="card-corner" id="fc-side-label">Mặt trước</span>
-                            <span class="card-spark">✦</span>
-                            <span class="flashcard-content" id="fc-front-text"></span>
-                            <span class="flashcard-content back-content" id="fc-back-text"></span>
+                            <span class="card-spark" aria-hidden="true"><svg><use href="#i-spark"></use></svg></span>
+                            <span class="study-flashcard-content" id="fc-front-text"></span>
+                            <span class="study-flashcard-content back-content" id="fc-back-text"></span>
                             <span class="tap-hint"><svg><use href="#i-refresh"></use></svg> Bấm hoặc nhấn Space để lật</span>
                         </button>
                         <div class="fc-type-answer" id="fc-type-answer" hidden>
@@ -457,7 +477,7 @@
                         <div class="fc-controls"><button class="btn btn-ghost" id="fc-undo-btn" onclick="undoFlashcardRating()" disabled><svg><use href="#i-back"></use></svg>Hoàn tác</button><span id="fc-session-position">Thẻ 1</span><button class="btn btn-ghost" onclick="skipFlashcard()">Bỏ qua<svg><use href="#i-chevron-right"></use></svg></button></div>
                     </section>
 
-                    <aside class="panel fc-progress-panel">
+                    <aside class="surface-panel fc-progress-panel">
                         <span class="section-kicker">Tiến độ phiên học</span>
                         <h2>Ghi nhớ có chiến lược</h2>
                         <div class="fc-circle"><span><strong id="fc-completed-count">0</strong><small>đã đánh giá</small></span></div>
@@ -474,7 +494,7 @@
 
             <section class="app-screen" id="flashcard-result-screen">
                 <div class="result-layout single-result">
-                    <section class="result-hero panel flashcard-result-card">
+                    <section class="result-hero surface-panel flashcard-result-card">
                         <div class="finish-illustration"><svg viewBox="0 0 180 160"><circle cx="90" cy="78" r="62" fill="#edf3ed"/><path d="M55 68c0-28 16-48 35-48s35 20 35 48v31c0 23-14 40-35 40s-35-17-35-40z" fill="#527793"/><ellipse cx="75" cy="67" rx="19" ry="22" fill="var(--owl-face)"/><ellipse cx="105" cy="67" rx="19" ry="22" fill="var(--owl-face)"/><path d="M70 67c2 4 7 4 10 0M100 67c2 4 7 4 10 0" stroke="#36566e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="m90 73-6 6h12z" fill="#e4ad58"/><path d="M52 104c17-13 29-10 38 0v31c-13-10-27-12-38-4zM128 104c-17-13-29-10-38 0v31c13-10 27-12 38-4z" fill="#6e927e"/><path d="m138 35 4 11 11 4-11 4-4 11-4-11-11-4 11-4z" fill="#f0bd66"/></svg></div>
                         <div class="result-message centered"><span class="result-badge"><svg><use href="#i-spark"></use></svg> Phiên học hoàn tất</span><h1>Làm tốt lắm!</h1><p>Bộ nhớ được củng cố theo mức độ bạn vừa đánh giá.</p></div>
                         <div class="result-mini-stats fc-finish-stats"><div><span><small>Tổng thẻ</small><strong id="fc-result-total">0</strong></span></div><div><span><small>Nhớ tốt</small><strong id="fc-result-good">0</strong></span></div><div><span><small>Cần ôn lại</small><strong id="fc-result-again">0</strong></span></div><div><span><small>Điểm nhận</small><strong id="fc-result-xp">0 XP</strong></span></div></div>
@@ -504,8 +524,8 @@
                             <span class="library-stat-icon all"><svg><use href="#i-library"></use></svg></span>
                             <span class="library-summary-copy"><small>Tổng bộ đề</small><strong id="library-stat-total">0</strong><em>đang lưu</em></span>
                         </article>
-                        <article class="library-summary-card quiz">
-                            <span class="library-stat-icon quiz"><svg><use href="#i-quiz"></use></svg></span>
+                        <article class="library-summary-card type-quiz">
+                            <span class="library-stat-icon type-quiz"><svg><use href="#i-quiz"></use></svg></span>
                             <span class="library-summary-copy"><small>Trắc nghiệm</small><strong id="library-stat-quiz">0</strong><em>bộ câu hỏi</em></span>
                         </article>
                         <article class="library-summary-card type-flashcard">
@@ -528,11 +548,28 @@
                             <button class="active" type="button" data-library-filter="all" onclick="setQuestionLibraryFilter('all')">Tất cả</button>
                             <button type="button" data-library-filter="quiz" onclick="setQuestionLibraryFilter('quiz')">TN</button>
                             <button type="button" data-library-filter="flashcard" onclick="setQuestionLibraryFilter('flashcard')">Flashcard</button>
+                            <button type="button" data-library-filter="pinned" onclick="setQuestionLibraryFilter('pinned')">Đã ghim</button>
+                            <button type="button" data-library-filter="favorite" onclick="setQuestionLibraryFilter('favorite')">Yêu thích</button>
+                            <button type="button" data-library-filter="archived" onclick="setQuestionLibraryFilter('archived')">Lưu trữ</button>
                         </div>
                         <label class="library-sort-field">
                             <span>Sắp xếp</span>
                             <select id="library-sort" onchange="setQuestionLibrarySort(this.value)"><option value="updated">Mới cập nhật</option><option value="name">Theo tên</option><option value="count">Nhiều nội dung nhất</option><option value="plays">Làm nhiều nhất</option></select>
                         </label>
+                    </section>
+
+                    <section class="library-bulk-toolbar" id="library-bulk-toolbar" aria-label="Thao tác nhiều bộ đề" hidden>
+                        <label><input id="library-select-all" type="checkbox" onchange="toggleSelectAllLibrary(this.checked)"> Chọn trang này</label>
+                        <strong class="library-bulk-count" id="library-bulk-count">0 đã chọn</strong>
+                        <span class="library-bulk-spacer"></span>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="bulkLibraryAction('pin')">Ghim</button>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="bulkLibraryAction('favorite')">Yêu thích</button>
+                        <button class="btn btn-secondary btn-small" id="library-bulk-archive" type="button" onclick="bulkLibraryAction('archive')">Lưu trữ</button>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="bulkDuplicateLibrarySets()">Nhân bản</button>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="bulkExportLibrarySets('edtech')">Xuất .edtech</button>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="bulkExportLibrarySets('excel')">Xuất Excel</button>
+                        <button class="btn btn-secondary btn-small" type="button" onclick="mergeSelectedLibrarySets()">Gộp</button>
+                        <button class="btn btn-danger btn-small" type="button" onclick="bulkDeleteLibrarySets()">Xóa</button>
                     </section>
 
                     <div class="library-content-heading">
@@ -541,6 +578,7 @@
                     </div>
 
                     <div id="question-library-grid" class="question-library-grid" aria-live="polite"></div>
+                    <nav class="library-pagination" id="library-pagination" aria-label="Phân trang thư viện" hidden></nav>
                 </div>
             </section>
 
@@ -548,11 +586,11 @@
                 <div class="page-heading creator-heading">
                     <button class="back-btn" onclick="showScreen('dashboard-screen')"><svg><use href="#i-back"></use></svg></button>
                     <div class="creator-heading-copy"><span class="section-kicker">Công cụ soạn đề</span><h1>Tạo nội dung học tập</h1><p>Soạn trắc nghiệm hoặc flashcard, hỗ trợ LaTeX và hình ảnh.</p><label class="creator-file-name-field"><span>Tên bộ đề / tên file xuất</span><input id="creator-file-name" type="text" maxlength="90" placeholder="Ví dụ: Ôn tập An toàn mạng" oninput="updateCreatorFileName(this.value)"></label></div>
-                    <div class="creator-top-actions"><button class="btn btn-secondary" onclick="openCreatorPreview()"><svg><use href="#i-eye"></use></svg>Xem trước bộ đề</button><button class="btn btn-secondary" onclick="openPromptPanel()"><svg><use href="#i-copy"></use></svg>Copy prompt tạo nhanh</button><button class="btn btn-primary" id="creator-export-btn" onclick="exportCreatorToExcel()"><svg><use href="#i-save"></use></svg><span>Xuất Excel</span></button></div>
+                    <div class="creator-top-actions"><button class="btn btn-secondary" onclick="openCreatorPreview()"><svg><use href="#i-eye"></use></svg>Xem trước bộ đề</button><button class="btn btn-secondary" onclick="openPromptPanel()"><svg><use href="#i-copy"></use></svg>Copy prompt tạo nhanh</button><button class="btn btn-secondary" id="creator-export-edtech-btn" onclick="exportCreatorToEdtech()"><svg><use href="#i-download"></use></svg><span>Xuất .edtech</span></button><button class="btn btn-primary" id="creator-export-btn" onclick="exportCreatorToExcel()"><svg><use href="#i-save"></use></svg><span>Xuất Excel</span></button></div>
                 </div>
 
                 <div class="creator-layout">
-                    <aside class="panel creator-sidebar">
+                    <aside class="surface-panel creator-sidebar">
                         <div class="creator-mode-tabs"><button id="creator-tab-quiz" class="active" onclick="setCreatorMode('quiz')"><svg><use href="#i-quiz"></use></svg>TN</button><button id="creator-tab-flashcard" onclick="setCreatorMode('flashcard')"><svg><use href="#i-cards"></use></svg>Flashcard</button></div>
                         <div class="sidebar-heading"><div><span class="section-kicker">Danh sách</span><h2 id="creator-list-title">Câu hỏi</h2></div><button class="icon-btn small" onclick="addCreatorItem()" title="Thêm mới"><svg><use href="#i-plus"></use></svg></button></div>
                         <div class="creator-list-tools"><input id="creator-search" type="search" placeholder="Tìm trong bộ đề..." oninput="setCreatorSearch(this.value)"><select id="creator-filter" onchange="setCreatorFilter(this.value)"><option value="all">Tất cả</option><option value="invalid">Chưa hoàn chỉnh</option><option value="valid">Hoàn chỉnh</option></select></div>
@@ -563,10 +601,10 @@
                         <button class="text-danger-btn" onclick="clearCreatorItems()"><svg><use href="#i-trash"></use></svg>Xóa toàn bộ nội dung</button>
                     </aside>
 
-                    <section class="panel creator-editor" id="creator-editor"></section>
+                    <section class="surface-panel creator-editor" id="creator-editor"></section>
 
-                    <aside class="panel creator-preview-panel">
-                        <div class="panel-heading"><div><span class="section-kicker">Xem trước</span><h2 id="preview-title">Câu hỏi hiện tại</h2></div></div>
+                    <aside class="surface-panel creator-preview-panel">
+                        <div class="surface-panel-heading"><div><span class="section-kicker">Xem trước</span><h2 id="preview-title">Câu hỏi hiện tại</h2></div></div>
                         <div id="creator-preview" class="creator-preview"></div>
                         <div class="creator-tips"><strong>Mẹo soạn nhanh</strong><p>Dùng <code>$...$</code> cho công thức toán. Dán ảnh trực tiếp bằng <kbd>Ctrl</kbd> + <kbd>V</kbd> trong ô nội dung.</p></div>
                     </aside>
@@ -578,7 +616,7 @@
                     <button class="back-btn" onclick="showScreen('dashboard-screen')"><svg><use href="#i-back"></use></svg></button>
                     <div><span class="section-kicker">Tiến độ</span><h1>Lịch sử hoạt động</h1><p>Xem lại toàn bộ các phiên trắc nghiệm và flashcard trên thiết bị này.</p></div>
                 </div>
-                <section class="panel history-full-panel">
+                <section class="surface-panel history-full-panel">
                     <div class="history-summary-grid"><article><small>Tổng phiên</small><strong id="history-total-sessions">0</strong></article><article><small>Trắc nghiệm</small><strong id="history-total-quizzes">0</strong></article><article><small>Flashcard</small><strong id="history-total-flashcards">0</strong></article><article><small>Điểm tích lũy</small><strong id="history-total-xp">0 XP</strong></article></div>
                     <div class="history-toolbar"><div class="search-box"><svg><use href="#i-history"></use></svg><input id="history-search" type="search" placeholder="Tìm theo tên bộ đề..." oninput="renderHistoryTable()"></div><select id="history-filter" onchange="renderHistoryTable()"><option value="all">Tất cả hoạt động</option><option value="quiz">Trắc nghiệm</option><option value="flashcard">Flashcard</option></select></div>
                     <div class="table-wrap"><table class="history-table"><thead><tr><th>Thời gian</th><th>Loại</th><th>Tài liệu</th><th>Kết quả</th><th>Thời lượng</th><th>Điểm</th><th>Thao tác</th></tr></thead><tbody id="history-table-body"></tbody></table></div>
@@ -606,7 +644,7 @@
 
     <div class="modal-overlay" id="prompt-modal" hidden>
         <div class="modal-box prompt-modal-box">
-            <button class="modal-close" onclick="closePromptPanel()" aria-label="Đóng">×</button>
+            <button class="modal-close" onclick="closePromptPanel()" aria-label="Đóng"><svg><use href="#i-close"></use></svg></button>
             <span class="section-kicker">Dùng AI bên ngoài, không tích hợp API</span>
             <h2>Copy prompt chuẩn</h2>
             <p>Copy prompt, gửi vào ChatGPT/Gemini/Claude, sau đó dán JSON trả về. Ứng dụng sẽ tự kiểm tra và chỉ nhập dữ liệu hợp lệ.</p>
@@ -636,17 +674,17 @@
 
     <div class="modal-overlay" id="creator-preview-modal" hidden>
         <div class="modal-box creator-preview-modal-box">
-            <button class="modal-close" onclick="closeCreatorPreview()" aria-label="Đóng">×</button>
+            <button class="modal-close" onclick="closeCreatorPreview()" aria-label="Đóng"><svg><use href="#i-close"></use></svg></button>
             <span class="section-kicker">Xem trước trước khi xuất</span>
             <h2 id="creator-full-preview-title">Bộ đề</h2>
             <div id="creator-full-preview" class="creator-full-preview"></div>
-            <div class="modal-actions"><button class="btn btn-secondary" onclick="closeCreatorPreview()">Quay lại chỉnh sửa</button><button class="btn btn-primary" onclick="closeCreatorPreview(); exportCreatorToExcel()"><svg><use href="#i-save"></use></svg>Xuất Excel</button></div>
+            <div class="modal-actions"><button class="btn btn-secondary" onclick="closeCreatorPreview()">Quay lại chỉnh sửa</button><button class="btn btn-secondary" onclick="closeCreatorPreview(); exportCreatorToEdtech()"><svg><use href="#i-download"></use></svg>Xuất .edtech</button><button class="btn btn-primary" onclick="closeCreatorPreview(); exportCreatorToExcel()"><svg><use href="#i-save"></use></svg>Xuất Excel</button></div>
         </div>
     </div>
 
     <div class="modal-overlay donate-overlay" id="donate-modal" role="dialog" aria-modal="true" aria-labelledby="donate-title" hidden>
         <div class="modal-box donate-modal-box" id="donate-card">
-            <button class="modal-close" type="button" onclick="closeDonateModal()" aria-label="Đóng khung ủng hộ">×</button>
+            <button class="modal-close" type="button" onclick="closeDonateModal()" aria-label="Đóng khung ủng hộ"><svg><use href="#i-close"></use></svg></button>
             <span class="section-kicker">Ủng hộ dự án</span>
             <h2 id="donate-title">Cảm ơn bạn đã đồng hành!</h2>
             <p>Mỗi đóng góp giúp EdTech LMS Pro tiếp tục được chăm chút và hoàn thiện tốt hơn.</p>
@@ -692,7 +730,21 @@
                 <div class="data-action-inline">
                     <button class="btn btn-secondary btn-small" type="button" onclick="optimizeStoredImages()">Nén lại ảnh cũ</button>
                     <button class="btn btn-secondary btn-small" type="button" onclick="clearAppCachesKeepData()">Xóa cache giữ dữ liệu học</button>
+                    <button class="btn btn-secondary btn-small" type="button" onclick="repairApplication()">Sửa ứng dụng</button>
                 </div>
+            </section>
+            <section class="data-diagnostics-card" aria-labelledby="diagnostic-title">
+                <h3 id="diagnostic-title">Chẩn đoán cục bộ</h3>
+                <div class="diagnostic-grid error-diagnostic-list">
+                    <article><small>Phiên bản</small><strong id="diagnostic-app-version">Đang đọc…</strong></article>
+                    <article><small>Trình duyệt</small><strong id="diagnostic-browser">Đang đọc…</strong></article>
+                    <article><small>Service Worker</small><strong id="diagnostic-service-worker">Đang đọc…</strong></article>
+                    <article><small>IndexedDB</small><strong id="diagnostic-indexeddb">Đang đọc…</strong></article>
+                    <article><small>Schema dữ liệu</small><strong id="diagnostic-schema">4</strong></article>
+                    <article><small>Dung lượng</small><strong id="diagnostic-storage">Đang đọc…</strong></article>
+                    <article><small>Lỗi gần nhất</small><strong id="diagnostic-last-error">Đang đọc…</strong></article>
+                </div>
+                <div class="data-action-inline"><button class="btn btn-secondary btn-small" type="button" onclick="copyDiagnosticReport()">Copy báo cáo lỗi</button><button class="btn btn-secondary btn-small" id="safe-mode-toggle" type="button" onclick="toggleSafeModeFromSettings()">Bật Safe Mode</button></div>
             </section>
             <div class="restore-preview" id="restore-preview" hidden></div>
             <div class="restore-options">
@@ -700,7 +752,20 @@
                 <label><input type="radio" name="restore-mode" value="replace"><span><strong>Thay thế toàn bộ</strong><small>Xóa dữ liệu hiện tại trước khi khôi phục.</small></span></label>
             </div>
             <button class="btn btn-primary btn-full" id="restore-confirm-btn" type="button" onclick="confirmRestore()" disabled>Khôi phục dữ liệu đã chọn</button>
-            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.3.4</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+            <div class="data-center-foot"><span>EdTech LMS Pro <b id="app-version-label">v1.4.6</b></span><span>Không gửi dữ liệu lên máy chủ.</span></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="deck-download-modal" hidden>
+        <div class="modal-box deck-download-box">
+            <button class="modal-close" type="button" onclick="closeDeckDownloadModal()" aria-label="Đóng"><svg><use href="#i-close"></use></svg></button>
+            <span class="section-kicker">Tải bộ đề</span>
+            <h2>Chọn định dạng</h2>
+            <p id="deck-download-name">Bộ đề</p>
+            <div class="deck-download-options">
+                <button class="deck-download-option" type="button" onclick="confirmDeckDownload('excel')"><span><svg><use href="#i-save"></use></svg></span><strong>Excel .xlsx</strong><small>Dễ chỉnh sửa và chia sẻ với bảng tính.</small></button>
+                <button class="deck-download-option" type="button" onclick="confirmDeckDownload('edtech')"><span><svg><use href="#i-download"></use></svg></span><strong>EdTech .edtech</strong><small>Giữ nguyên cấu trúc để nhập lại vào ứng dụng.</small></button>
+            </div>
         </div>
     </div>
 
@@ -722,16 +787,38 @@
         </div>
     </div>
 
+    <div class="app-recovery-overlay" id="app-recovery-overlay" role="dialog" aria-modal="true" aria-labelledby="recovery-title" hidden>
+        <section class="app-recovery-card">
+            <span class="section-kicker">Recovery Mode</span>
+            <h2 id="recovery-title">Khôi phục EdTech LMS Pro</h2>
+            <p data-recovery-message>Ứng dụng gặp lỗi khi khởi động.</p>
+            <small data-recovery-detail></small>
+            <div class="app-recovery-actions">
+                <button class="btn btn-primary" type="button" onclick="location.reload()">Tải lại ứng dụng</button>
+                <button class="btn btn-secondary" type="button" onclick="repairApplication()">Xóa cache, giữ dữ liệu</button>
+                <button class="btn btn-secondary" type="button" onclick="emergencyBackup()">Xuất backup khẩn cấp</button>
+                <button class="btn btn-secondary" type="button" onclick="restoreLatestSnapshot()">Khôi phục snapshot</button>
+                <button class="btn btn-secondary" type="button" onclick="startSafeMode()">Khởi động Safe Mode</button>
+                <button class="btn btn-secondary" type="button" onclick="closeRecovery()">Đóng</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="undo-snackbar" id="undo-snackbar" role="status" aria-live="polite" hidden><span id="undo-snackbar-text">Đã xóa.</span><button class="btn btn-secondary btn-small" id="undo-snackbar-action" type="button">Hoàn tác</button></div>
+
     <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-    <script>window.EDTECH_APP_VERSION = '1.3.4';</script>
+    <script>window.EDTECH_APP_VERSION = '1.4.6';</script>
     <script src="js/database.js"></script>
+    <script src="js/recovery.js"></script>
     <script src="js/lazy-libs.js"></script>
     <script src="js/worker-client.js"></script>
     <script src="js/audio-manager.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/router.js"></script>
     <script src="js/backup.js"></script>
+    <script src="js/diagnostics.js"></script>
+    <script src="js/accessibility.js"></script>
     <script src="js/pwa.js"></script>
     <script src="js/core.js"></script>
     <script src="js/app.js"></script>

@@ -1,0 +1,53 @@
+{
+  "format": "EdTechQuestionSet",
+  "schemaVersion": 4,
+  "name": "Bốn câu",
+  "type": "quiz",
+  "rows": [
+    [
+      "Câu hỏi",
+      "Đáp án A",
+      "Đáp án B",
+      "Đáp án C",
+      "Đáp án D",
+      "Đáp án đúng",
+      "Giải thích"
+    ],
+    [
+      "Câu hỏi kiểm thử số 1?",
+      "Đáp án A 1",
+      "Đáp án B 1",
+      "Đáp án C 1",
+      "Đáp án D 1",
+      "A",
+      "Giải thích cho câu 1."
+    ],
+    [
+      "Câu hỏi kiểm thử số 2?",
+      "Đáp án A 2",
+      "Đáp án B 2",
+      "Đáp án C 2",
+      "Đáp án D 2",
+      "A",
+      "Giải thích cho câu 2."
+    ],
+    [
+      "Câu hỏi kiểm thử số 3?",
+      "Đáp án A 3",
+      "Đáp án B 3",
+      "Đáp án C 3",
+      "Đáp án D 3",
+      "A",
+      "Giải thích cho câu 3."
+    ],
+    [
+      "Câu hỏi kiểm thử số 4?",
+      "Đáp án A 4",
+      "Đáp án B 4",
+      "Đáp án C 4",
+      "Đáp án D 4",
+      "A",
+      "Giải thích cho câu 4."
+    ]
+  ]
+}

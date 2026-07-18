@@ -1,11 +1,16 @@
 {
   "name": "edtech-lms-pro",
-  "version": "1.3.4",
+  "version": "1.4.6",
   "private": true,
   "description": "Static-first learning app",
   "scripts": {
     "check": "node tests/static-check.mjs",
-    "test": "node tests/smoke.mjs"
+    "test": "node tests/static-check.mjs",
+    "fixtures": "node tests/generate-fixtures.mjs",
+    "visual": "node tests/visual-regression.mjs",
+    "visual:update": "node tests/visual-regression.mjs --update",
+    "audit": "npm run check && npm run fixtures && npm run stress && npm run visual",
+    "stress": "node tests/stress-test.mjs"
   },
   "devDependencies": {
     "playwright": "1.61.1"

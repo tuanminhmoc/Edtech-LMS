@@ -10,8 +10,20 @@ let installPromptEvent = window.__edtechInstallPrompt || null;
 let questionLibrarySearch = '';
 let questionLibraryFilter = 'all';
 let questionLibrarySort = 'updated';
+let questionLibraryPage = 0;
+const QUESTION_LIBRARY_PAGE_SIZE = 24;
+const selectedLibraryIds = new Set();
+let libraryCurrentPageItems = [];
 
 let activeLibraryPreviewId = null;
+
+function buildIconSvg(name) {
+    return `<svg aria-hidden="true"><use href="#${name}"></use></svg>`;
+}
+
+function getBrandMascotPath(name) {
+    return `assets/brand/mascots-vector/${name}.svg`;
+}
 
 function formatBytesHuman(bytes) {
     if (!Number.isFinite(Number(bytes)) || Number(bytes) <= 0) return '0 B';
@@ -38,11 +50,21 @@ function getDeckHistoryStats(item) {
 async function updateQuestionSetFlags(id, updates = {}) {
     const item = await window.EdTechDB?.get('questionSets', id).catch(() => null);
     if (!item) return;
-    await window.EdTechDB.saveQuestionSet({ ...item, ...updates, createdAt: item.createdAt });
+    const saved = await window.EdTechDB.saveQuestionSet({ ...item, ...updates, createdAt: item.createdAt });
     if (activeLibraryPreviewId === id) activeLibraryPreviewId = id;
     renderLocalQuestionSets();
+    if (Object.keys(updates).length === 1 && Object.prototype.hasOwnProperty.call(updates, 'favorite')) {
+        const card = [...document.querySelectorAll('[data-library-id]')].find(element => element.dataset.libraryId === id);
+        card?.classList.toggle('is-favorite', Boolean(saved.favorite));
+        const button = card?.querySelector('[data-library-favorite]');
+        button?.classList.toggle('active', Boolean(saved.favorite));
+        button?.setAttribute('aria-pressed', String(Boolean(saved.favorite)));
+        return saved;
+    }
     renderQuestionLibrary();
+    return saved;
 }
+
 
 async function recordDeckActivity(id, payload = {}) {
     if (!id || !window.EdTechDB) return;
@@ -83,26 +105,31 @@ function debounceActiveSessionSave(callback) {
     activeSessionSaveTimer = setTimeout(callback, 160);
 }
 
-function persistActiveQuizSession() {
-    if (!window.EdTechDB || quizSubmitted || !quizData?.length) return;
-    debounceActiveSessionSave(() => {
-        window.EdTechDB.put('activeSessions', {
-            id: 'active-quiz',
-            type: 'quiz',
-            updatedAt: new Date().toISOString(),
-            fileName: currentFileName || 'Bộ đề trắc nghiệm',
-            quizData: clone(quizData),
-            quizAnswers: clone(quizAnswers),
-            flaggedQuestions: [...flaggedQuestions],
-            currentQuizIndex,
-            quizNavPage,
-            quizStartedAt,
-            quizDeadline,
-            quizTimeLimitSeconds,
-            lastQuizSource: lastQuizSource ? clone(lastQuizSource) : null
-        }).catch(error => console.warn('Không thể lưu bài đang làm:', error));
-    });
+function persistActiveQuizSession(immediate = false) {
+    if (!window.EdTechDB || quizSubmitted || !quizData?.length) return Promise.resolve();
+    const save = () => window.EdTechDB.put('activeSessions', {
+        id: 'active-quiz',
+        type: 'quiz',
+        updatedAt: new Date().toISOString(),
+        fileName: currentFileName || 'Bộ đề trắc nghiệm',
+        quizData: clone(quizData),
+        quizAnswers: clone(quizAnswers),
+        flaggedQuestions: [...flaggedQuestions],
+        currentQuizIndex,
+        quizNavPage,
+        quizStartedAt,
+        quizDeadline,
+        quizTimeLimitSeconds,
+        lastQuizSource: lastQuizSource ? clone(lastQuizSource) : null
+    }).catch(error => console.warn('Không thể lưu bài đang làm:', error));
+    if (immediate) {
+        clearTimeout(activeSessionSaveTimer);
+        return save();
+    }
+    debounceActiveSessionSave(save);
+    return Promise.resolve();
 }
+
 
 function clearActiveQuizSession() {
     clearTimeout(activeSessionSaveTimer);
@@ -110,8 +137,8 @@ function clearActiveQuizSession() {
 }
 
 function persistActiveFlashcardSession() {
-    if (!window.EdTechDB || !fcState?.cards?.length) return;
-    window.EdTechDB.put('activeSessions', {
+    if (!window.EdTechDB || !fcState?.cards?.length) return Promise.resolve();
+    return window.EdTechDB.put('activeSessions', {
         id: 'active-flashcards',
         type: 'flashcard',
         updatedAt: new Date().toISOString(),
@@ -121,11 +148,13 @@ function persistActiveFlashcardSession() {
     }).catch(error => console.warn('Không thể lưu phiên flashcard:', error));
 }
 
+
 function clearActiveFlashcardSession() {
     return window.EdTechDB?.delete('activeSessions', 'active-flashcards').catch(() => {});
 }
 
 async function offerRestoreActiveSession() {
+    if (window.EdTechRecovery?.isSafeMode?.()) return;
     if (!window.EdTechDB) return;
     const [quizSession, flashcardSession] = await Promise.all([
         window.EdTechDB.get('activeSessions', 'active-quiz').catch(() => null),
@@ -136,6 +165,14 @@ async function offerRestoreActiveSession() {
     const age = Date.now() - new Date(session.updatedAt || 0).getTime();
     if (!Number.isFinite(age) || age > 14 * 86400000) {
         await window.EdTechDB.delete('activeSessions', session.id).catch(() => {});
+        return;
+    }
+    const restoreAfterUpdate = sessionStorage.getItem('edtech_restore_after_update');
+    if (restoreAfterUpdate) {
+        sessionStorage.removeItem('edtech_restore_after_update');
+        if (session.type === 'quiz') restoreQuizSession(session);
+        else restoreFlashcardSession(session);
+        showToast('Đã khôi phục phiên học sau cập nhật.', 'success');
         return;
     }
     await new Promise(resolve => {
@@ -192,7 +229,12 @@ function restoreFlashcardSession(session) {
 }
 
 async function renderLocalQuestionSets() {
-    const container = document.getElementById('local-question-set-list');
+    if (window.EdTechRecovery?.isSafeMode?.()) {
+        const safeContainer = document.getElementById('setup-local-deck-list');
+        if (safeContainer) safeContainer.innerHTML = '<span class="empty-inline">Safe Mode đang tắt danh sách gần đây.</span>';
+        return;
+    }
+    const container = document.getElementById('setup-local-deck-list');
     if (!container || !window.EdTechDB) return;
     container.innerHTML = '<span class="empty-inline">Đang đọc thư viện…</span>';
     try {
@@ -208,17 +250,17 @@ async function renderLocalQuestionSets() {
             const stats = getDeckHistoryStats(item);
             const isFlashcard = item.type === 'flashcard';
             const deckName = escapeHTML(item.name || (isFlashcard ? 'Bộ flashcard mới' : 'Bộ trắc nghiệm mới'));
-            return `<article class="local-set-item ${item.pinned ? 'is-pinned' : ''}">
-                <button type="button" class="local-set-main" onclick="loadLocalQuestionSet('${escapeHTML(item.id)}')">
-                    <span class="local-set-icon ${isFlashcard ? 'is-flashcard' : 'is-quiz'}"><svg><use href="#${isFlashcard ? 'i-cards' : 'i-quiz'}"></use></svg></span>
-                    <span class="local-set-copy">
-                        <span class="local-set-title-row"><strong>${item.pinned ? '📌 ' : ''}${deckName}</strong><span class="local-set-badge ${isFlashcard ? 'is-flashcard' : 'is-quiz'}">${isFlashcard ? 'Flashcard' : 'Trắc nghiệm'}</span></span>
+            return `<article class="setup-local-deck ${item.pinned ? 'is-pinned' : ''}">
+                <button type="button" class="setup-local-deck-main" onclick="loadLocalQuestionSet('${escapeHTML(item.id)}')">
+                    <span class="setup-local-deck-icon ${isFlashcard ? 'is-flashcard' : 'is-quiz'}"><svg><use href="#${isFlashcard ? 'i-cards' : 'i-quiz'}"></use></svg></span>
+                    <span class="setup-local-deck-copy">
+                        <span class="setup-local-deck-title-row"><strong>${item.pinned ? `${buildIconSvg('i-pin')} ` : ''}${deckName}</strong><span class="setup-local-deck-badge ${isFlashcard ? 'is-flashcard' : 'is-quiz'}">${isFlashcard ? 'Flashcard' : 'Trắc nghiệm'}</span></span>
                         <small>${item.count || Math.max(0, (item.rows?.length || 1) - 1)} mục · ${stats.playCount} lượt làm</small>
                     </span>
                 </button>
-                <span class="local-set-side-actions">
-                    <button type="button" class="local-set-mini ${item.favorite ? 'active' : ''}" onclick="toggleLibraryFavorite('${escapeHTML(item.id)}', event)" aria-label="Yêu thích">★</button>
-                    <button type="button" class="local-set-delete" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button>
+                <span class="setup-local-deck-actions">
+                    <button type="button" class="setup-local-deck-mini ${item.favorite ? 'active' : ''}" onclick="toggleLibraryFavorite('${escapeHTML(item.id)}', event)" aria-label="Yêu thích">${buildIconSvg('i-star')}</button>
+                    <button type="button" class="setup-local-deck-delete" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button>
                 </span>
             </article>`;
         }).join('');
@@ -249,15 +291,43 @@ async function loadLocalQuestionSet(id) {
     playSound('navigate');
 }
 
-function deleteLocalQuestionSet(id, event) {
-    event?.stopPropagation();
-    openConfirmModal('Xóa bộ đề đã lưu?', 'Bộ đề sẽ bị xóa khỏi thư viện trên thiết bị. Lịch sử học tập không bị ảnh hưởng.', 'Xóa', async () => {
-        await window.EdTechDB.delete('questionSets', id).catch(() => {});
+function showUndoSnackbar(message, action, timeout = 10000) {
+    const bar = document.getElementById('undo-snackbar');
+    const text = document.getElementById('undo-snackbar-text');
+    const button = document.getElementById('undo-snackbar-action');
+    if (!bar || !button) return;
+    if (bar._timer) clearTimeout(bar._timer);
+    if (text) text.textContent = message;
+    bar.hidden = false;
+    button.onclick = async () => {
+        bar.hidden = true;
+        if (bar._timer) clearTimeout(bar._timer);
+        await action?.();
+    };
+    bar._timer = setTimeout(() => { bar.hidden = true; }, timeout);
+}
+
+async function deleteQuestionSetsWithUndo(ids) {
+    const uniqueIds = [...new Set((Array.isArray(ids) ? ids : [ids]).filter(Boolean))];
+    if (!uniqueIds.length) return;
+    const records = (await Promise.all(uniqueIds.map(id => window.EdTechDB.get('questionSets', id).catch(() => null)))).filter(Boolean);
+    await Promise.all(records.map(item => window.EdTechDB.delete('questionSets', item.id)));
+    records.forEach(item => selectedLibraryIds.delete(item.id));
+    renderLocalQuestionSets();
+    renderQuestionLibrary();
+    showUndoSnackbar(`Đã xóa ${records.length} bộ đề.`, async () => {
+        await Promise.all(records.map(item => window.EdTechDB.saveQuestionSet({ ...item, createdAt: item.createdAt })));
         renderLocalQuestionSets();
         renderQuestionLibrary();
-        showToast('Đã xóa bộ đề khỏi thiết bị.', 'success');
+        showToast('Đã hoàn tác xóa bộ đề.', 'success');
     });
 }
+
+function deleteLocalQuestionSet(id, event) {
+    event?.stopPropagation();
+    openConfirmModal('Xóa bộ đề đã lưu?', 'Bộ đề sẽ được giữ trong vùng hoàn tác 10 giây. Lịch sử học tập không bị ảnh hưởng.', 'Xóa', () => deleteQuestionSetsWithUndo([id]));
+}
+
 
 function toggleLibraryFavorite(id, event) {
     event?.stopPropagation();
@@ -293,21 +363,26 @@ function updateQuestionLibraryFilterUI() {
         button.classList.toggle('active', active);
         button.setAttribute('aria-pressed', String(active));
     });
+    const archiveBulk = document.getElementById('library-bulk-archive');
+    if (archiveBulk) archiveBulk.textContent = questionLibraryFilter === 'archived' ? 'Khôi phục' : 'Lưu trữ';
 }
 
 function setQuestionLibrarySearch(value) {
     questionLibrarySearch = String(value || '').trim().toLowerCase();
+    questionLibraryPage = 0;
     renderQuestionLibrary();
 }
 
 function setQuestionLibraryFilter(value) {
-    questionLibraryFilter = ['quiz', 'flashcard'].includes(value) ? value : 'all';
+    questionLibraryFilter = ['quiz', 'flashcard', 'pinned', 'favorite', 'archived'].includes(value) ? value : 'all';
+    questionLibraryPage = 0;
     updateQuestionLibraryFilterUI();
     renderQuestionLibrary();
 }
 
 function setQuestionLibrarySort(value) {
     questionLibrarySort = ['name', 'count', 'plays'].includes(value) ? value : 'updated';
+    questionLibraryPage = 0;
     renderQuestionLibrary();
 }
 
@@ -321,12 +396,15 @@ function getLibraryVisibleTitle() {
     if (questionLibrarySearch) return 'Kết quả tìm kiếm';
     if (questionLibraryFilter === 'quiz') return 'Bộ đề trắc nghiệm';
     if (questionLibraryFilter === 'flashcard') return 'Bộ flashcard';
+    if (questionLibraryFilter === 'pinned') return 'Bộ đề đã ghim';
+    if (questionLibraryFilter === 'favorite') return 'Bộ đề yêu thích';
+    if (questionLibraryFilter === 'archived') return 'Bộ đề lưu trữ';
     return 'Tất cả bộ đề';
 }
 
 function renderLibraryEmptyState(hasLibraryItems) {
     return `<section class="library-empty-state">
-        <span class="library-empty-visual"><svg><use href="#i-library"></use></svg><i></i></span>
+        <span class="library-empty-visual library-empty-owl"><img src="${getBrandMascotPath(hasLibraryItems ? 'search' : 'study')}" alt="" loading="lazy"><i></i></span>
         <span class="section-kicker">${hasLibraryItems ? 'Không có kết quả' : 'Bắt đầu xây thư viện'}</span>
         <h2>${hasLibraryItems ? 'Không tìm thấy bộ đề phù hợp' : 'Thư viện của bạn đang trống'}</h2>
         <p>${hasLibraryItems ? 'Hãy thử đổi từ khóa, loại nội dung hoặc cách sắp xếp.' : 'Nhập file Excel / EdTech hoặc tạo bộ đề mới. Dữ liệu sẽ được lưu cục bộ trên thiết bị.'}</p>
@@ -340,6 +418,7 @@ function resetQuestionLibraryFilters() {
     questionLibrarySearch = '';
     questionLibraryFilter = 'all';
     questionLibrarySort = 'updated';
+    questionLibraryPage = 0;
     const search = document.getElementById('library-search');
     const sort = document.getElementById('library-sort');
     if (search) search.value = '';
@@ -355,20 +434,20 @@ async function renderQuestionLibrary() {
     grid.innerHTML = '<div class="library-loading"><span></span><strong>Đang mở thư viện…</strong><small>Đọc dữ liệu trên thiết bị</small></div>';
     try {
         const allItems = await window.EdTechDB.listQuestionSets();
-        const visibleItems = allItems.filter(item => !item.archived);
-        const quizItems = visibleItems.filter(item => item.type === 'quiz');
-        const flashcardItems = visibleItems.filter(item => item.type === 'flashcard');
-        const totalContent = visibleItems.reduce((sum, item) => sum + Number(item.count || Math.max(0, (item.rows?.length || 1) - 1)), 0);
-        const statTotal = document.getElementById('library-stat-total');
-        const statQuiz = document.getElementById('library-stat-quiz');
-        const statFlashcard = document.getElementById('library-stat-flashcard');
-        const statItems = document.getElementById('library-stat-items');
-        if (statTotal) statTotal.textContent = visibleItems.length;
-        if (statQuiz) statQuiz.textContent = quizItems.length;
-        if (statFlashcard) statFlashcard.textContent = flashcardItems.length;
-        if (statItems) statItems.textContent = totalContent;
+        const activeItems = allItems.filter(item => !item.archived);
+        const visibleItems = questionLibraryFilter === 'archived' ? allItems.filter(item => item.archived) : activeItems;
+        const quizItems = activeItems.filter(item => item.type === 'quiz');
+        const flashcardItems = activeItems.filter(item => item.type === 'flashcard');
+        const totalContent = activeItems.reduce((sum, item) => sum + Number(item.count || Math.max(0, (item.rows?.length || 1) - 1)), 0);
+        const statsMap = { 'library-stat-total': activeItems.length, 'library-stat-quiz': quizItems.length, 'library-stat-flashcard': flashcardItems.length, 'library-stat-items': totalContent };
+        Object.entries(statsMap).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.textContent = value; });
 
-        let items = visibleItems.filter(item => questionLibraryFilter === 'all' || item.type === questionLibraryFilter);
+        let items = visibleItems.filter(item => {
+            if (questionLibraryFilter === 'quiz' || questionLibraryFilter === 'flashcard') return item.type === questionLibraryFilter;
+            if (questionLibraryFilter === 'pinned') return item.pinned;
+            if (questionLibraryFilter === 'favorite') return item.favorite;
+            return true;
+        });
         if (questionLibrarySearch) items = items.filter(item => String(item.name || '').toLowerCase().includes(questionLibrarySearch));
         items.sort((a, b) => {
             const pinRank = Number(Boolean(b.pinned)) - Number(Boolean(a.pinned));
@@ -381,60 +460,148 @@ async function renderQuestionLibrary() {
             return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
         });
 
+        const pages = Math.max(1, Math.ceil(items.length / QUESTION_LIBRARY_PAGE_SIZE));
+        questionLibraryPage = Math.max(0, Math.min(questionLibraryPage, pages - 1));
+        libraryCurrentPageItems = items.slice(questionLibraryPage * QUESTION_LIBRARY_PAGE_SIZE, (questionLibraryPage + 1) * QUESTION_LIBRARY_PAGE_SIZE);
         const countLabel = document.getElementById('library-result-count');
         const visibleTitle = document.getElementById('library-visible-title');
         if (countLabel) countLabel.textContent = `${items.length} bộ đề`;
         if (visibleTitle) visibleTitle.textContent = getLibraryVisibleTitle();
 
         if (!items.length) {
-            grid.innerHTML = renderLibraryEmptyState(Boolean(visibleItems.length));
+            grid.innerHTML = renderLibraryEmptyState(Boolean(allItems.length));
+            renderLibraryPagination(0, 1);
+            updateLibraryBulkToolbar();
             return;
         }
 
-        grid.innerHTML = items.map((item, index) => {
+        const fragment = document.createDocumentFragment();
+        libraryCurrentPageItems.forEach((item, index) => {
+            const wrapper = document.createElement('div');
             const isFlashcard = item.type === 'flashcard';
             const count = Number(item.count || Math.max(0, (item.rows?.length || 1) - 1));
             const sourceLabel = item.source === 'creator' ? 'Tạo trong ứng dụng' : item.source === 'edtech' ? 'Nhập từ file EdTech' : 'Nhập từ Excel';
             const itemLabel = isFlashcard ? 'thẻ' : 'câu';
             const stats = getDeckHistoryStats(item);
             const chips = [item.pinned ? '<span class="library-mini-chip pin">Đã ghim</span>' : '', item.favorite ? '<span class="library-mini-chip favorite">Yêu thích</span>' : ''].join('');
-            return `<article class="library-deck-card ${isFlashcard ? 'is-flashcard' : 'is-quiz'}" style="--library-index:${Math.min(index, 10)}" onclick="openLibraryPreview('${escapeHTML(item.id)}')">
-                <div class="library-deck-cover" aria-hidden="true">
-                    <span class="library-deck-icon"><svg><use href="#${isFlashcard ? 'i-cards' : 'i-quiz'}"></use></svg></span>
-                    <span class="library-deck-count"><strong>${count}</strong><small>${itemLabel}</small></span>
-                    <i class="library-cover-orbit orbit-one"></i><i class="library-cover-orbit orbit-two"></i>
-                </div>
-                <div class="library-deck-body">
-                    <div class="library-deck-topline">
-                        <span class="library-type-chip">${isFlashcard ? 'Flashcard' : 'Trắc nghiệm'}</span>
-                        <div class="library-inline-actions" onclick="event.stopPropagation()">
-                            <button class="library-action-icon compact ${item.pinned ? 'active' : ''}" type="button" onclick="toggleLibraryPinned('${escapeHTML(item.id)}', event)" title="Ghim">📌</button>
-                            <button class="library-action-icon compact ${item.favorite ? 'active' : ''}" type="button" onclick="toggleLibraryFavorite('${escapeHTML(item.id)}', event)" title="Yêu thích">★</button>
-                            <button class="library-action-icon compact" type="button" onclick="toggleLibraryArchived('${escapeHTML(item.id)}', event)" title="Lưu trữ">🗄</button>
-                            <button class="library-card-delete" type="button" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa ${escapeHTML(item.name)}" title="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button>
-                        </div>
-                    </div>
-                    <h3 title="${escapeHTML(item.name)}">${escapeHTML(item.name)}</h3>
-                    <p>${sourceLabel}</p>
-                    <div class="library-chip-row">${chips}</div>
-                    <div class="library-deck-meta">
-                        <span><svg><use href="#i-clock"></use></svg>${stats.lastPlayed ? `Học ${formatLibraryDate(stats.lastPlayed)}` : formatLibraryDate(item.updatedAt)}</span>
-                        <span><svg><use href="#i-database"></use></svg>${formatBytesHuman(item.sizeBytes)}</span>
-                        <span><svg><use href="#i-history"></use></svg>${stats.playCount} lượt</span>
-                        <span><svg><use href="#i-spark"></use></svg>${stats.bestScore}% cao nhất</span>
-                    </div>
-                </div>
-                <div class="library-deck-actions" onclick="event.stopPropagation()">
-                    <button class="btn btn-primary library-study-btn" type="button" onclick="openLibraryPreview('${escapeHTML(item.id)}')"><svg><use href="#i-eye"></use></svg>Xem nhanh</button>
-                    <button class="library-action-icon" type="button" onclick="openLibrarySet('${escapeHTML(item.id)}')" aria-label="Học ngay" title="Học ngay"><svg><use href="#i-spark"></use></svg></button>
-                    <button class="library-action-icon" type="button" onclick="editLibrarySet('${escapeHTML(item.id)}')" aria-label="Chỉnh sửa" title="Chỉnh sửa"><svg><use href="#i-create"></use></svg></button>
-                </div>
+            const mascotName = isFlashcard ? 'read' : 'focus';
+            wrapper.innerHTML = `<article class="library-deck-card ${isFlashcard ? 'is-flashcard' : 'is-quiz'} ${item.favorite ? 'is-favorite' : ''}" data-library-id="${escapeHTML(item.id)}" style="--library-index:${Math.min(index, 10)}" onclick="openLibraryPreview('${escapeHTML(item.id)}')">
+                <label class="library-select-box" onclick="event.stopPropagation()"><input type="checkbox" ${selectedLibraryIds.has(item.id) ? 'checked' : ''} onchange="toggleLibrarySelection('${escapeHTML(item.id)}', this.checked)" aria-label="Chọn ${escapeHTML(item.name)}"></label>
+                <div class="library-deck-cover" aria-hidden="true"><img class="library-cover-mascot" src="${getBrandMascotPath(mascotName)}" alt="" loading="lazy"><span class="library-deck-icon"><svg><use href="#${isFlashcard ? 'i-cards' : 'i-quiz'}"></use></svg></span><span class="library-deck-count"><strong>${count}</strong><small>${itemLabel}</small></span><i class="library-cover-orbit orbit-one"></i><i class="library-cover-orbit orbit-two"></i></div>
+                <div class="library-deck-body"><div class="library-deck-topline"><span class="library-type-chip">${isFlashcard ? 'Flashcard' : 'Trắc nghiệm'}</span><div class="library-inline-actions" onclick="event.stopPropagation()"><button class="library-action-icon compact ${item.pinned ? 'active' : ''}" type="button" onclick="toggleLibraryPinned('${escapeHTML(item.id)}', event)" title="Ghim" aria-pressed="${Boolean(item.pinned)}">${buildIconSvg('i-pin')}</button><button class="library-action-icon compact ${item.favorite ? 'active' : ''}" data-library-favorite type="button" onclick="toggleLibraryFavorite('${escapeHTML(item.id)}', event)" title="Yêu thích" aria-pressed="${Boolean(item.favorite)}">${buildIconSvg('i-star')}</button><button class="library-action-icon compact" type="button" onclick="toggleLibraryArchived('${escapeHTML(item.id)}', event)" title="${item.archived ? 'Khôi phục' : 'Lưu trữ'}">${item.archived ? buildIconSvg('i-refresh') : buildIconSvg('i-archive')}</button><button class="library-card-delete" type="button" onclick="deleteLocalQuestionSet('${escapeHTML(item.id)}', event)" aria-label="Xóa ${escapeHTML(item.name)}" title="Xóa bộ đề"><svg><use href="#i-trash"></use></svg></button></div></div><h3 title="${escapeHTML(item.name)}">${escapeHTML(item.name)}</h3><p>${sourceLabel}</p><div class="library-chip-row">${chips}</div><div class="library-deck-meta"><span><svg><use href="#i-clock"></use></svg>${stats.lastPlayed ? `Học ${formatLibraryDate(stats.lastPlayed)}` : formatLibraryDate(item.updatedAt)}</span><span><svg><use href="#i-database"></use></svg>${formatBytesHuman(item.sizeBytes)}</span><span><svg><use href="#i-history"></use></svg>${stats.playCount} lượt</span><span><svg><use href="#i-spark"></use></svg>${stats.bestScore}% cao nhất</span></div></div>
+                <div class="library-deck-actions" onclick="event.stopPropagation()"><div class="library-primary-actions"><button class="btn btn-primary library-study-btn" type="button" onclick="openLibraryPreview('${escapeHTML(item.id)}')"><svg><use href="#i-eye"></use></svg>Xem nhanh</button><button class="library-action-icon" type="button" onclick="openLibrarySet('${escapeHTML(item.id)}')" aria-label="Học ngay" title="Học ngay"><svg><use href="#i-spark"></use></svg></button><button class="library-action-icon" type="button" onclick="editLibrarySet('${escapeHTML(item.id)}')" aria-label="Chỉnh sửa" title="Chỉnh sửa"><svg><use href="#i-create"></use></svg></button></div><button class="library-download-btn" type="button" onclick="openDeckDownloadModal('${escapeHTML(item.id)}')"><svg><use href="#i-download"></use></svg><span>Tải bộ đề</span><small>Excel hoặc EdTech</small></button></div>
             </article>`;
-        }).join('');
+            fragment.appendChild(wrapper.firstElementChild);
+        });
+        grid.replaceChildren(fragment);
+        renderLibraryPagination(items.length, pages);
+        updateLibraryBulkToolbar();
     } catch (error) {
         console.error('Không thể đọc thư viện:', error);
-        grid.innerHTML = '<section class="library-empty-state error"><span class="library-empty-visual"><svg><use href="#i-library"></use></svg></span><h2>Không thể mở thư viện</h2><p>Dữ liệu vẫn an toàn trên thiết bị. Hãy tải lại trang và thử lại.</p><button class="btn btn-primary" type="button" onclick="renderQuestionLibrary()"><svg><use href="#i-refresh"></use></svg>Thử lại</button></section>';
+        window.EdTechRecovery?.recordError?.(error, 'library.render');
+        grid.innerHTML = `<section class="library-empty-state error"><span class="library-empty-visual library-empty-owl"><img src="${getBrandMascotPath('warning')}" alt="" loading="lazy"></span><h2>Không thể mở thư viện</h2><p>Dữ liệu vẫn an toàn trên thiết bị. Hãy tải lại trang và thử lại.</p><button class="btn btn-primary" type="button" onclick="renderQuestionLibrary()"><svg><use href="#i-refresh"></use></svg>Thử lại</button></section>`;
     }
+}
+
+function renderLibraryPagination(total, pages) {
+    const pager = document.getElementById('library-pagination');
+    if (!pager) return;
+    pager.hidden = total <= QUESTION_LIBRARY_PAGE_SIZE;
+    pager.innerHTML = `<button class="btn btn-secondary btn-small" type="button" onclick="changeQuestionLibraryPage(-1)" ${questionLibraryPage <= 0 ? 'disabled' : ''}>Trang trước</button><span>Trang <strong>${questionLibraryPage + 1}</strong> / ${pages}</span><button class="btn btn-secondary btn-small" type="button" onclick="changeQuestionLibraryPage(1)" ${questionLibraryPage >= pages - 1 ? 'disabled' : ''}>Trang sau</button>`;
+}
+
+function changeQuestionLibraryPage(delta) {
+    questionLibraryPage = Math.max(0, questionLibraryPage + Number(delta || 0));
+    renderQuestionLibrary();
+    document.getElementById('library-visible-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleLibrarySelection(id, checked) {
+    checked ? selectedLibraryIds.add(id) : selectedLibraryIds.delete(id);
+    updateLibraryBulkToolbar();
+}
+
+function toggleSelectAllLibrary(checked) {
+    libraryCurrentPageItems.forEach(item => checked ? selectedLibraryIds.add(item.id) : selectedLibraryIds.delete(item.id));
+    document.querySelectorAll('[data-library-id] .library-select-box input').forEach(input => { input.checked = checked; });
+    updateLibraryBulkToolbar();
+}
+
+function updateLibraryBulkToolbar() {
+    const toolbar = document.getElementById('library-bulk-toolbar');
+    const count = document.getElementById('library-bulk-count');
+    const selectAll = document.getElementById('library-select-all');
+    if (toolbar) toolbar.hidden = selectedLibraryIds.size === 0;
+    if (count) count.textContent = `${selectedLibraryIds.size} đã chọn`;
+    if (selectAll) selectAll.checked = libraryCurrentPageItems.length > 0 && libraryCurrentPageItems.every(item => selectedLibraryIds.has(item.id));
+}
+
+async function getSelectedLibraryRecords() {
+    return (await Promise.all([...selectedLibraryIds].map(id => window.EdTechDB.get('questionSets', id).catch(() => null)))).filter(Boolean);
+}
+
+async function bulkLibraryAction(action) {
+    const records = await getSelectedLibraryRecords();
+    if (!records.length) return;
+    const updates = action === 'pin' ? { pinned: true } : action === 'favorite' ? { favorite: true } : { archived: questionLibraryFilter !== 'archived' };
+    await Promise.all(records.map(item => window.EdTechDB.saveQuestionSet({ ...item, ...updates, createdAt: item.createdAt })));
+    selectedLibraryIds.clear();
+    renderLocalQuestionSets();
+    renderQuestionLibrary();
+    showToast(`Đã cập nhật ${records.length} bộ đề.`, 'success');
+}
+
+async function bulkDuplicateLibrarySets() {
+    const records = await getSelectedLibraryRecords();
+    await Promise.all(records.map(item => window.EdTechDB.saveQuestionSet({ ...item, id: undefined, name: `${item.name} · Bản sao`, pinned: false, favorite: false, archived: false, createdAt: undefined })));
+    selectedLibraryIds.clear();
+    renderQuestionLibrary();
+    showToast(`Đã nhân bản ${records.length} bộ đề.`, 'success');
+}
+
+async function bulkExportLibrarySets(format = 'edtech') {
+    const records = await getSelectedLibraryRecords();
+    if (!records.length) return;
+    if (format === 'excel') {
+        const XLSX = await window.EdTechLibraries.loadXLSX();
+        const workbook = XLSX.utils.book_new();
+        records.forEach((item, index) => {
+            const sheet = XLSX.utils.aoa_to_sheet(item.rows || []);
+            XLSX.utils.book_append_sheet(workbook, sheet, `${index + 1}-${String(item.name || 'BoDe').slice(0, 24)}`);
+        });
+        XLSX.writeFile(workbook, `EdTech-Multi-Export-${Date.now()}.xlsx`);
+    } else {
+        const payload = { format: 'EdTechQuestionSetBundle', schemaVersion: 4, exportedAt: new Date().toISOString(), sets: records };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a'); link.href = url; link.download = `EdTech-${records.length}-Bo-De.edtech`; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    showToast(`Đã xuất ${records.length} bộ đề.`, 'success');
+}
+
+async function mergeSelectedLibrarySets() {
+    const records = await getSelectedLibraryRecords();
+    if (records.length < 2) return showToast('Cần chọn ít nhất 2 bộ đề để gộp.', 'info');
+    const types = new Set(records.map(item => item.type));
+    if (types.size > 1) return showToast('Chỉ có thể gộp các bộ đề cùng loại.', 'error');
+    const name = window.prompt('Tên bộ đề sau khi gộp:', `Bộ đề gộp ${new Date().toLocaleDateString('vi-VN')}`);
+    if (!name) return;
+    const header = records[0].rows?.[0] || [];
+    const rows = [header];
+    const seen = new Set();
+    records.forEach(item => (item.rows || []).slice(1).forEach(row => {
+        const key = JSON.stringify(row).trim().toLowerCase();
+        if (!seen.has(key)) { seen.add(key); rows.push(row); }
+    }));
+    await window.EdTechDB.saveQuestionSet({ name, type: records[0].type, rows, source: 'merged' });
+    selectedLibraryIds.clear();
+    renderQuestionLibrary();
+    showToast(`Đã gộp ${records.length} bộ đề và loại ${records.reduce((s,i)=>s+Math.max(0,(i.rows?.length||1)-1),0)-(rows.length-1)} mục trùng.`, 'success');
+}
+
+function bulkDeleteLibrarySets() {
+    const ids = [...selectedLibraryIds];
+    openConfirmModal('Xóa nhiều bộ đề?', `${ids.length} bộ đề sẽ được giữ trong vùng hoàn tác 10 giây.`, 'Xóa', () => deleteQuestionSetsWithUndo(ids));
 }
 
 
@@ -444,6 +611,31 @@ async function openLibrarySet(id) {
     document.getElementById('start-study-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+
+let activeDeckDownloadId = null;
+
+async function openDeckDownloadModal(id) {
+    const item = await window.EdTechDB?.get('questionSets', id).catch(() => null);
+    if (!item) return;
+    activeDeckDownloadId = id;
+    const modal = document.getElementById('deck-download-modal');
+    const name = document.getElementById('deck-download-name');
+    if (name) name.textContent = item.name || 'Bộ đề';
+    if (modal) modal.hidden = false;
+    document.body.classList.add('modal-open');
+}
+
+function closeDeckDownloadModal() {
+    document.getElementById('deck-download-modal')?.setAttribute('hidden', '');
+    activeDeckDownloadId = null;
+    document.body.classList.remove('modal-open');
+}
+
+async function confirmDeckDownload(format) {
+    const id = activeDeckDownloadId;
+    closeDeckDownloadModal();
+    if (id) await downloadLibrarySet(id, format);
+}
 
 function closeLibraryPreview() {
     const modal = document.getElementById('library-preview-modal');
@@ -474,7 +666,9 @@ async function openLibraryPreview(id) {
             <button class="btn btn-primary" type="button" onclick="openLibrarySet('${escapeHTML(item.id)}'); closeLibraryPreview();"><svg><use href="#i-spark"></use></svg>Học ngay</button>
             <button class="btn btn-secondary" type="button" onclick="openLibrarySet('${escapeHTML(item.id)}'); closeLibraryPreview();"><svg><use href="#i-eye"></use></svg>Xem nội dung</button>
             <button class="btn btn-secondary" type="button" onclick="editLibrarySet('${escapeHTML(item.id)}'); closeLibraryPreview();"><svg><use href="#i-create"></use></svg>Chỉnh sửa</button>
-            <button class="btn btn-secondary" type="button" onclick="toggleLibraryArchived('${escapeHTML(item.id)}'); closeLibraryPreview();">Lưu trữ</button>
+            <button class="btn btn-secondary" type="button" onclick="downloadLibrarySet('${escapeHTML(item.id)}', 'edtech')"><svg><use href="#i-download"></use></svg>Tải .edtech</button>
+            <button class="btn btn-secondary" type="button" onclick="downloadLibrarySet('${escapeHTML(item.id)}', 'excel')"><svg><use href="#i-save"></use></svg>Tải Excel</button>
+            <button class="btn btn-secondary" type="button" onclick="toggleLibraryArchived('${escapeHTML(item.id)}'); closeLibraryPreview();">${item.archived ? 'Khôi phục' : 'Lưu trữ'}</button>
         </div>`;
     modal.hidden = false;
     document.body.classList.add('modal-open');
@@ -553,23 +747,48 @@ async function renameLibrarySet(id) {
     showToast('Đã đổi tên bộ đề.', 'success');
 }
 
-async function downloadLibrarySet(id) {
+function getSafeDeckFileName(name, fallback = 'EdTech-Bo-De') {
+    return String(name || fallback)
+        .replace(/[\/:*?"<>|]+/g, '-')
+        .replace(/\s+/g, '_')
+        .replace(/^\.+|\.+$/g, '')
+        .slice(0, 80) || fallback;
+}
+
+function triggerFileDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+}
+
+async function exportQuestionSetToExcel(item) {
+    const XLSX = await window.EdTechLibraries.loadXLSX();
+    const worksheet = XLSX.utils.aoa_to_sheet(item.rows || []);
+    worksheet['!cols'] = [{ wch: 48 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 32 }, { wch: 16 }, { wch: 36 }, { wch: 18 }, { wch: 16 }, { wch: 14 }];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, item.type === 'flashcard' ? 'Flashcard' : 'TracNghiem');
+    XLSX.writeFile(workbook, `${getSafeDeckFileName(item.name)}.xlsx`);
+}
+
+async function downloadLibrarySet(id, format = 'edtech') {
     const item = await window.EdTechDB?.get('questionSets', id).catch(() => null);
     if (!item?.rows?.length) {
         showToast('Bộ đề này không còn dữ liệu để tải.', 'error');
         return;
     }
     try {
-        const safeName = String(item.name || 'EdTech-Bo-De').replace(/[\/:*?"<>|]+/g, '-').replace(/\s+/g, '_').slice(0, 80);
-        const blob = new Blob([JSON.stringify({ format: 'EdTechQuestionSet', app: 'EdTech LMS Pro', name: item.name, type: item.type, source: item.source, rows: item.rows }, null, 2)], { type: 'application/json;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `${safeName}.edtech`;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1200);
+        if (format === 'excel') {
+            await exportQuestionSetToExcel(item);
+            showToast('Đã xuất file Excel.', 'success');
+            return;
+        }
+        const blob = new Blob([JSON.stringify({ format: 'EdTechQuestionSet', schemaVersion: 4, app: 'EdTech LMS Pro', name: item.name, type: item.type, source: item.source, rows: item.rows }, null, 2)], { type: 'application/json;charset=utf-8' });
+        triggerFileDownload(blob, `${getSafeDeckFileName(item.name)}.edtech`);
         showToast('Đã xuất file EdTech.', 'success');
     } catch (error) {
         showToast(error.message || 'Không thể tải bộ đề.', 'error');
@@ -804,7 +1023,7 @@ function renderHistoryTablePaged() {
         const result = isQuiz ? `${item.correct || 0}/${item.total || 0} (${item.accuracy || 0}%)` : `${item.good || 0}/${item.total || 0} nhớ tốt`;
         const hasSource = Array.isArray(item.sourceRows) && item.sourceRows.length > 1;
         const hasFocusRows = isQuiz ? Array.isArray(item.wrongRows) && item.wrongRows.length > 1 : Array.isArray(item.hardRows) && item.hardRows.length > 1;
-        return `<tr><td>${formatDate(item.timestamp)}</td><td><span class="history-mode-chip ${isQuiz ? 'mode-quiz' : 'mode-flashcard'}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td><td><strong>${escapeHTML(item.file || 'Không tên')}</strong></td><td>${escapeHTML(result)}</td><td>${formatLongDuration(item.duration || 0)}</td><td><strong>+${Number(item.xp) || 0} XP</strong></td><td><div class="history-actions"><button ${hasSource ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}')">${isQuiz ? 'Làm lại' : 'Ôn lại'}</button>${isQuiz && Array.isArray(item.review) ? `<button onclick="reviewHistoryQuiz('${item.id}')">Xem lại</button>` : ''}<button ${hasFocusRows ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}', true)">${isQuiz ? 'Câu sai' : 'Thẻ khó'}</button><button class="danger" onclick="deleteHistoryItem('${item.id}')">Xóa</button></div></td></tr>`;
+        return `<tr><td>${formatDate(item.timestamp)}</td><td><span class="history-mode-badge ${isQuiz ? 'mode-quiz' : 'mode-flashcard'}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td><td><strong>${escapeHTML(item.file || 'Không tên')}</strong></td><td>${escapeHTML(result)}</td><td>${formatLongDuration(item.duration || 0)}</td><td><strong>+${Number(item.xp) || 0} XP</strong></td><td><div class="history-actions"><button ${hasSource ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}')">${isQuiz ? 'Làm lại' : 'Ôn lại'}</button>${isQuiz && Array.isArray(item.review) ? `<button onclick="reviewHistoryQuiz('${item.id}')">Xem lại</button>` : ''}<button ${hasFocusRows ? '' : 'disabled'} onclick="repeatHistorySession('${item.id}', true)">${isQuiz ? 'Câu sai' : 'Thẻ khó'}</button><button class="danger" onclick="deleteHistoryItem('${item.id}')">Xóa</button></div></td></tr>`;
     }).join('');
     let pager = document.getElementById('history-pagination');
     if (!pager) {
@@ -1149,15 +1368,28 @@ Object.assign(window, {
     openLibrarySet,
     renameLibrarySet,
     downloadLibrarySet,
+    openDeckDownloadModal,
+    closeDeckDownloadModal,
+    confirmDeckDownload,
+    exportQuestionSetToExcel,
     openLibraryPreview,
     closeLibraryPreview,
     editLibrarySet,
     toggleLibraryFavorite,
     toggleLibraryPinned,
     toggleLibraryArchived,
+    toggleLibrarySelection,
+    toggleSelectAllLibrary,
+    changeQuestionLibraryPage,
+    bulkLibraryAction,
+    bulkDuplicateLibrarySets,
+    bulkExportLibrarySets,
+    mergeSelectedLibrarySets,
+    bulkDeleteLibrarySets,
     recordDeckActivity,
     toggleStudyFullscreen,
     creatorUndo,
+    exportCreatorToEdtech,
     creatorRedo,
     toggleCreatorMultiSelect,
     toggleCreatorSelection,

@@ -1,26 +1,16 @@
-# Hướng dẫn chạy và tự deploy
+# Chạy và tự deploy
 
 ## Chạy trên máy
-
-Dùng Python:
 
 ```bash
 python -m http.server 8080
 ```
 
-Sau đó mở:
-
-```text
-http://localhost:8080
-```
-
-Hoặc dùng **Live Server** trong Visual Studio Code và mở file `index.html`.
+Mở `http://localhost:8080`.
 
 ## Tự deploy
 
-Đây là website tĩnh. Chỉ cần tải toàn bộ thư mục dự án lên dịch vụ hosting có hỗ trợ HTML/CSS/JavaScript.
-
-Đảm bảo giữ nguyên cấu trúc:
+Tải nguyên thư mục dự án lên dịch vụ hosting tĩnh có HTTPS. Giữ nguyên:
 
 ```text
 index.html
@@ -31,16 +21,22 @@ manifest.webmanifest
 sw.js
 ```
 
-Website nên chạy bằng HTTPS để cài dạng web app và sử dụng offline.
-
 ## Kiểm tra trước khi deploy
 
 ```bash
 npm install
 npm run check
-npm test
+npm run fixtures
 ```
 
-## Sao lưu dữ liệu
+Visual regression:
 
-Dữ liệu nằm trên trình duyệt của từng thiết bị. Hãy dùng mục **Dữ liệu** trong ứng dụng để xuất bản sao lưu trước khi đổi máy hoặc xóa dữ liệu trình duyệt.
+```bash
+npx playwright install chromium
+npm run visual:update   # tạo baseline lần đầu
+npm run visual          # so sánh với baseline
+```
+
+## Dữ liệu
+
+Dữ liệu nằm trong IndexedDB của trình duyệt. Dùng mục **Dữ liệu** để xuất backup trước khi đổi máy hoặc xóa dữ liệu trình duyệt.

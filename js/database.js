@@ -2,7 +2,8 @@
 
 (function () {
     const DB_NAME = 'EdTechLMSPro_DB';
-    const DB_VERSION = 4;
+    const DB_VERSION = 5;
+    const DATA_SCHEMA_VERSION = 4;
     const STORES = {
         kv: { keyPath: 'key' },
         questionSets: { keyPath: 'id', indexes: [['updatedAt', 'updatedAt'], ['type', 'type']] },
@@ -10,7 +11,9 @@
         history: { keyPath: 'id', indexes: [['timestamp', 'timestamp'], ['mode', 'mode']] },
         flashcardProgress: { keyPath: 'id', indexes: [['deckKey', 'deckKey'], ['dueAt', 'dueAt']] },
         media: { keyPath: 'id', indexes: [['updatedAt', 'updatedAt']] },
-        activeSessions: { keyPath: 'id', indexes: [['updatedAt', 'updatedAt'], ['type', 'type']] }
+        activeSessions: { keyPath: 'id', indexes: [['updatedAt', 'updatedAt'], ['type', 'type']] },
+        migrationSnapshots: { keyPath: 'id', indexes: [['createdAt', 'createdAt'], ['toVersion', 'toVersion']] },
+        errorLogs: { keyPath: 'id', indexes: [['timestamp', 'timestamp'], ['level', 'level']] }
     };
 
     let dbPromise = null;
@@ -165,16 +168,119 @@
         }
     }
 
+
+    function estimateJSONSize(value) {
+        try { return new Blob([JSON.stringify(value)]).size; } catch (_) { return 0; }
+    }
+
+    async function createMigrationSnapshot(fromVersion, toVersion) {
+        const payload = {};
+        for (const storeName of ['kv', 'questionSets', 'drafts', 'history', 'flashcardProgress', 'activeSessions']) {
+            payload[storeName] = await getAll(storeName).catch(() => []);
+        }
+        const snapshot = {
+            id: `migration-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            fromVersion: Number(fromVersion) || 0,
+            toVersion: Number(toVersion) || DATA_SCHEMA_VERSION,
+            createdAt: new Date().toISOString(),
+            payload
+        };
+        await put('migrationSnapshots', snapshot);
+        const snapshots = (await getAll('migrationSnapshots')).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+        await Promise.all(snapshots.slice(5).map(item => remove('migrationSnapshots', item.id)));
+        return snapshot;
+    }
+
+    function normalizeQuestionSet(record) {
+        const rows = Array.isArray(record?.rows) ? record.rows : [];
+        return {
+            ...record,
+            id: record?.id || `set-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            name: String(record?.name || 'Bộ đề chưa đặt tên'),
+            type: record?.type === 'flashcard' ? 'flashcard' : 'quiz',
+            rows,
+            count: Number.isFinite(Number(record?.count)) ? Math.max(0, Number(record.count)) : Math.max(0, rows.length - 1),
+            createdAt: record?.createdAt || new Date().toISOString(),
+            updatedAt: record?.updatedAt || new Date().toISOString(),
+            source: record?.source || 'local',
+            favorite: Boolean(record?.favorite),
+            pinned: Boolean(record?.pinned),
+            archived: Boolean(record?.archived),
+            playCount: Math.max(0, Number(record?.playCount) || 0),
+            bestScore: Math.max(0, Number(record?.bestScore) || 0),
+            wrongCount: Math.max(0, Number(record?.wrongCount) || 0),
+            lastPlayed: record?.lastPlayed || '',
+            sizeBytes: Math.max(0, Number(record?.sizeBytes) || estimateJSONSize(rows))
+        };
+    }
+
+    async function ensureDataSchema() {
+        const currentVersion = Number(await getKV('dataSchemaVersion', 1).catch(() => 1)) || 1;
+        if (currentVersion >= DATA_SCHEMA_VERSION) return { migrated: false, version: currentVersion };
+        await createMigrationSnapshot(currentVersion, DATA_SCHEMA_VERSION);
+        const sets = await getAll('questionSets').catch(() => []);
+        if (sets.length) await bulkPut('questionSets', sets.map(normalizeQuestionSet));
+        const history = await getAll('history').catch(() => []);
+        if (history.length) {
+            await bulkPut('history', history.map(item => ({
+                ...item,
+                mode: item?.mode === 'flashcard' ? 'flashcard' : 'quiz',
+                timestamp: item?.timestamp || new Date().toISOString()
+            })));
+        }
+        await setKV('dataSchemaVersion', DATA_SCHEMA_VERSION);
+        await setKV('lastMigrationAt', new Date().toISOString());
+        return { migrated: true, fromVersion: currentVersion, version: DATA_SCHEMA_VERSION };
+    }
+
+    async function listMigrationSnapshots() {
+        return (await getAll('migrationSnapshots')).sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    }
+
+    async function restoreLatestMigrationSnapshot() {
+        const snapshot = (await listMigrationSnapshots())[0];
+        if (!snapshot?.payload) throw new Error('Không có snapshot migration để khôi phục.');
+        for (const storeName of ['kv', 'questionSets', 'drafts', 'history', 'flashcardProgress', 'activeSessions']) {
+            await clear(storeName);
+            const records = Array.isArray(snapshot.payload[storeName]) ? snapshot.payload[storeName] : [];
+            if (records.length) await bulkPut(storeName, records);
+        }
+        return snapshot;
+    }
+
+    async function logError(entry = {}) {
+        const normalized = {
+            id: entry.id || `error-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            level: entry.level || 'error',
+            message: String(entry.message || 'Unknown error').slice(0, 1200),
+            source: String(entry.source || '').slice(0, 500),
+            stack: String(entry.stack || '').slice(0, 4000),
+            screen: String(entry.screen || '').slice(0, 120),
+            appVersion: window.EDTECH_APP_VERSION || '',
+            timestamp: entry.timestamp || new Date().toISOString()
+        };
+        await put('errorLogs', normalized);
+        const logs = (await getAll('errorLogs')).sort((a, b) => String(b.timestamp).localeCompare(String(a.timestamp)));
+        await Promise.all(logs.slice(50).map(item => remove('errorLogs', item.id)));
+        return normalized;
+    }
+
+    async function listErrorLogs(limit = 20) {
+        const logs = (await getAll('errorLogs')).sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')));
+        return logs.slice(0, Math.max(1, Number(limit) || 20));
+    }
+
     async function bootstrap(keys = {}) {
         await open();
         await migrateLegacy(keys);
+        const migration = await ensureDataSchema();
         const [learning, creatorDrafts, preferences, creatorRecovery] = await Promise.all([
             getKV('learning', null),
             getKV('creatorDrafts', null),
             getKV('preferences', null),
             getKV('creatorRecovery', null)
         ]);
-        return { learning, creatorDrafts, preferences, creatorRecovery };
+        return { learning, creatorDrafts, preferences, creatorRecovery, migration };
     }
 
     async function syncLearning(learning) {
@@ -201,24 +307,7 @@
     async function saveQuestionSet(record) {
         const rows = Array.isArray(record.rows) ? record.rows : [];
         const estimatedSize = Number(record.sizeBytes) || new Blob([JSON.stringify(rows)]).size;
-        const normalized = {
-            id: record.id || `set-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            name: String(record.name || 'Bộ đề chưa đặt tên'),
-            type: record.type === 'flashcard' ? 'flashcard' : 'quiz',
-            rows,
-            count: Number.isFinite(Number(record.count)) ? Number(record.count) : Math.max(0, (rows?.length || 1) - 1),
-            createdAt: record.createdAt || new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            source: record.source || 'local',
-            pinned: Boolean(record.pinned),
-            favorite: Boolean(record.favorite),
-            archived: Boolean(record.archived),
-            playCount: Math.max(0, Number(record.playCount) || 0),
-            bestScore: Math.max(0, Number(record.bestScore) || 0),
-            wrongCount: Math.max(0, Number(record.wrongCount) || 0),
-            lastPlayed: record.lastPlayed || '',
-            sizeBytes: estimatedSize
-        };
+        const normalized = normalizeQuestionSet({ ...record, rows, sizeBytes: estimatedSize, updatedAt: new Date().toISOString() });
         await put('questionSets', normalized);
         return normalized;
     }
@@ -304,7 +393,8 @@
         }
         return {
             format: 'EdTechLMSProBackup',
-            schemaVersion: DB_VERSION,
+            schemaVersion: DATA_SCHEMA_VERSION,
+            databaseVersion: DB_VERSION,
             appVersion: window.EDTECH_APP_VERSION || '1.0.0',
             exportedAt: new Date().toISOString(),
             stores
@@ -340,6 +430,7 @@
     window.EdTechDB = {
         DB_NAME,
         DB_VERSION,
+        DATA_SCHEMA_VERSION,
         STORES: Object.keys(STORES),
         open,
         get,
@@ -367,6 +458,12 @@
         exportAll,
         importAll,
         clearApplicationData,
-        clearLearningData
+        clearLearningData,
+        ensureDataSchema,
+        createMigrationSnapshot,
+        listMigrationSnapshots,
+        restoreLatestMigrationSnapshot,
+        logError,
+        listErrorLogs
     };
 })();

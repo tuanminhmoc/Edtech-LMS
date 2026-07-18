@@ -1,14 +1,25 @@
 'use strict';
 
-const APP_VERSION = '1.3.4';
+const APP_VERSION = '1.4.6';
 const CACHE_NAME = `edtech-lms-pro-${APP_VERSION}`;
 const RUNTIME_CACHE = `edtech-lms-runtime-${APP_VERSION}`;
 const BASE = new URL('./', self.location.href);
 const LOCAL_ASSETS = [
   './',
   './index.html',
-  './css/style.css',
+  './css/tokens.css',
+  './css/base.css',
+  './css/components.css',
+  './css/dashboard.css',
+  './css/practice.css',
+  './css/flashcard.css',
+  './css/creator.css',
+  './css/library.css',
+  './css/history.css',
+  './css/mobile.css',
+  './css/themes.css',
   './js/database.js',
+  './js/recovery.js',
   './js/lazy-libs.js',
   './js/worker-client.js',
   './js/workers/data-worker.js',
@@ -16,6 +27,8 @@ const LOCAL_ASSETS = [
   './js/theme.js',
   './js/router.js',
   './js/backup.js',
+  './js/diagnostics.js',
+  './js/accessibility.js',
   './js/pwa.js',
   './js/core.js',
   './js/app.js',
@@ -24,9 +37,17 @@ const LOCAL_ASSETS = [
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   './assets/icons/EdTech-LMS-Pro.ico',
-  './assets/cursors/owl-cursor.png',
-  './assets/cursors/owl-pointer.png',
   './assets/images/donate-qr.png',
+  './assets/brand/intro/intro-stars-1536.webp',
+  './assets/cursors/owl-cursor-v2.svg',
+  './assets/cursors/owl-pointer-v2.svg',
+  './assets/brand/mascots-vector/study.svg',
+  './assets/brand/mascots-vector/read.svg',
+  './assets/brand/mascots-vector/focus.svg',
+  './assets/brand/mascots-vector/idea.svg',
+  './assets/brand/mascots-vector/search.svg',
+  './assets/brand/mascots-vector/warning.svg',
+  './assets/brand/mascots-vector/success.svg',
   './downloads/Install EdTech LMS Pro.cmd'
 ].map(path => new URL(path, BASE).href);
 

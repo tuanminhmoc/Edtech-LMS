@@ -1,0 +1,4517 @@
+{
+  "format": "EdTechQuestionSet",
+  "schemaVersion": 4,
+  "name": "Năm trăm câu",
+  "type": "quiz",
+  "rows": [
+    [
+      "Câu hỏi",
+      "Đáp án A",
+      "Đáp án B",
+      "Đáp án C",
+      "Đáp án D",
+      "Đáp án đúng",
+      "Giải thích"
+    ],
+    [
+      "Câu hỏi kiểm thử số 1?",
+      "Đáp án A 1",
+      "Đáp án B 1",
+      "Đáp án C 1",
+      "Đáp án D 1",
+      "A",
+      "Giải thích cho câu 1."
+    ],
+    [
+      "Câu hỏi kiểm thử số 2?",
+      "Đáp án A 2",
+      "Đáp án B 2",
+      "Đáp án C 2",
+      "Đáp án D 2",
+      "A",
+      "Giải thích cho câu 2."
+    ],
+    [
+      "Câu hỏi kiểm thử số 3?",
+      "Đáp án A 3",
+      "Đáp án B 3",
+      "Đáp án C 3",
+      "Đáp án D 3",
+      "A",
+      "Giải thích cho câu 3."
+    ],
+    [
+      "Câu hỏi kiểm thử số 4?",
+      "Đáp án A 4",
+      "Đáp án B 4",
+      "Đáp án C 4",
+      "Đáp án D 4",
+      "A",
+      "Giải thích cho câu 4."
+    ],
+    [
+      "Câu hỏi kiểm thử số 5?",
+      "Đáp án A 5",
+      "Đáp án B 5",
+      "Đáp án C 5",
+      "Đáp án D 5",
+      "A",
+      "Giải thích cho câu 5."
+    ],
+    [
+      "Câu hỏi kiểm thử số 6?",
+      "Đáp án A 6",
+      "Đáp án B 6",
+      "Đáp án C 6",
+      "Đáp án D 6",
+      "A",
+      "Giải thích cho câu 6."
+    ],
+    [
+      "Câu hỏi kiểm thử số 7?",
+      "Đáp án A 7",
+      "Đáp án B 7",
+      "Đáp án C 7",
+      "Đáp án D 7",
+      "A",
+      "Giải thích cho câu 7."
+    ],
+    [
+      "Câu hỏi kiểm thử số 8?",
+      "Đáp án A 8",
+      "Đáp án B 8",
+      "Đáp án C 8",
+      "Đáp án D 8",
+      "A",
+      "Giải thích cho câu 8."
+    ],
+    [
+      "Câu hỏi kiểm thử số 9?",
+      "Đáp án A 9",
+      "Đáp án B 9",
+      "Đáp án C 9",
+      "Đáp án D 9",
+      "A",
+      "Giải thích cho câu 9."
+    ],
+    [
+      "Câu hỏi kiểm thử số 10?",
+      "Đáp án A 10",
+      "Đáp án B 10",
+      "Đáp án C 10",
+      "Đáp án D 10",
+      "A",
+      "Giải thích cho câu 10."
+    ],
+    [
+      "Câu hỏi kiểm thử số 11?",
+      "Đáp án A 11",
+      "Đáp án B 11",
+      "Đáp án C 11",
+      "Đáp án D 11",
+      "A",
+      "Giải thích cho câu 11."
+    ],
+    [
+      "Câu hỏi kiểm thử số 12?",
+      "Đáp án A 12",
+      "Đáp án B 12",
+      "Đáp án C 12",
+      "Đáp án D 12",
+      "A",
+      "Giải thích cho câu 12."
+    ],
+    [
+      "Câu hỏi kiểm thử số 13?",
+      "Đáp án A 13",
+      "Đáp án B 13",
+      "Đáp án C 13",
+      "Đáp án D 13",
+      "A",
+      "Giải thích cho câu 13."
+    ],
+    [
+      "Câu hỏi kiểm thử số 14?",
+      "Đáp án A 14",
+      "Đáp án B 14",
+      "Đáp án C 14",
+      "Đáp án D 14",
+      "A",
+      "Giải thích cho câu 14."
+    ],
+    [
+      "Câu hỏi kiểm thử số 15?",
+      "Đáp án A 15",
+      "Đáp án B 15",
+      "Đáp án C 15",
+      "Đáp án D 15",
+      "A",
+      "Giải thích cho câu 15."
+    ],
+    [
+      "Câu hỏi kiểm thử số 16?",
+      "Đáp án A 16",
+      "Đáp án B 16",
+      "Đáp án C 16",
+      "Đáp án D 16",
+      "A",
+      "Giải thích cho câu 16."
+    ],
+    [
+      "Câu hỏi kiểm thử số 17?",
+      "Đáp án A 17",
+      "Đáp án B 17",
+      "Đáp án C 17",
+      "Đáp án D 17",
+      "A",
+      "Giải thích cho câu 17."
+    ],
+    [
+      "Câu hỏi kiểm thử số 18?",
+      "Đáp án A 18",
+      "Đáp án B 18",
+      "Đáp án C 18",
+      "Đáp án D 18",
+      "A",
+      "Giải thích cho câu 18."
+    ],
+    [
+      "Câu hỏi kiểm thử số 19?",
+      "Đáp án A 19",
+      "Đáp án B 19",
+      "Đáp án C 19",
+      "Đáp án D 19",
+      "A",
+      "Giải thích cho câu 19."
+    ],
+    [
+      "Câu hỏi kiểm thử số 20?",
+      "Đáp án A 20",
+      "Đáp án B 20",
+      "Đáp án C 20",
+      "Đáp án D 20",
+      "A",
+      "Giải thích cho câu 20."
+    ],
+    [
+      "Câu hỏi kiểm thử số 21?",
+      "Đáp án A 21",
+      "Đáp án B 21",
+      "Đáp án C 21",
+      "Đáp án D 21",
+      "A",
+      "Giải thích cho câu 21."
+    ],
+    [
+      "Câu hỏi kiểm thử số 22?",
+      "Đáp án A 22",
+      "Đáp án B 22",
+      "Đáp án C 22",
+      "Đáp án D 22",
+      "A",
+      "Giải thích cho câu 22."
+    ],
+    [
+      "Câu hỏi kiểm thử số 23?",
+      "Đáp án A 23",
+      "Đáp án B 23",
+      "Đáp án C 23",
+      "Đáp án D 23",
+      "A",
+      "Giải thích cho câu 23."
+    ],
+    [
+      "Câu hỏi kiểm thử số 24?",
+      "Đáp án A 24",
+      "Đáp án B 24",
+      "Đáp án C 24",
+      "Đáp án D 24",
+      "A",
+      "Giải thích cho câu 24."
+    ],
+    [
+      "Câu hỏi kiểm thử số 25?",
+      "Đáp án A 25",
+      "Đáp án B 25",
+      "Đáp án C 25",
+      "Đáp án D 25",
+      "A",
+      "Giải thích cho câu 25."
+    ],
+    [
+      "Câu hỏi kiểm thử số 26?",
+      "Đáp án A 26",
+      "Đáp án B 26",
+      "Đáp án C 26",
+      "Đáp án D 26",
+      "A",
+      "Giải thích cho câu 26."
+    ],
+    [
+      "Câu hỏi kiểm thử số 27?",
+      "Đáp án A 27",
+      "Đáp án B 27",
+      "Đáp án C 27",
+      "Đáp án D 27",
+      "A",
+      "Giải thích cho câu 27."
+    ],
+    [
+      "Câu hỏi kiểm thử số 28?",
+      "Đáp án A 28",
+      "Đáp án B 28",
+      "Đáp án C 28",
+      "Đáp án D 28",
+      "A",
+      "Giải thích cho câu 28."
+    ],
+    [
+      "Câu hỏi kiểm thử số 29?",
+      "Đáp án A 29",
+      "Đáp án B 29",
+      "Đáp án C 29",
+      "Đáp án D 29",
+      "A",
+      "Giải thích cho câu 29."
+    ],
+    [
+      "Câu hỏi kiểm thử số 30?",
+      "Đáp án A 30",
+      "Đáp án B 30",
+      "Đáp án C 30",
+      "Đáp án D 30",
+      "A",
+      "Giải thích cho câu 30."
+    ],
+    [
+      "Câu hỏi kiểm thử số 31?",
+      "Đáp án A 31",
+      "Đáp án B 31",
+      "Đáp án C 31",
+      "Đáp án D 31",
+      "A",
+      "Giải thích cho câu 31."
+    ],
+    [
+      "Câu hỏi kiểm thử số 32?",
+      "Đáp án A 32",
+      "Đáp án B 32",
+      "Đáp án C 32",
+      "Đáp án D 32",
+      "A",
+      "Giải thích cho câu 32."
+    ],
+    [
+      "Câu hỏi kiểm thử số 33?",
+      "Đáp án A 33",
+      "Đáp án B 33",
+      "Đáp án C 33",
+      "Đáp án D 33",
+      "A",
+      "Giải thích cho câu 33."
+    ],
+    [
+      "Câu hỏi kiểm thử số 34?",
+      "Đáp án A 34",
+      "Đáp án B 34",
+      "Đáp án C 34",
+      "Đáp án D 34",
+      "A",
+      "Giải thích cho câu 34."
+    ],
+    [
+      "Câu hỏi kiểm thử số 35?",
+      "Đáp án A 35",
+      "Đáp án B 35",
+      "Đáp án C 35",
+      "Đáp án D 35",
+      "A",
+      "Giải thích cho câu 35."
+    ],
+    [
+      "Câu hỏi kiểm thử số 36?",
+      "Đáp án A 36",
+      "Đáp án B 36",
+      "Đáp án C 36",
+      "Đáp án D 36",
+      "A",
+      "Giải thích cho câu 36."
+    ],
+    [
+      "Câu hỏi kiểm thử số 37?",
+      "Đáp án A 37",
+      "Đáp án B 37",
+      "Đáp án C 37",
+      "Đáp án D 37",
+      "A",
+      "Giải thích cho câu 37."
+    ],
+    [
+      "Câu hỏi kiểm thử số 38?",
+      "Đáp án A 38",
+      "Đáp án B 38",
+      "Đáp án C 38",
+      "Đáp án D 38",
+      "A",
+      "Giải thích cho câu 38."
+    ],
+    [
+      "Câu hỏi kiểm thử số 39?",
+      "Đáp án A 39",
+      "Đáp án B 39",
+      "Đáp án C 39",
+      "Đáp án D 39",
+      "A",
+      "Giải thích cho câu 39."
+    ],
+    [
+      "Câu hỏi kiểm thử số 40?",
+      "Đáp án A 40",
+      "Đáp án B 40",
+      "Đáp án C 40",
+      "Đáp án D 40",
+      "A",
+      "Giải thích cho câu 40."
+    ],
+    [
+      "Câu hỏi kiểm thử số 41?",
+      "Đáp án A 41",
+      "Đáp án B 41",
+      "Đáp án C 41",
+      "Đáp án D 41",
+      "A",
+      "Giải thích cho câu 41."
+    ],
+    [
+      "Câu hỏi kiểm thử số 42?",
+      "Đáp án A 42",
+      "Đáp án B 42",
+      "Đáp án C 42",
+      "Đáp án D 42",
+      "A",
+      "Giải thích cho câu 42."
+    ],
+    [
+      "Câu hỏi kiểm thử số 43?",
+      "Đáp án A 43",
+      "Đáp án B 43",
+      "Đáp án C 43",
+      "Đáp án D 43",
+      "A",
+      "Giải thích cho câu 43."
+    ],
+    [
+      "Câu hỏi kiểm thử số 44?",
+      "Đáp án A 44",
+      "Đáp án B 44",
+      "Đáp án C 44",
+      "Đáp án D 44",
+      "A",
+      "Giải thích cho câu 44."
+    ],
+    [
+      "Câu hỏi kiểm thử số 45?",
+      "Đáp án A 45",
+      "Đáp án B 45",
+      "Đáp án C 45",
+      "Đáp án D 45",
+      "A",
+      "Giải thích cho câu 45."
+    ],
+    [
+      "Câu hỏi kiểm thử số 46?",
+      "Đáp án A 46",
+      "Đáp án B 46",
+      "Đáp án C 46",
+      "Đáp án D 46",
+      "A",
+      "Giải thích cho câu 46."
+    ],
+    [
+      "Câu hỏi kiểm thử số 47?",
+      "Đáp án A 47",
+      "Đáp án B 47",
+      "Đáp án C 47",
+      "Đáp án D 47",
+      "A",
+      "Giải thích cho câu 47."
+    ],
+    [
+      "Câu hỏi kiểm thử số 48?",
+      "Đáp án A 48",
+      "Đáp án B 48",
+      "Đáp án C 48",
+      "Đáp án D 48",
+      "A",
+      "Giải thích cho câu 48."
+    ],
+    [
+      "Câu hỏi kiểm thử số 49?",
+      "Đáp án A 49",
+      "Đáp án B 49",
+      "Đáp án C 49",
+      "Đáp án D 49",
+      "A",
+      "Giải thích cho câu 49."
+    ],
+    [
+      "Câu hỏi kiểm thử số 50?",
+      "Đáp án A 50",
+      "Đáp án B 50",
+      "Đáp án C 50",
+      "Đáp án D 50",
+      "A",
+      "Giải thích cho câu 50."
+    ],
+    [
+      "Câu hỏi kiểm thử số 51?",
+      "Đáp án A 51",
+      "Đáp án B 51",
+      "Đáp án C 51",
+      "Đáp án D 51",
+      "A",
+      "Giải thích cho câu 51."
+    ],
+    [
+      "Câu hỏi kiểm thử số 52?",
+      "Đáp án A 52",
+      "Đáp án B 52",
+      "Đáp án C 52",
+      "Đáp án D 52",
+      "A",
+      "Giải thích cho câu 52."
+    ],
+    [
+      "Câu hỏi kiểm thử số 53?",
+      "Đáp án A 53",
+      "Đáp án B 53",
+      "Đáp án C 53",
+      "Đáp án D 53",
+      "A",
+      "Giải thích cho câu 53."
+    ],
+    [
+      "Câu hỏi kiểm thử số 54?",
+      "Đáp án A 54",
+      "Đáp án B 54",
+      "Đáp án C 54",
+      "Đáp án D 54",
+      "A",
+      "Giải thích cho câu 54."
+    ],
+    [
+      "Câu hỏi kiểm thử số 55?",
+      "Đáp án A 55",
+      "Đáp án B 55",
+      "Đáp án C 55",
+      "Đáp án D 55",
+      "A",
+      "Giải thích cho câu 55."
+    ],
+    [
+      "Câu hỏi kiểm thử số 56?",
+      "Đáp án A 56",
+      "Đáp án B 56",
+      "Đáp án C 56",
+      "Đáp án D 56",
+      "A",
+      "Giải thích cho câu 56."
+    ],
+    [
+      "Câu hỏi kiểm thử số 57?",
+      "Đáp án A 57",
+      "Đáp án B 57",
+      "Đáp án C 57",
+      "Đáp án D 57",
+      "A",
+      "Giải thích cho câu 57."
+    ],
+    [
+      "Câu hỏi kiểm thử số 58?",
+      "Đáp án A 58",
+      "Đáp án B 58",
+      "Đáp án C 58",
+      "Đáp án D 58",
+      "A",
+      "Giải thích cho câu 58."
+    ],
+    [
+      "Câu hỏi kiểm thử số 59?",
+      "Đáp án A 59",
+      "Đáp án B 59",
+      "Đáp án C 59",
+      "Đáp án D 59",
+      "A",
+      "Giải thích cho câu 59."
+    ],
+    [
+      "Câu hỏi kiểm thử số 60?",
+      "Đáp án A 60",
+      "Đáp án B 60",
+      "Đáp án C 60",
+      "Đáp án D 60",
+      "A",
+      "Giải thích cho câu 60."
+    ],
+    [
+      "Câu hỏi kiểm thử số 61?",
+      "Đáp án A 61",
+      "Đáp án B 61",
+      "Đáp án C 61",
+      "Đáp án D 61",
+      "A",
+      "Giải thích cho câu 61."
+    ],
+    [
+      "Câu hỏi kiểm thử số 62?",
+      "Đáp án A 62",
+      "Đáp án B 62",
+      "Đáp án C 62",
+      "Đáp án D 62",
+      "A",
+      "Giải thích cho câu 62."
+    ],
+    [
+      "Câu hỏi kiểm thử số 63?",
+      "Đáp án A 63",
+      "Đáp án B 63",
+      "Đáp án C 63",
+      "Đáp án D 63",
+      "A",
+      "Giải thích cho câu 63."
+    ],
+    [
+      "Câu hỏi kiểm thử số 64?",
+      "Đáp án A 64",
+      "Đáp án B 64",
+      "Đáp án C 64",
+      "Đáp án D 64",
+      "A",
+      "Giải thích cho câu 64."
+    ],
+    [
+      "Câu hỏi kiểm thử số 65?",
+      "Đáp án A 65",
+      "Đáp án B 65",
+      "Đáp án C 65",
+      "Đáp án D 65",
+      "A",
+      "Giải thích cho câu 65."
+    ],
+    [
+      "Câu hỏi kiểm thử số 66?",
+      "Đáp án A 66",
+      "Đáp án B 66",
+      "Đáp án C 66",
+      "Đáp án D 66",
+      "A",
+      "Giải thích cho câu 66."
+    ],
+    [
+      "Câu hỏi kiểm thử số 67?",
+      "Đáp án A 67",
+      "Đáp án B 67",
+      "Đáp án C 67",
+      "Đáp án D 67",
+      "A",
+      "Giải thích cho câu 67."
+    ],
+    [
+      "Câu hỏi kiểm thử số 68?",
+      "Đáp án A 68",
+      "Đáp án B 68",
+      "Đáp án C 68",
+      "Đáp án D 68",
+      "A",
+      "Giải thích cho câu 68."
+    ],
+    [
+      "Câu hỏi kiểm thử số 69?",
+      "Đáp án A 69",
+      "Đáp án B 69",
+      "Đáp án C 69",
+      "Đáp án D 69",
+      "A",
+      "Giải thích cho câu 69."
+    ],
+    [
+      "Câu hỏi kiểm thử số 70?",
+      "Đáp án A 70",
+      "Đáp án B 70",
+      "Đáp án C 70",
+      "Đáp án D 70",
+      "A",
+      "Giải thích cho câu 70."
+    ],
+    [
+      "Câu hỏi kiểm thử số 71?",
+      "Đáp án A 71",
+      "Đáp án B 71",
+      "Đáp án C 71",
+      "Đáp án D 71",
+      "A",
+      "Giải thích cho câu 71."
+    ],
+    [
+      "Câu hỏi kiểm thử số 72?",
+      "Đáp án A 72",
+      "Đáp án B 72",
+      "Đáp án C 72",
+      "Đáp án D 72",
+      "A",
+      "Giải thích cho câu 72."
+    ],
+    [
+      "Câu hỏi kiểm thử số 73?",
+      "Đáp án A 73",
+      "Đáp án B 73",
+      "Đáp án C 73",
+      "Đáp án D 73",
+      "A",
+      "Giải thích cho câu 73."
+    ],
+    [
+      "Câu hỏi kiểm thử số 74?",
+      "Đáp án A 74",
+      "Đáp án B 74",
+      "Đáp án C 74",
+      "Đáp án D 74",
+      "A",
+      "Giải thích cho câu 74."
+    ],
+    [
+      "Câu hỏi kiểm thử số 75?",
+      "Đáp án A 75",
+      "Đáp án B 75",
+      "Đáp án C 75",
+      "Đáp án D 75",
+      "A",
+      "Giải thích cho câu 75."
+    ],
+    [
+      "Câu hỏi kiểm thử số 76?",
+      "Đáp án A 76",
+      "Đáp án B 76",
+      "Đáp án C 76",
+      "Đáp án D 76",
+      "A",
+      "Giải thích cho câu 76."
+    ],
+    [
+      "Câu hỏi kiểm thử số 77?",
+      "Đáp án A 77",
+      "Đáp án B 77",
+      "Đáp án C 77",
+      "Đáp án D 77",
+      "A",
+      "Giải thích cho câu 77."
+    ],
+    [
+      "Câu hỏi kiểm thử số 78?",
+      "Đáp án A 78",
+      "Đáp án B 78",
+      "Đáp án C 78",
+      "Đáp án D 78",
+      "A",
+      "Giải thích cho câu 78."
+    ],
+    [
+      "Câu hỏi kiểm thử số 79?",
+      "Đáp án A 79",
+      "Đáp án B 79",
+      "Đáp án C 79",
+      "Đáp án D 79",
+      "A",
+      "Giải thích cho câu 79."
+    ],
+    [
+      "Câu hỏi kiểm thử số 80?",
+      "Đáp án A 80",
+      "Đáp án B 80",
+      "Đáp án C 80",
+      "Đáp án D 80",
+      "A",
+      "Giải thích cho câu 80."
+    ],
+    [
+      "Câu hỏi kiểm thử số 81?",
+      "Đáp án A 81",
+      "Đáp án B 81",
+      "Đáp án C 81",
+      "Đáp án D 81",
+      "A",
+      "Giải thích cho câu 81."
+    ],
+    [
+      "Câu hỏi kiểm thử số 82?",
+      "Đáp án A 82",
+      "Đáp án B 82",
+      "Đáp án C 82",
+      "Đáp án D 82",
+      "A",
+      "Giải thích cho câu 82."
+    ],
+    [
+      "Câu hỏi kiểm thử số 83?",
+      "Đáp án A 83",
+      "Đáp án B 83",
+      "Đáp án C 83",
+      "Đáp án D 83",
+      "A",
+      "Giải thích cho câu 83."
+    ],
+    [
+      "Câu hỏi kiểm thử số 84?",
+      "Đáp án A 84",
+      "Đáp án B 84",
+      "Đáp án C 84",
+      "Đáp án D 84",
+      "A",
+      "Giải thích cho câu 84."
+    ],
+    [
+      "Câu hỏi kiểm thử số 85?",
+      "Đáp án A 85",
+      "Đáp án B 85",
+      "Đáp án C 85",
+      "Đáp án D 85",
+      "A",
+      "Giải thích cho câu 85."
+    ],
+    [
+      "Câu hỏi kiểm thử số 86?",
+      "Đáp án A 86",
+      "Đáp án B 86",
+      "Đáp án C 86",
+      "Đáp án D 86",
+      "A",
+      "Giải thích cho câu 86."
+    ],
+    [
+      "Câu hỏi kiểm thử số 87?",
+      "Đáp án A 87",
+      "Đáp án B 87",
+      "Đáp án C 87",
+      "Đáp án D 87",
+      "A",
+      "Giải thích cho câu 87."
+    ],
+    [
+      "Câu hỏi kiểm thử số 88?",
+      "Đáp án A 88",
+      "Đáp án B 88",
+      "Đáp án C 88",
+      "Đáp án D 88",
+      "A",
+      "Giải thích cho câu 88."
+    ],
+    [
+      "Câu hỏi kiểm thử số 89?",
+      "Đáp án A 89",
+      "Đáp án B 89",
+      "Đáp án C 89",
+      "Đáp án D 89",
+      "A",
+      "Giải thích cho câu 89."
+    ],
+    [
+      "Câu hỏi kiểm thử số 90?",
+      "Đáp án A 90",
+      "Đáp án B 90",
+      "Đáp án C 90",
+      "Đáp án D 90",
+      "A",
+      "Giải thích cho câu 90."
+    ],
+    [
+      "Câu hỏi kiểm thử số 91?",
+      "Đáp án A 91",
+      "Đáp án B 91",
+      "Đáp án C 91",
+      "Đáp án D 91",
+      "A",
+      "Giải thích cho câu 91."
+    ],
+    [
+      "Câu hỏi kiểm thử số 92?",
+      "Đáp án A 92",
+      "Đáp án B 92",
+      "Đáp án C 92",
+      "Đáp án D 92",
+      "A",
+      "Giải thích cho câu 92."
+    ],
+    [
+      "Câu hỏi kiểm thử số 93?",
+      "Đáp án A 93",
+      "Đáp án B 93",
+      "Đáp án C 93",
+      "Đáp án D 93",
+      "A",
+      "Giải thích cho câu 93."
+    ],
+    [
+      "Câu hỏi kiểm thử số 94?",
+      "Đáp án A 94",
+      "Đáp án B 94",
+      "Đáp án C 94",
+      "Đáp án D 94",
+      "A",
+      "Giải thích cho câu 94."
+    ],
+    [
+      "Câu hỏi kiểm thử số 95?",
+      "Đáp án A 95",
+      "Đáp án B 95",
+      "Đáp án C 95",
+      "Đáp án D 95",
+      "A",
+      "Giải thích cho câu 95."
+    ],
+    [
+      "Câu hỏi kiểm thử số 96?",
+      "Đáp án A 96",
+      "Đáp án B 96",
+      "Đáp án C 96",
+      "Đáp án D 96",
+      "A",
+      "Giải thích cho câu 96."
+    ],
+    [
+      "Câu hỏi kiểm thử số 97?",
+      "Đáp án A 97",
+      "Đáp án B 97",
+      "Đáp án C 97",
+      "Đáp án D 97",
+      "A",
+      "Giải thích cho câu 97."
+    ],
+    [
+      "Câu hỏi kiểm thử số 98?",
+      "Đáp án A 98",
+      "Đáp án B 98",
+      "Đáp án C 98",
+      "Đáp án D 98",
+      "A",
+      "Giải thích cho câu 98."
+    ],
+    [
+      "Câu hỏi kiểm thử số 99?",
+      "Đáp án A 99",
+      "Đáp án B 99",
+      "Đáp án C 99",
+      "Đáp án D 99",
+      "A",
+      "Giải thích cho câu 99."
+    ],
+    [
+      "Câu hỏi kiểm thử số 100?",
+      "Đáp án A 100",
+      "Đáp án B 100",
+      "Đáp án C 100",
+      "Đáp án D 100",
+      "A",
+      "Giải thích cho câu 100."
+    ],
+    [
+      "Câu hỏi kiểm thử số 101?",
+      "Đáp án A 101",
+      "Đáp án B 101",
+      "Đáp án C 101",
+      "Đáp án D 101",
+      "A",
+      "Giải thích cho câu 101."
+    ],
+    [
+      "Câu hỏi kiểm thử số 102?",
+      "Đáp án A 102",
+      "Đáp án B 102",
+      "Đáp án C 102",
+      "Đáp án D 102",
+      "A",
+      "Giải thích cho câu 102."
+    ],
+    [
+      "Câu hỏi kiểm thử số 103?",
+      "Đáp án A 103",
+      "Đáp án B 103",
+      "Đáp án C 103",
+      "Đáp án D 103",
+      "A",
+      "Giải thích cho câu 103."
+    ],
+    [
+      "Câu hỏi kiểm thử số 104?",
+      "Đáp án A 104",
+      "Đáp án B 104",
+      "Đáp án C 104",
+      "Đáp án D 104",
+      "A",
+      "Giải thích cho câu 104."
+    ],
+    [
+      "Câu hỏi kiểm thử số 105?",
+      "Đáp án A 105",
+      "Đáp án B 105",
+      "Đáp án C 105",
+      "Đáp án D 105",
+      "A",
+      "Giải thích cho câu 105."
+    ],
+    [
+      "Câu hỏi kiểm thử số 106?",
+      "Đáp án A 106",
+      "Đáp án B 106",
+      "Đáp án C 106",
+      "Đáp án D 106",
+      "A",
+      "Giải thích cho câu 106."
+    ],
+    [
+      "Câu hỏi kiểm thử số 107?",
+      "Đáp án A 107",
+      "Đáp án B 107",
+      "Đáp án C 107",
+      "Đáp án D 107",
+      "A",
+      "Giải thích cho câu 107."
+    ],
+    [
+      "Câu hỏi kiểm thử số 108?",
+      "Đáp án A 108",
+      "Đáp án B 108",
+      "Đáp án C 108",
+      "Đáp án D 108",
+      "A",
+      "Giải thích cho câu 108."
+    ],
+    [
+      "Câu hỏi kiểm thử số 109?",
+      "Đáp án A 109",
+      "Đáp án B 109",
+      "Đáp án C 109",
+      "Đáp án D 109",
+      "A",
+      "Giải thích cho câu 109."
+    ],
+    [
+      "Câu hỏi kiểm thử số 110?",
+      "Đáp án A 110",
+      "Đáp án B 110",
+      "Đáp án C 110",
+      "Đáp án D 110",
+      "A",
+      "Giải thích cho câu 110."
+    ],
+    [
+      "Câu hỏi kiểm thử số 111?",
+      "Đáp án A 111",
+      "Đáp án B 111",
+      "Đáp án C 111",
+      "Đáp án D 111",
+      "A",
+      "Giải thích cho câu 111."
+    ],
+    [
+      "Câu hỏi kiểm thử số 112?",
+      "Đáp án A 112",
+      "Đáp án B 112",
+      "Đáp án C 112",
+      "Đáp án D 112",
+      "A",
+      "Giải thích cho câu 112."
+    ],
+    [
+      "Câu hỏi kiểm thử số 113?",
+      "Đáp án A 113",
+      "Đáp án B 113",
+      "Đáp án C 113",
+      "Đáp án D 113",
+      "A",
+      "Giải thích cho câu 113."
+    ],
+    [
+      "Câu hỏi kiểm thử số 114?",
+      "Đáp án A 114",
+      "Đáp án B 114",
+      "Đáp án C 114",
+      "Đáp án D 114",
+      "A",
+      "Giải thích cho câu 114."
+    ],
+    [
+      "Câu hỏi kiểm thử số 115?",
+      "Đáp án A 115",
+      "Đáp án B 115",
+      "Đáp án C 115",
+      "Đáp án D 115",
+      "A",
+      "Giải thích cho câu 115."
+    ],
+    [
+      "Câu hỏi kiểm thử số 116?",
+      "Đáp án A 116",
+      "Đáp án B 116",
+      "Đáp án C 116",
+      "Đáp án D 116",
+      "A",
+      "Giải thích cho câu 116."
+    ],
+    [
+      "Câu hỏi kiểm thử số 117?",
+      "Đáp án A 117",
+      "Đáp án B 117",
+      "Đáp án C 117",
+      "Đáp án D 117",
+      "A",
+      "Giải thích cho câu 117."
+    ],
+    [
+      "Câu hỏi kiểm thử số 118?",
+      "Đáp án A 118",
+      "Đáp án B 118",
+      "Đáp án C 118",
+      "Đáp án D 118",
+      "A",
+      "Giải thích cho câu 118."
+    ],
+    [
+      "Câu hỏi kiểm thử số 119?",
+      "Đáp án A 119",
+      "Đáp án B 119",
+      "Đáp án C 119",
+      "Đáp án D 119",
+      "A",
+      "Giải thích cho câu 119."
+    ],
+    [
+      "Câu hỏi kiểm thử số 120?",
+      "Đáp án A 120",
+      "Đáp án B 120",
+      "Đáp án C 120",
+      "Đáp án D 120",
+      "A",
+      "Giải thích cho câu 120."
+    ],
+    [
+      "Câu hỏi kiểm thử số 121?",
+      "Đáp án A 121",
+      "Đáp án B 121",
+      "Đáp án C 121",
+      "Đáp án D 121",
+      "A",
+      "Giải thích cho câu 121."
+    ],
+    [
+      "Câu hỏi kiểm thử số 122?",
+      "Đáp án A 122",
+      "Đáp án B 122",
+      "Đáp án C 122",
+      "Đáp án D 122",
+      "A",
+      "Giải thích cho câu 122."
+    ],
+    [
+      "Câu hỏi kiểm thử số 123?",
+      "Đáp án A 123",
+      "Đáp án B 123",
+      "Đáp án C 123",
+      "Đáp án D 123",
+      "A",
+      "Giải thích cho câu 123."
+    ],
+    [
+      "Câu hỏi kiểm thử số 124?",
+      "Đáp án A 124",
+      "Đáp án B 124",
+      "Đáp án C 124",
+      "Đáp án D 124",
+      "A",
+      "Giải thích cho câu 124."
+    ],
+    [
+      "Câu hỏi kiểm thử số 125?",
+      "Đáp án A 125",
+      "Đáp án B 125",
+      "Đáp án C 125",
+      "Đáp án D 125",
+      "A",
+      "Giải thích cho câu 125."
+    ],
+    [
+      "Câu hỏi kiểm thử số 126?",
+      "Đáp án A 126",
+      "Đáp án B 126",
+      "Đáp án C 126",
+      "Đáp án D 126",
+      "A",
+      "Giải thích cho câu 126."
+    ],
+    [
+      "Câu hỏi kiểm thử số 127?",
+      "Đáp án A 127",
+      "Đáp án B 127",
+      "Đáp án C 127",
+      "Đáp án D 127",
+      "A",
+      "Giải thích cho câu 127."
+    ],
+    [
+      "Câu hỏi kiểm thử số 128?",
+      "Đáp án A 128",
+      "Đáp án B 128",
+      "Đáp án C 128",
+      "Đáp án D 128",
+      "A",
+      "Giải thích cho câu 128."
+    ],
+    [
+      "Câu hỏi kiểm thử số 129?",
+      "Đáp án A 129",
+      "Đáp án B 129",
+      "Đáp án C 129",
+      "Đáp án D 129",
+      "A",
+      "Giải thích cho câu 129."
+    ],
+    [
+      "Câu hỏi kiểm thử số 130?",
+      "Đáp án A 130",
+      "Đáp án B 130",
+      "Đáp án C 130",
+      "Đáp án D 130",
+      "A",
+      "Giải thích cho câu 130."
+    ],
+    [
+      "Câu hỏi kiểm thử số 131?",
+      "Đáp án A 131",
+      "Đáp án B 131",
+      "Đáp án C 131",
+      "Đáp án D 131",
+      "A",
+      "Giải thích cho câu 131."
+    ],
+    [
+      "Câu hỏi kiểm thử số 132?",
+      "Đáp án A 132",
+      "Đáp án B 132",
+      "Đáp án C 132",
+      "Đáp án D 132",
+      "A",
+      "Giải thích cho câu 132."
+    ],
+    [
+      "Câu hỏi kiểm thử số 133?",
+      "Đáp án A 133",
+      "Đáp án B 133",
+      "Đáp án C 133",
+      "Đáp án D 133",
+      "A",
+      "Giải thích cho câu 133."
+    ],
+    [
+      "Câu hỏi kiểm thử số 134?",
+      "Đáp án A 134",
+      "Đáp án B 134",
+      "Đáp án C 134",
+      "Đáp án D 134",
+      "A",
+      "Giải thích cho câu 134."
+    ],
+    [
+      "Câu hỏi kiểm thử số 135?",
+      "Đáp án A 135",
+      "Đáp án B 135",
+      "Đáp án C 135",
+      "Đáp án D 135",
+      "A",
+      "Giải thích cho câu 135."
+    ],
+    [
+      "Câu hỏi kiểm thử số 136?",
+      "Đáp án A 136",
+      "Đáp án B 136",
+      "Đáp án C 136",
+      "Đáp án D 136",
+      "A",
+      "Giải thích cho câu 136."
+    ],
+    [
+      "Câu hỏi kiểm thử số 137?",
+      "Đáp án A 137",
+      "Đáp án B 137",
+      "Đáp án C 137",
+      "Đáp án D 137",
+      "A",
+      "Giải thích cho câu 137."
+    ],
+    [
+      "Câu hỏi kiểm thử số 138?",
+      "Đáp án A 138",
+      "Đáp án B 138",
+      "Đáp án C 138",
+      "Đáp án D 138",
+      "A",
+      "Giải thích cho câu 138."
+    ],
+    [
+      "Câu hỏi kiểm thử số 139?",
+      "Đáp án A 139",
+      "Đáp án B 139",
+      "Đáp án C 139",
+      "Đáp án D 139",
+      "A",
+      "Giải thích cho câu 139."
+    ],
+    [
+      "Câu hỏi kiểm thử số 140?",
+      "Đáp án A 140",
+      "Đáp án B 140",
+      "Đáp án C 140",
+      "Đáp án D 140",
+      "A",
+      "Giải thích cho câu 140."
+    ],
+    [
+      "Câu hỏi kiểm thử số 141?",
+      "Đáp án A 141",
+      "Đáp án B 141",
+      "Đáp án C 141",
+      "Đáp án D 141",
+      "A",
+      "Giải thích cho câu 141."
+    ],
+    [
+      "Câu hỏi kiểm thử số 142?",
+      "Đáp án A 142",
+      "Đáp án B 142",
+      "Đáp án C 142",
+      "Đáp án D 142",
+      "A",
+      "Giải thích cho câu 142."
+    ],
+    [
+      "Câu hỏi kiểm thử số 143?",
+      "Đáp án A 143",
+      "Đáp án B 143",
+      "Đáp án C 143",
+      "Đáp án D 143",
+      "A",
+      "Giải thích cho câu 143."
+    ],
+    [
+      "Câu hỏi kiểm thử số 144?",
+      "Đáp án A 144",
+      "Đáp án B 144",
+      "Đáp án C 144",
+      "Đáp án D 144",
+      "A",
+      "Giải thích cho câu 144."
+    ],
+    [
+      "Câu hỏi kiểm thử số 145?",
+      "Đáp án A 145",
+      "Đáp án B 145",
+      "Đáp án C 145",
+      "Đáp án D 145",
+      "A",
+      "Giải thích cho câu 145."
+    ],
+    [
+      "Câu hỏi kiểm thử số 146?",
+      "Đáp án A 146",
+      "Đáp án B 146",
+      "Đáp án C 146",
+      "Đáp án D 146",
+      "A",
+      "Giải thích cho câu 146."
+    ],
+    [
+      "Câu hỏi kiểm thử số 147?",
+      "Đáp án A 147",
+      "Đáp án B 147",
+      "Đáp án C 147",
+      "Đáp án D 147",
+      "A",
+      "Giải thích cho câu 147."
+    ],
+    [
+      "Câu hỏi kiểm thử số 148?",
+      "Đáp án A 148",
+      "Đáp án B 148",
+      "Đáp án C 148",
+      "Đáp án D 148",
+      "A",
+      "Giải thích cho câu 148."
+    ],
+    [
+      "Câu hỏi kiểm thử số 149?",
+      "Đáp án A 149",
+      "Đáp án B 149",
+      "Đáp án C 149",
+      "Đáp án D 149",
+      "A",
+      "Giải thích cho câu 149."
+    ],
+    [
+      "Câu hỏi kiểm thử số 150?",
+      "Đáp án A 150",
+      "Đáp án B 150",
+      "Đáp án C 150",
+      "Đáp án D 150",
+      "A",
+      "Giải thích cho câu 150."
+    ],
+    [
+      "Câu hỏi kiểm thử số 151?",
+      "Đáp án A 151",
+      "Đáp án B 151",
+      "Đáp án C 151",
+      "Đáp án D 151",
+      "A",
+      "Giải thích cho câu 151."
+    ],
+    [
+      "Câu hỏi kiểm thử số 152?",
+      "Đáp án A 152",
+      "Đáp án B 152",
+      "Đáp án C 152",
+      "Đáp án D 152",
+      "A",
+      "Giải thích cho câu 152."
+    ],
+    [
+      "Câu hỏi kiểm thử số 153?",
+      "Đáp án A 153",
+      "Đáp án B 153",
+      "Đáp án C 153",
+      "Đáp án D 153",
+      "A",
+      "Giải thích cho câu 153."
+    ],
+    [
+      "Câu hỏi kiểm thử số 154?",
+      "Đáp án A 154",
+      "Đáp án B 154",
+      "Đáp án C 154",
+      "Đáp án D 154",
+      "A",
+      "Giải thích cho câu 154."
+    ],
+    [
+      "Câu hỏi kiểm thử số 155?",
+      "Đáp án A 155",
+      "Đáp án B 155",
+      "Đáp án C 155",
+      "Đáp án D 155",
+      "A",
+      "Giải thích cho câu 155."
+    ],
+    [
+      "Câu hỏi kiểm thử số 156?",
+      "Đáp án A 156",
+      "Đáp án B 156",
+      "Đáp án C 156",
+      "Đáp án D 156",
+      "A",
+      "Giải thích cho câu 156."
+    ],
+    [
+      "Câu hỏi kiểm thử số 157?",
+      "Đáp án A 157",
+      "Đáp án B 157",
+      "Đáp án C 157",
+      "Đáp án D 157",
+      "A",
+      "Giải thích cho câu 157."
+    ],
+    [
+      "Câu hỏi kiểm thử số 158?",
+      "Đáp án A 158",
+      "Đáp án B 158",
+      "Đáp án C 158",
+      "Đáp án D 158",
+      "A",
+      "Giải thích cho câu 158."
+    ],
+    [
+      "Câu hỏi kiểm thử số 159?",
+      "Đáp án A 159",
+      "Đáp án B 159",
+      "Đáp án C 159",
+      "Đáp án D 159",
+      "A",
+      "Giải thích cho câu 159."
+    ],
+    [
+      "Câu hỏi kiểm thử số 160?",
+      "Đáp án A 160",
+      "Đáp án B 160",
+      "Đáp án C 160",
+      "Đáp án D 160",
+      "A",
+      "Giải thích cho câu 160."
+    ],
+    [
+      "Câu hỏi kiểm thử số 161?",
+      "Đáp án A 161",
+      "Đáp án B 161",
+      "Đáp án C 161",
+      "Đáp án D 161",
+      "A",
+      "Giải thích cho câu 161."
+    ],
+    [
+      "Câu hỏi kiểm thử số 162?",
+      "Đáp án A 162",
+      "Đáp án B 162",
+      "Đáp án C 162",
+      "Đáp án D 162",
+      "A",
+      "Giải thích cho câu 162."
+    ],
+    [
+      "Câu hỏi kiểm thử số 163?",
+      "Đáp án A 163",
+      "Đáp án B 163",
+      "Đáp án C 163",
+      "Đáp án D 163",
+      "A",
+      "Giải thích cho câu 163."
+    ],
+    [
+      "Câu hỏi kiểm thử số 164?",
+      "Đáp án A 164",
+      "Đáp án B 164",
+      "Đáp án C 164",
+      "Đáp án D 164",
+      "A",
+      "Giải thích cho câu 164."
+    ],
+    [
+      "Câu hỏi kiểm thử số 165?",
+      "Đáp án A 165",
+      "Đáp án B 165",
+      "Đáp án C 165",
+      "Đáp án D 165",
+      "A",
+      "Giải thích cho câu 165."
+    ],
+    [
+      "Câu hỏi kiểm thử số 166?",
+      "Đáp án A 166",
+      "Đáp án B 166",
+      "Đáp án C 166",
+      "Đáp án D 166",
+      "A",
+      "Giải thích cho câu 166."
+    ],
+    [
+      "Câu hỏi kiểm thử số 167?",
+      "Đáp án A 167",
+      "Đáp án B 167",
+      "Đáp án C 167",
+      "Đáp án D 167",
+      "A",
+      "Giải thích cho câu 167."
+    ],
+    [
+      "Câu hỏi kiểm thử số 168?",
+      "Đáp án A 168",
+      "Đáp án B 168",
+      "Đáp án C 168",
+      "Đáp án D 168",
+      "A",
+      "Giải thích cho câu 168."
+    ],
+    [
+      "Câu hỏi kiểm thử số 169?",
+      "Đáp án A 169",
+      "Đáp án B 169",
+      "Đáp án C 169",
+      "Đáp án D 169",
+      "A",
+      "Giải thích cho câu 169."
+    ],
+    [
+      "Câu hỏi kiểm thử số 170?",
+      "Đáp án A 170",
+      "Đáp án B 170",
+      "Đáp án C 170",
+      "Đáp án D 170",
+      "A",
+      "Giải thích cho câu 170."
+    ],
+    [
+      "Câu hỏi kiểm thử số 171?",
+      "Đáp án A 171",
+      "Đáp án B 171",
+      "Đáp án C 171",
+      "Đáp án D 171",
+      "A",
+      "Giải thích cho câu 171."
+    ],
+    [
+      "Câu hỏi kiểm thử số 172?",
+      "Đáp án A 172",
+      "Đáp án B 172",
+      "Đáp án C 172",
+      "Đáp án D 172",
+      "A",
+      "Giải thích cho câu 172."
+    ],
+    [
+      "Câu hỏi kiểm thử số 173?",
+      "Đáp án A 173",
+      "Đáp án B 173",
+      "Đáp án C 173",
+      "Đáp án D 173",
+      "A",
+      "Giải thích cho câu 173."
+    ],
+    [
+      "Câu hỏi kiểm thử số 174?",
+      "Đáp án A 174",
+      "Đáp án B 174",
+      "Đáp án C 174",
+      "Đáp án D 174",
+      "A",
+      "Giải thích cho câu 174."
+    ],
+    [
+      "Câu hỏi kiểm thử số 175?",
+      "Đáp án A 175",
+      "Đáp án B 175",
+      "Đáp án C 175",
+      "Đáp án D 175",
+      "A",
+      "Giải thích cho câu 175."
+    ],
+    [
+      "Câu hỏi kiểm thử số 176?",
+      "Đáp án A 176",
+      "Đáp án B 176",
+      "Đáp án C 176",
+      "Đáp án D 176",
+      "A",
+      "Giải thích cho câu 176."
+    ],
+    [
+      "Câu hỏi kiểm thử số 177?",
+      "Đáp án A 177",
+      "Đáp án B 177",
+      "Đáp án C 177",
+      "Đáp án D 177",
+      "A",
+      "Giải thích cho câu 177."
+    ],
+    [
+      "Câu hỏi kiểm thử số 178?",
+      "Đáp án A 178",
+      "Đáp án B 178",
+      "Đáp án C 178",
+      "Đáp án D 178",
+      "A",
+      "Giải thích cho câu 178."
+    ],
+    [
+      "Câu hỏi kiểm thử số 179?",
+      "Đáp án A 179",
+      "Đáp án B 179",
+      "Đáp án C 179",
+      "Đáp án D 179",
+      "A",
+      "Giải thích cho câu 179."
+    ],
+    [
+      "Câu hỏi kiểm thử số 180?",
+      "Đáp án A 180",
+      "Đáp án B 180",
+      "Đáp án C 180",
+      "Đáp án D 180",
+      "A",
+      "Giải thích cho câu 180."
+    ],
+    [
+      "Câu hỏi kiểm thử số 181?",
+      "Đáp án A 181",
+      "Đáp án B 181",
+      "Đáp án C 181",
+      "Đáp án D 181",
+      "A",
+      "Giải thích cho câu 181."
+    ],
+    [
+      "Câu hỏi kiểm thử số 182?",
+      "Đáp án A 182",
+      "Đáp án B 182",
+      "Đáp án C 182",
+      "Đáp án D 182",
+      "A",
+      "Giải thích cho câu 182."
+    ],
+    [
+      "Câu hỏi kiểm thử số 183?",
+      "Đáp án A 183",
+      "Đáp án B 183",
+      "Đáp án C 183",
+      "Đáp án D 183",
+      "A",
+      "Giải thích cho câu 183."
+    ],
+    [
+      "Câu hỏi kiểm thử số 184?",
+      "Đáp án A 184",
+      "Đáp án B 184",
+      "Đáp án C 184",
+      "Đáp án D 184",
+      "A",
+      "Giải thích cho câu 184."
+    ],
+    [
+      "Câu hỏi kiểm thử số 185?",
+      "Đáp án A 185",
+      "Đáp án B 185",
+      "Đáp án C 185",
+      "Đáp án D 185",
+      "A",
+      "Giải thích cho câu 185."
+    ],
+    [
+      "Câu hỏi kiểm thử số 186?",
+      "Đáp án A 186",
+      "Đáp án B 186",
+      "Đáp án C 186",
+      "Đáp án D 186",
+      "A",
+      "Giải thích cho câu 186."
+    ],
+    [
+      "Câu hỏi kiểm thử số 187?",
+      "Đáp án A 187",
+      "Đáp án B 187",
+      "Đáp án C 187",
+      "Đáp án D 187",
+      "A",
+      "Giải thích cho câu 187."
+    ],
+    [
+      "Câu hỏi kiểm thử số 188?",
+      "Đáp án A 188",
+      "Đáp án B 188",
+      "Đáp án C 188",
+      "Đáp án D 188",
+      "A",
+      "Giải thích cho câu 188."
+    ],
+    [
+      "Câu hỏi kiểm thử số 189?",
+      "Đáp án A 189",
+      "Đáp án B 189",
+      "Đáp án C 189",
+      "Đáp án D 189",
+      "A",
+      "Giải thích cho câu 189."
+    ],
+    [
+      "Câu hỏi kiểm thử số 190?",
+      "Đáp án A 190",
+      "Đáp án B 190",
+      "Đáp án C 190",
+      "Đáp án D 190",
+      "A",
+      "Giải thích cho câu 190."
+    ],
+    [
+      "Câu hỏi kiểm thử số 191?",
+      "Đáp án A 191",
+      "Đáp án B 191",
+      "Đáp án C 191",
+      "Đáp án D 191",
+      "A",
+      "Giải thích cho câu 191."
+    ],
+    [
+      "Câu hỏi kiểm thử số 192?",
+      "Đáp án A 192",
+      "Đáp án B 192",
+      "Đáp án C 192",
+      "Đáp án D 192",
+      "A",
+      "Giải thích cho câu 192."
+    ],
+    [
+      "Câu hỏi kiểm thử số 193?",
+      "Đáp án A 193",
+      "Đáp án B 193",
+      "Đáp án C 193",
+      "Đáp án D 193",
+      "A",
+      "Giải thích cho câu 193."
+    ],
+    [
+      "Câu hỏi kiểm thử số 194?",
+      "Đáp án A 194",
+      "Đáp án B 194",
+      "Đáp án C 194",
+      "Đáp án D 194",
+      "A",
+      "Giải thích cho câu 194."
+    ],
+    [
+      "Câu hỏi kiểm thử số 195?",
+      "Đáp án A 195",
+      "Đáp án B 195",
+      "Đáp án C 195",
+      "Đáp án D 195",
+      "A",
+      "Giải thích cho câu 195."
+    ],
+    [
+      "Câu hỏi kiểm thử số 196?",
+      "Đáp án A 196",
+      "Đáp án B 196",
+      "Đáp án C 196",
+      "Đáp án D 196",
+      "A",
+      "Giải thích cho câu 196."
+    ],
+    [
+      "Câu hỏi kiểm thử số 197?",
+      "Đáp án A 197",
+      "Đáp án B 197",
+      "Đáp án C 197",
+      "Đáp án D 197",
+      "A",
+      "Giải thích cho câu 197."
+    ],
+    [
+      "Câu hỏi kiểm thử số 198?",
+      "Đáp án A 198",
+      "Đáp án B 198",
+      "Đáp án C 198",
+      "Đáp án D 198",
+      "A",
+      "Giải thích cho câu 198."
+    ],
+    [
+      "Câu hỏi kiểm thử số 199?",
+      "Đáp án A 199",
+      "Đáp án B 199",
+      "Đáp án C 199",
+      "Đáp án D 199",
+      "A",
+      "Giải thích cho câu 199."
+    ],
+    [
+      "Câu hỏi kiểm thử số 200?",
+      "Đáp án A 200",
+      "Đáp án B 200",
+      "Đáp án C 200",
+      "Đáp án D 200",
+      "A",
+      "Giải thích cho câu 200."
+    ],
+    [
+      "Câu hỏi kiểm thử số 201?",
+      "Đáp án A 201",
+      "Đáp án B 201",
+      "Đáp án C 201",
+      "Đáp án D 201",
+      "A",
+      "Giải thích cho câu 201."
+    ],
+    [
+      "Câu hỏi kiểm thử số 202?",
+      "Đáp án A 202",
+      "Đáp án B 202",
+      "Đáp án C 202",
+      "Đáp án D 202",
+      "A",
+      "Giải thích cho câu 202."
+    ],
+    [
+      "Câu hỏi kiểm thử số 203?",
+      "Đáp án A 203",
+      "Đáp án B 203",
+      "Đáp án C 203",
+      "Đáp án D 203",
+      "A",
+      "Giải thích cho câu 203."
+    ],
+    [
+      "Câu hỏi kiểm thử số 204?",
+      "Đáp án A 204",
+      "Đáp án B 204",
+      "Đáp án C 204",
+      "Đáp án D 204",
+      "A",
+      "Giải thích cho câu 204."
+    ],
+    [
+      "Câu hỏi kiểm thử số 205?",
+      "Đáp án A 205",
+      "Đáp án B 205",
+      "Đáp án C 205",
+      "Đáp án D 205",
+      "A",
+      "Giải thích cho câu 205."
+    ],
+    [
+      "Câu hỏi kiểm thử số 206?",
+      "Đáp án A 206",
+      "Đáp án B 206",
+      "Đáp án C 206",
+      "Đáp án D 206",
+      "A",
+      "Giải thích cho câu 206."
+    ],
+    [
+      "Câu hỏi kiểm thử số 207?",
+      "Đáp án A 207",
+      "Đáp án B 207",
+      "Đáp án C 207",
+      "Đáp án D 207",
+      "A",
+      "Giải thích cho câu 207."
+    ],
+    [
+      "Câu hỏi kiểm thử số 208?",
+      "Đáp án A 208",
+      "Đáp án B 208",
+      "Đáp án C 208",
+      "Đáp án D 208",
+      "A",
+      "Giải thích cho câu 208."
+    ],
+    [
+      "Câu hỏi kiểm thử số 209?",
+      "Đáp án A 209",
+      "Đáp án B 209",
+      "Đáp án C 209",
+      "Đáp án D 209",
+      "A",
+      "Giải thích cho câu 209."
+    ],
+    [
+      "Câu hỏi kiểm thử số 210?",
+      "Đáp án A 210",
+      "Đáp án B 210",
+      "Đáp án C 210",
+      "Đáp án D 210",
+      "A",
+      "Giải thích cho câu 210."
+    ],
+    [
+      "Câu hỏi kiểm thử số 211?",
+      "Đáp án A 211",
+      "Đáp án B 211",
+      "Đáp án C 211",
+      "Đáp án D 211",
+      "A",
+      "Giải thích cho câu 211."
+    ],
+    [
+      "Câu hỏi kiểm thử số 212?",
+      "Đáp án A 212",
+      "Đáp án B 212",
+      "Đáp án C 212",
+      "Đáp án D 212",
+      "A",
+      "Giải thích cho câu 212."
+    ],
+    [
+      "Câu hỏi kiểm thử số 213?",
+      "Đáp án A 213",
+      "Đáp án B 213",
+      "Đáp án C 213",
+      "Đáp án D 213",
+      "A",
+      "Giải thích cho câu 213."
+    ],
+    [
+      "Câu hỏi kiểm thử số 214?",
+      "Đáp án A 214",
+      "Đáp án B 214",
+      "Đáp án C 214",
+      "Đáp án D 214",
+      "A",
+      "Giải thích cho câu 214."
+    ],
+    [
+      "Câu hỏi kiểm thử số 215?",
+      "Đáp án A 215",
+      "Đáp án B 215",
+      "Đáp án C 215",
+      "Đáp án D 215",
+      "A",
+      "Giải thích cho câu 215."
+    ],
+    [
+      "Câu hỏi kiểm thử số 216?",
+      "Đáp án A 216",
+      "Đáp án B 216",
+      "Đáp án C 216",
+      "Đáp án D 216",
+      "A",
+      "Giải thích cho câu 216."
+    ],
+    [
+      "Câu hỏi kiểm thử số 217?",
+      "Đáp án A 217",
+      "Đáp án B 217",
+      "Đáp án C 217",
+      "Đáp án D 217",
+      "A",
+      "Giải thích cho câu 217."
+    ],
+    [
+      "Câu hỏi kiểm thử số 218?",
+      "Đáp án A 218",
+      "Đáp án B 218",
+      "Đáp án C 218",
+      "Đáp án D 218",
+      "A",
+      "Giải thích cho câu 218."
+    ],
+    [
+      "Câu hỏi kiểm thử số 219?",
+      "Đáp án A 219",
+      "Đáp án B 219",
+      "Đáp án C 219",
+      "Đáp án D 219",
+      "A",
+      "Giải thích cho câu 219."
+    ],
+    [
+      "Câu hỏi kiểm thử số 220?",
+      "Đáp án A 220",
+      "Đáp án B 220",
+      "Đáp án C 220",
+      "Đáp án D 220",
+      "A",
+      "Giải thích cho câu 220."
+    ],
+    [
+      "Câu hỏi kiểm thử số 221?",
+      "Đáp án A 221",
+      "Đáp án B 221",
+      "Đáp án C 221",
+      "Đáp án D 221",
+      "A",
+      "Giải thích cho câu 221."
+    ],
+    [
+      "Câu hỏi kiểm thử số 222?",
+      "Đáp án A 222",
+      "Đáp án B 222",
+      "Đáp án C 222",
+      "Đáp án D 222",
+      "A",
+      "Giải thích cho câu 222."
+    ],
+    [
+      "Câu hỏi kiểm thử số 223?",
+      "Đáp án A 223",
+      "Đáp án B 223",
+      "Đáp án C 223",
+      "Đáp án D 223",
+      "A",
+      "Giải thích cho câu 223."
+    ],
+    [
+      "Câu hỏi kiểm thử số 224?",
+      "Đáp án A 224",
+      "Đáp án B 224",
+      "Đáp án C 224",
+      "Đáp án D 224",
+      "A",
+      "Giải thích cho câu 224."
+    ],
+    [
+      "Câu hỏi kiểm thử số 225?",
+      "Đáp án A 225",
+      "Đáp án B 225",
+      "Đáp án C 225",
+      "Đáp án D 225",
+      "A",
+      "Giải thích cho câu 225."
+    ],
+    [
+      "Câu hỏi kiểm thử số 226?",
+      "Đáp án A 226",
+      "Đáp án B 226",
+      "Đáp án C 226",
+      "Đáp án D 226",
+      "A",
+      "Giải thích cho câu 226."
+    ],
+    [
+      "Câu hỏi kiểm thử số 227?",
+      "Đáp án A 227",
+      "Đáp án B 227",
+      "Đáp án C 227",
+      "Đáp án D 227",
+      "A",
+      "Giải thích cho câu 227."
+    ],
+    [
+      "Câu hỏi kiểm thử số 228?",
+      "Đáp án A 228",
+      "Đáp án B 228",
+      "Đáp án C 228",
+      "Đáp án D 228",
+      "A",
+      "Giải thích cho câu 228."
+    ],
+    [
+      "Câu hỏi kiểm thử số 229?",
+      "Đáp án A 229",
+      "Đáp án B 229",
+      "Đáp án C 229",
+      "Đáp án D 229",
+      "A",
+      "Giải thích cho câu 229."
+    ],
+    [
+      "Câu hỏi kiểm thử số 230?",
+      "Đáp án A 230",
+      "Đáp án B 230",
+      "Đáp án C 230",
+      "Đáp án D 230",
+      "A",
+      "Giải thích cho câu 230."
+    ],
+    [
+      "Câu hỏi kiểm thử số 231?",
+      "Đáp án A 231",
+      "Đáp án B 231",
+      "Đáp án C 231",
+      "Đáp án D 231",
+      "A",
+      "Giải thích cho câu 231."
+    ],
+    [
+      "Câu hỏi kiểm thử số 232?",
+      "Đáp án A 232",
+      "Đáp án B 232",
+      "Đáp án C 232",
+      "Đáp án D 232",
+      "A",
+      "Giải thích cho câu 232."
+    ],
+    [
+      "Câu hỏi kiểm thử số 233?",
+      "Đáp án A 233",
+      "Đáp án B 233",
+      "Đáp án C 233",
+      "Đáp án D 233",
+      "A",
+      "Giải thích cho câu 233."
+    ],
+    [
+      "Câu hỏi kiểm thử số 234?",
+      "Đáp án A 234",
+      "Đáp án B 234",
+      "Đáp án C 234",
+      "Đáp án D 234",
+      "A",
+      "Giải thích cho câu 234."
+    ],
+    [
+      "Câu hỏi kiểm thử số 235?",
+      "Đáp án A 235",
+      "Đáp án B 235",
+      "Đáp án C 235",
+      "Đáp án D 235",
+      "A",
+      "Giải thích cho câu 235."
+    ],
+    [
+      "Câu hỏi kiểm thử số 236?",
+      "Đáp án A 236",
+      "Đáp án B 236",
+      "Đáp án C 236",
+      "Đáp án D 236",
+      "A",
+      "Giải thích cho câu 236."
+    ],
+    [
+      "Câu hỏi kiểm thử số 237?",
+      "Đáp án A 237",
+      "Đáp án B 237",
+      "Đáp án C 237",
+      "Đáp án D 237",
+      "A",
+      "Giải thích cho câu 237."
+    ],
+    [
+      "Câu hỏi kiểm thử số 238?",
+      "Đáp án A 238",
+      "Đáp án B 238",
+      "Đáp án C 238",
+      "Đáp án D 238",
+      "A",
+      "Giải thích cho câu 238."
+    ],
+    [
+      "Câu hỏi kiểm thử số 239?",
+      "Đáp án A 239",
+      "Đáp án B 239",
+      "Đáp án C 239",
+      "Đáp án D 239",
+      "A",
+      "Giải thích cho câu 239."
+    ],
+    [
+      "Câu hỏi kiểm thử số 240?",
+      "Đáp án A 240",
+      "Đáp án B 240",
+      "Đáp án C 240",
+      "Đáp án D 240",
+      "A",
+      "Giải thích cho câu 240."
+    ],
+    [
+      "Câu hỏi kiểm thử số 241?",
+      "Đáp án A 241",
+      "Đáp án B 241",
+      "Đáp án C 241",
+      "Đáp án D 241",
+      "A",
+      "Giải thích cho câu 241."
+    ],
+    [
+      "Câu hỏi kiểm thử số 242?",
+      "Đáp án A 242",
+      "Đáp án B 242",
+      "Đáp án C 242",
+      "Đáp án D 242",
+      "A",
+      "Giải thích cho câu 242."
+    ],
+    [
+      "Câu hỏi kiểm thử số 243?",
+      "Đáp án A 243",
+      "Đáp án B 243",
+      "Đáp án C 243",
+      "Đáp án D 243",
+      "A",
+      "Giải thích cho câu 243."
+    ],
+    [
+      "Câu hỏi kiểm thử số 244?",
+      "Đáp án A 244",
+      "Đáp án B 244",
+      "Đáp án C 244",
+      "Đáp án D 244",
+      "A",
+      "Giải thích cho câu 244."
+    ],
+    [
+      "Câu hỏi kiểm thử số 245?",
+      "Đáp án A 245",
+      "Đáp án B 245",
+      "Đáp án C 245",
+      "Đáp án D 245",
+      "A",
+      "Giải thích cho câu 245."
+    ],
+    [
+      "Câu hỏi kiểm thử số 246?",
+      "Đáp án A 246",
+      "Đáp án B 246",
+      "Đáp án C 246",
+      "Đáp án D 246",
+      "A",
+      "Giải thích cho câu 246."
+    ],
+    [
+      "Câu hỏi kiểm thử số 247?",
+      "Đáp án A 247",
+      "Đáp án B 247",
+      "Đáp án C 247",
+      "Đáp án D 247",
+      "A",
+      "Giải thích cho câu 247."
+    ],
+    [
+      "Câu hỏi kiểm thử số 248?",
+      "Đáp án A 248",
+      "Đáp án B 248",
+      "Đáp án C 248",
+      "Đáp án D 248",
+      "A",
+      "Giải thích cho câu 248."
+    ],
+    [
+      "Câu hỏi kiểm thử số 249?",
+      "Đáp án A 249",
+      "Đáp án B 249",
+      "Đáp án C 249",
+      "Đáp án D 249",
+      "A",
+      "Giải thích cho câu 249."
+    ],
+    [
+      "Câu hỏi kiểm thử số 250?",
+      "Đáp án A 250",
+      "Đáp án B 250",
+      "Đáp án C 250",
+      "Đáp án D 250",
+      "A",
+      "Giải thích cho câu 250."
+    ],
+    [
+      "Câu hỏi kiểm thử số 251?",
+      "Đáp án A 251",
+      "Đáp án B 251",
+      "Đáp án C 251",
+      "Đáp án D 251",
+      "A",
+      "Giải thích cho câu 251."
+    ],
+    [
+      "Câu hỏi kiểm thử số 252?",
+      "Đáp án A 252",
+      "Đáp án B 252",
+      "Đáp án C 252",
+      "Đáp án D 252",
+      "A",
+      "Giải thích cho câu 252."
+    ],
+    [
+      "Câu hỏi kiểm thử số 253?",
+      "Đáp án A 253",
+      "Đáp án B 253",
+      "Đáp án C 253",
+      "Đáp án D 253",
+      "A",
+      "Giải thích cho câu 253."
+    ],
+    [
+      "Câu hỏi kiểm thử số 254?",
+      "Đáp án A 254",
+      "Đáp án B 254",
+      "Đáp án C 254",
+      "Đáp án D 254",
+      "A",
+      "Giải thích cho câu 254."
+    ],
+    [
+      "Câu hỏi kiểm thử số 255?",
+      "Đáp án A 255",
+      "Đáp án B 255",
+      "Đáp án C 255",
+      "Đáp án D 255",
+      "A",
+      "Giải thích cho câu 255."
+    ],
+    [
+      "Câu hỏi kiểm thử số 256?",
+      "Đáp án A 256",
+      "Đáp án B 256",
+      "Đáp án C 256",
+      "Đáp án D 256",
+      "A",
+      "Giải thích cho câu 256."
+    ],
+    [
+      "Câu hỏi kiểm thử số 257?",
+      "Đáp án A 257",
+      "Đáp án B 257",
+      "Đáp án C 257",
+      "Đáp án D 257",
+      "A",
+      "Giải thích cho câu 257."
+    ],
+    [
+      "Câu hỏi kiểm thử số 258?",
+      "Đáp án A 258",
+      "Đáp án B 258",
+      "Đáp án C 258",
+      "Đáp án D 258",
+      "A",
+      "Giải thích cho câu 258."
+    ],
+    [
+      "Câu hỏi kiểm thử số 259?",
+      "Đáp án A 259",
+      "Đáp án B 259",
+      "Đáp án C 259",
+      "Đáp án D 259",
+      "A",
+      "Giải thích cho câu 259."
+    ],
+    [
+      "Câu hỏi kiểm thử số 260?",
+      "Đáp án A 260",
+      "Đáp án B 260",
+      "Đáp án C 260",
+      "Đáp án D 260",
+      "A",
+      "Giải thích cho câu 260."
+    ],
+    [
+      "Câu hỏi kiểm thử số 261?",
+      "Đáp án A 261",
+      "Đáp án B 261",
+      "Đáp án C 261",
+      "Đáp án D 261",
+      "A",
+      "Giải thích cho câu 261."
+    ],
+    [
+      "Câu hỏi kiểm thử số 262?",
+      "Đáp án A 262",
+      "Đáp án B 262",
+      "Đáp án C 262",
+      "Đáp án D 262",
+      "A",
+      "Giải thích cho câu 262."
+    ],
+    [
+      "Câu hỏi kiểm thử số 263?",
+      "Đáp án A 263",
+      "Đáp án B 263",
+      "Đáp án C 263",
+      "Đáp án D 263",
+      "A",
+      "Giải thích cho câu 263."
+    ],
+    [
+      "Câu hỏi kiểm thử số 264?",
+      "Đáp án A 264",
+      "Đáp án B 264",
+      "Đáp án C 264",
+      "Đáp án D 264",
+      "A",
+      "Giải thích cho câu 264."
+    ],
+    [
+      "Câu hỏi kiểm thử số 265?",
+      "Đáp án A 265",
+      "Đáp án B 265",
+      "Đáp án C 265",
+      "Đáp án D 265",
+      "A",
+      "Giải thích cho câu 265."
+    ],
+    [
+      "Câu hỏi kiểm thử số 266?",
+      "Đáp án A 266",
+      "Đáp án B 266",
+      "Đáp án C 266",
+      "Đáp án D 266",
+      "A",
+      "Giải thích cho câu 266."
+    ],
+    [
+      "Câu hỏi kiểm thử số 267?",
+      "Đáp án A 267",
+      "Đáp án B 267",
+      "Đáp án C 267",
+      "Đáp án D 267",
+      "A",
+      "Giải thích cho câu 267."
+    ],
+    [
+      "Câu hỏi kiểm thử số 268?",
+      "Đáp án A 268",
+      "Đáp án B 268",
+      "Đáp án C 268",
+      "Đáp án D 268",
+      "A",
+      "Giải thích cho câu 268."
+    ],
+    [
+      "Câu hỏi kiểm thử số 269?",
+      "Đáp án A 269",
+      "Đáp án B 269",
+      "Đáp án C 269",
+      "Đáp án D 269",
+      "A",
+      "Giải thích cho câu 269."
+    ],
+    [
+      "Câu hỏi kiểm thử số 270?",
+      "Đáp án A 270",
+      "Đáp án B 270",
+      "Đáp án C 270",
+      "Đáp án D 270",
+      "A",
+      "Giải thích cho câu 270."
+    ],
+    [
+      "Câu hỏi kiểm thử số 271?",
+      "Đáp án A 271",
+      "Đáp án B 271",
+      "Đáp án C 271",
+      "Đáp án D 271",
+      "A",
+      "Giải thích cho câu 271."
+    ],
+    [
+      "Câu hỏi kiểm thử số 272?",
+      "Đáp án A 272",
+      "Đáp án B 272",
+      "Đáp án C 272",
+      "Đáp án D 272",
+      "A",
+      "Giải thích cho câu 272."
+    ],
+    [
+      "Câu hỏi kiểm thử số 273?",
+      "Đáp án A 273",
+      "Đáp án B 273",
+      "Đáp án C 273",
+      "Đáp án D 273",
+      "A",
+      "Giải thích cho câu 273."
+    ],
+    [
+      "Câu hỏi kiểm thử số 274?",
+      "Đáp án A 274",
+      "Đáp án B 274",
+      "Đáp án C 274",
+      "Đáp án D 274",
+      "A",
+      "Giải thích cho câu 274."
+    ],
+    [
+      "Câu hỏi kiểm thử số 275?",
+      "Đáp án A 275",
+      "Đáp án B 275",
+      "Đáp án C 275",
+      "Đáp án D 275",
+      "A",
+      "Giải thích cho câu 275."
+    ],
+    [
+      "Câu hỏi kiểm thử số 276?",
+      "Đáp án A 276",
+      "Đáp án B 276",
+      "Đáp án C 276",
+      "Đáp án D 276",
+      "A",
+      "Giải thích cho câu 276."
+    ],
+    [
+      "Câu hỏi kiểm thử số 277?",
+      "Đáp án A 277",
+      "Đáp án B 277",
+      "Đáp án C 277",
+      "Đáp án D 277",
+      "A",
+      "Giải thích cho câu 277."
+    ],
+    [
+      "Câu hỏi kiểm thử số 278?",
+      "Đáp án A 278",
+      "Đáp án B 278",
+      "Đáp án C 278",
+      "Đáp án D 278",
+      "A",
+      "Giải thích cho câu 278."
+    ],
+    [
+      "Câu hỏi kiểm thử số 279?",
+      "Đáp án A 279",
+      "Đáp án B 279",
+      "Đáp án C 279",
+      "Đáp án D 279",
+      "A",
+      "Giải thích cho câu 279."
+    ],
+    [
+      "Câu hỏi kiểm thử số 280?",
+      "Đáp án A 280",
+      "Đáp án B 280",
+      "Đáp án C 280",
+      "Đáp án D 280",
+      "A",
+      "Giải thích cho câu 280."
+    ],
+    [
+      "Câu hỏi kiểm thử số 281?",
+      "Đáp án A 281",
+      "Đáp án B 281",
+      "Đáp án C 281",
+      "Đáp án D 281",
+      "A",
+      "Giải thích cho câu 281."
+    ],
+    [
+      "Câu hỏi kiểm thử số 282?",
+      "Đáp án A 282",
+      "Đáp án B 282",
+      "Đáp án C 282",
+      "Đáp án D 282",
+      "A",
+      "Giải thích cho câu 282."
+    ],
+    [
+      "Câu hỏi kiểm thử số 283?",
+      "Đáp án A 283",
+      "Đáp án B 283",
+      "Đáp án C 283",
+      "Đáp án D 283",
+      "A",
+      "Giải thích cho câu 283."
+    ],
+    [
+      "Câu hỏi kiểm thử số 284?",
+      "Đáp án A 284",
+      "Đáp án B 284",
+      "Đáp án C 284",
+      "Đáp án D 284",
+      "A",
+      "Giải thích cho câu 284."
+    ],
+    [
+      "Câu hỏi kiểm thử số 285?",
+      "Đáp án A 285",
+      "Đáp án B 285",
+      "Đáp án C 285",
+      "Đáp án D 285",
+      "A",
+      "Giải thích cho câu 285."
+    ],
+    [
+      "Câu hỏi kiểm thử số 286?",
+      "Đáp án A 286",
+      "Đáp án B 286",
+      "Đáp án C 286",
+      "Đáp án D 286",
+      "A",
+      "Giải thích cho câu 286."
+    ],
+    [
+      "Câu hỏi kiểm thử số 287?",
+      "Đáp án A 287",
+      "Đáp án B 287",
+      "Đáp án C 287",
+      "Đáp án D 287",
+      "A",
+      "Giải thích cho câu 287."
+    ],
+    [
+      "Câu hỏi kiểm thử số 288?",
+      "Đáp án A 288",
+      "Đáp án B 288",
+      "Đáp án C 288",
+      "Đáp án D 288",
+      "A",
+      "Giải thích cho câu 288."
+    ],
+    [
+      "Câu hỏi kiểm thử số 289?",
+      "Đáp án A 289",
+      "Đáp án B 289",
+      "Đáp án C 289",
+      "Đáp án D 289",
+      "A",
+      "Giải thích cho câu 289."
+    ],
+    [
+      "Câu hỏi kiểm thử số 290?",
+      "Đáp án A 290",
+      "Đáp án B 290",
+      "Đáp án C 290",
+      "Đáp án D 290",
+      "A",
+      "Giải thích cho câu 290."
+    ],
+    [
+      "Câu hỏi kiểm thử số 291?",
+      "Đáp án A 291",
+      "Đáp án B 291",
+      "Đáp án C 291",
+      "Đáp án D 291",
+      "A",
+      "Giải thích cho câu 291."
+    ],
+    [
+      "Câu hỏi kiểm thử số 292?",
+      "Đáp án A 292",
+      "Đáp án B 292",
+      "Đáp án C 292",
+      "Đáp án D 292",
+      "A",
+      "Giải thích cho câu 292."
+    ],
+    [
+      "Câu hỏi kiểm thử số 293?",
+      "Đáp án A 293",
+      "Đáp án B 293",
+      "Đáp án C 293",
+      "Đáp án D 293",
+      "A",
+      "Giải thích cho câu 293."
+    ],
+    [
+      "Câu hỏi kiểm thử số 294?",
+      "Đáp án A 294",
+      "Đáp án B 294",
+      "Đáp án C 294",
+      "Đáp án D 294",
+      "A",
+      "Giải thích cho câu 294."
+    ],
+    [
+      "Câu hỏi kiểm thử số 295?",
+      "Đáp án A 295",
+      "Đáp án B 295",
+      "Đáp án C 295",
+      "Đáp án D 295",
+      "A",
+      "Giải thích cho câu 295."
+    ],
+    [
+      "Câu hỏi kiểm thử số 296?",
+      "Đáp án A 296",
+      "Đáp án B 296",
+      "Đáp án C 296",
+      "Đáp án D 296",
+      "A",
+      "Giải thích cho câu 296."
+    ],
+    [
+      "Câu hỏi kiểm thử số 297?",
+      "Đáp án A 297",
+      "Đáp án B 297",
+      "Đáp án C 297",
+      "Đáp án D 297",
+      "A",
+      "Giải thích cho câu 297."
+    ],
+    [
+      "Câu hỏi kiểm thử số 298?",
+      "Đáp án A 298",
+      "Đáp án B 298",
+      "Đáp án C 298",
+      "Đáp án D 298",
+      "A",
+      "Giải thích cho câu 298."
+    ],
+    [
+      "Câu hỏi kiểm thử số 299?",
+      "Đáp án A 299",
+      "Đáp án B 299",
+      "Đáp án C 299",
+      "Đáp án D 299",
+      "A",
+      "Giải thích cho câu 299."
+    ],
+    [
+      "Câu hỏi kiểm thử số 300?",
+      "Đáp án A 300",
+      "Đáp án B 300",
+      "Đáp án C 300",
+      "Đáp án D 300",
+      "A",
+      "Giải thích cho câu 300."
+    ],
+    [
+      "Câu hỏi kiểm thử số 301?",
+      "Đáp án A 301",
+      "Đáp án B 301",
+      "Đáp án C 301",
+      "Đáp án D 301",
+      "A",
+      "Giải thích cho câu 301."
+    ],
+    [
+      "Câu hỏi kiểm thử số 302?",
+      "Đáp án A 302",
+      "Đáp án B 302",
+      "Đáp án C 302",
+      "Đáp án D 302",
+      "A",
+      "Giải thích cho câu 302."
+    ],
+    [
+      "Câu hỏi kiểm thử số 303?",
+      "Đáp án A 303",
+      "Đáp án B 303",
+      "Đáp án C 303",
+      "Đáp án D 303",
+      "A",
+      "Giải thích cho câu 303."
+    ],
+    [
+      "Câu hỏi kiểm thử số 304?",
+      "Đáp án A 304",
+      "Đáp án B 304",
+      "Đáp án C 304",
+      "Đáp án D 304",
+      "A",
+      "Giải thích cho câu 304."
+    ],
+    [
+      "Câu hỏi kiểm thử số 305?",
+      "Đáp án A 305",
+      "Đáp án B 305",
+      "Đáp án C 305",
+      "Đáp án D 305",
+      "A",
+      "Giải thích cho câu 305."
+    ],
+    [
+      "Câu hỏi kiểm thử số 306?",
+      "Đáp án A 306",
+      "Đáp án B 306",
+      "Đáp án C 306",
+      "Đáp án D 306",
+      "A",
+      "Giải thích cho câu 306."
+    ],
+    [
+      "Câu hỏi kiểm thử số 307?",
+      "Đáp án A 307",
+      "Đáp án B 307",
+      "Đáp án C 307",
+      "Đáp án D 307",
+      "A",
+      "Giải thích cho câu 307."
+    ],
+    [
+      "Câu hỏi kiểm thử số 308?",
+      "Đáp án A 308",
+      "Đáp án B 308",
+      "Đáp án C 308",
+      "Đáp án D 308",
+      "A",
+      "Giải thích cho câu 308."
+    ],
+    [
+      "Câu hỏi kiểm thử số 309?",
+      "Đáp án A 309",
+      "Đáp án B 309",
+      "Đáp án C 309",
+      "Đáp án D 309",
+      "A",
+      "Giải thích cho câu 309."
+    ],
+    [
+      "Câu hỏi kiểm thử số 310?",
+      "Đáp án A 310",
+      "Đáp án B 310",
+      "Đáp án C 310",
+      "Đáp án D 310",
+      "A",
+      "Giải thích cho câu 310."
+    ],
+    [
+      "Câu hỏi kiểm thử số 311?",
+      "Đáp án A 311",
+      "Đáp án B 311",
+      "Đáp án C 311",
+      "Đáp án D 311",
+      "A",
+      "Giải thích cho câu 311."
+    ],
+    [
+      "Câu hỏi kiểm thử số 312?",
+      "Đáp án A 312",
+      "Đáp án B 312",
+      "Đáp án C 312",
+      "Đáp án D 312",
+      "A",
+      "Giải thích cho câu 312."
+    ],
+    [
+      "Câu hỏi kiểm thử số 313?",
+      "Đáp án A 313",
+      "Đáp án B 313",
+      "Đáp án C 313",
+      "Đáp án D 313",
+      "A",
+      "Giải thích cho câu 313."
+    ],
+    [
+      "Câu hỏi kiểm thử số 314?",
+      "Đáp án A 314",
+      "Đáp án B 314",
+      "Đáp án C 314",
+      "Đáp án D 314",
+      "A",
+      "Giải thích cho câu 314."
+    ],
+    [
+      "Câu hỏi kiểm thử số 315?",
+      "Đáp án A 315",
+      "Đáp án B 315",
+      "Đáp án C 315",
+      "Đáp án D 315",
+      "A",
+      "Giải thích cho câu 315."
+    ],
+    [
+      "Câu hỏi kiểm thử số 316?",
+      "Đáp án A 316",
+      "Đáp án B 316",
+      "Đáp án C 316",
+      "Đáp án D 316",
+      "A",
+      "Giải thích cho câu 316."
+    ],
+    [
+      "Câu hỏi kiểm thử số 317?",
+      "Đáp án A 317",
+      "Đáp án B 317",
+      "Đáp án C 317",
+      "Đáp án D 317",
+      "A",
+      "Giải thích cho câu 317."
+    ],
+    [
+      "Câu hỏi kiểm thử số 318?",
+      "Đáp án A 318",
+      "Đáp án B 318",
+      "Đáp án C 318",
+      "Đáp án D 318",
+      "A",
+      "Giải thích cho câu 318."
+    ],
+    [
+      "Câu hỏi kiểm thử số 319?",
+      "Đáp án A 319",
+      "Đáp án B 319",
+      "Đáp án C 319",
+      "Đáp án D 319",
+      "A",
+      "Giải thích cho câu 319."
+    ],
+    [
+      "Câu hỏi kiểm thử số 320?",
+      "Đáp án A 320",
+      "Đáp án B 320",
+      "Đáp án C 320",
+      "Đáp án D 320",
+      "A",
+      "Giải thích cho câu 320."
+    ],
+    [
+      "Câu hỏi kiểm thử số 321?",
+      "Đáp án A 321",
+      "Đáp án B 321",
+      "Đáp án C 321",
+      "Đáp án D 321",
+      "A",
+      "Giải thích cho câu 321."
+    ],
+    [
+      "Câu hỏi kiểm thử số 322?",
+      "Đáp án A 322",
+      "Đáp án B 322",
+      "Đáp án C 322",
+      "Đáp án D 322",
+      "A",
+      "Giải thích cho câu 322."
+    ],
+    [
+      "Câu hỏi kiểm thử số 323?",
+      "Đáp án A 323",
+      "Đáp án B 323",
+      "Đáp án C 323",
+      "Đáp án D 323",
+      "A",
+      "Giải thích cho câu 323."
+    ],
+    [
+      "Câu hỏi kiểm thử số 324?",
+      "Đáp án A 324",
+      "Đáp án B 324",
+      "Đáp án C 324",
+      "Đáp án D 324",
+      "A",
+      "Giải thích cho câu 324."
+    ],
+    [
+      "Câu hỏi kiểm thử số 325?",
+      "Đáp án A 325",
+      "Đáp án B 325",
+      "Đáp án C 325",
+      "Đáp án D 325",
+      "A",
+      "Giải thích cho câu 325."
+    ],
+    [
+      "Câu hỏi kiểm thử số 326?",
+      "Đáp án A 326",
+      "Đáp án B 326",
+      "Đáp án C 326",
+      "Đáp án D 326",
+      "A",
+      "Giải thích cho câu 326."
+    ],
+    [
+      "Câu hỏi kiểm thử số 327?",
+      "Đáp án A 327",
+      "Đáp án B 327",
+      "Đáp án C 327",
+      "Đáp án D 327",
+      "A",
+      "Giải thích cho câu 327."
+    ],
+    [
+      "Câu hỏi kiểm thử số 328?",
+      "Đáp án A 328",
+      "Đáp án B 328",
+      "Đáp án C 328",
+      "Đáp án D 328",
+      "A",
+      "Giải thích cho câu 328."
+    ],
+    [
+      "Câu hỏi kiểm thử số 329?",
+      "Đáp án A 329",
+      "Đáp án B 329",
+      "Đáp án C 329",
+      "Đáp án D 329",
+      "A",
+      "Giải thích cho câu 329."
+    ],
+    [
+      "Câu hỏi kiểm thử số 330?",
+      "Đáp án A 330",
+      "Đáp án B 330",
+      "Đáp án C 330",
+      "Đáp án D 330",
+      "A",
+      "Giải thích cho câu 330."
+    ],
+    [
+      "Câu hỏi kiểm thử số 331?",
+      "Đáp án A 331",
+      "Đáp án B 331",
+      "Đáp án C 331",
+      "Đáp án D 331",
+      "A",
+      "Giải thích cho câu 331."
+    ],
+    [
+      "Câu hỏi kiểm thử số 332?",
+      "Đáp án A 332",
+      "Đáp án B 332",
+      "Đáp án C 332",
+      "Đáp án D 332",
+      "A",
+      "Giải thích cho câu 332."
+    ],
+    [
+      "Câu hỏi kiểm thử số 333?",
+      "Đáp án A 333",
+      "Đáp án B 333",
+      "Đáp án C 333",
+      "Đáp án D 333",
+      "A",
+      "Giải thích cho câu 333."
+    ],
+    [
+      "Câu hỏi kiểm thử số 334?",
+      "Đáp án A 334",
+      "Đáp án B 334",
+      "Đáp án C 334",
+      "Đáp án D 334",
+      "A",
+      "Giải thích cho câu 334."
+    ],
+    [
+      "Câu hỏi kiểm thử số 335?",
+      "Đáp án A 335",
+      "Đáp án B 335",
+      "Đáp án C 335",
+      "Đáp án D 335",
+      "A",
+      "Giải thích cho câu 335."
+    ],
+    [
+      "Câu hỏi kiểm thử số 336?",
+      "Đáp án A 336",
+      "Đáp án B 336",
+      "Đáp án C 336",
+      "Đáp án D 336",
+      "A",
+      "Giải thích cho câu 336."
+    ],
+    [
+      "Câu hỏi kiểm thử số 337?",
+      "Đáp án A 337",
+      "Đáp án B 337",
+      "Đáp án C 337",
+      "Đáp án D 337",
+      "A",
+      "Giải thích cho câu 337."
+    ],
+    [
+      "Câu hỏi kiểm thử số 338?",
+      "Đáp án A 338",
+      "Đáp án B 338",
+      "Đáp án C 338",
+      "Đáp án D 338",
+      "A",
+      "Giải thích cho câu 338."
+    ],
+    [
+      "Câu hỏi kiểm thử số 339?",
+      "Đáp án A 339",
+      "Đáp án B 339",
+      "Đáp án C 339",
+      "Đáp án D 339",
+      "A",
+      "Giải thích cho câu 339."
+    ],
+    [
+      "Câu hỏi kiểm thử số 340?",
+      "Đáp án A 340",
+      "Đáp án B 340",
+      "Đáp án C 340",
+      "Đáp án D 340",
+      "A",
+      "Giải thích cho câu 340."
+    ],
+    [
+      "Câu hỏi kiểm thử số 341?",
+      "Đáp án A 341",
+      "Đáp án B 341",
+      "Đáp án C 341",
+      "Đáp án D 341",
+      "A",
+      "Giải thích cho câu 341."
+    ],
+    [
+      "Câu hỏi kiểm thử số 342?",
+      "Đáp án A 342",
+      "Đáp án B 342",
+      "Đáp án C 342",
+      "Đáp án D 342",
+      "A",
+      "Giải thích cho câu 342."
+    ],
+    [
+      "Câu hỏi kiểm thử số 343?",
+      "Đáp án A 343",
+      "Đáp án B 343",
+      "Đáp án C 343",
+      "Đáp án D 343",
+      "A",
+      "Giải thích cho câu 343."
+    ],
+    [
+      "Câu hỏi kiểm thử số 344?",
+      "Đáp án A 344",
+      "Đáp án B 344",
+      "Đáp án C 344",
+      "Đáp án D 344",
+      "A",
+      "Giải thích cho câu 344."
+    ],
+    [
+      "Câu hỏi kiểm thử số 345?",
+      "Đáp án A 345",
+      "Đáp án B 345",
+      "Đáp án C 345",
+      "Đáp án D 345",
+      "A",
+      "Giải thích cho câu 345."
+    ],
+    [
+      "Câu hỏi kiểm thử số 346?",
+      "Đáp án A 346",
+      "Đáp án B 346",
+      "Đáp án C 346",
+      "Đáp án D 346",
+      "A",
+      "Giải thích cho câu 346."
+    ],
+    [
+      "Câu hỏi kiểm thử số 347?",
+      "Đáp án A 347",
+      "Đáp án B 347",
+      "Đáp án C 347",
+      "Đáp án D 347",
+      "A",
+      "Giải thích cho câu 347."
+    ],
+    [
+      "Câu hỏi kiểm thử số 348?",
+      "Đáp án A 348",
+      "Đáp án B 348",
+      "Đáp án C 348",
+      "Đáp án D 348",
+      "A",
+      "Giải thích cho câu 348."
+    ],
+    [
+      "Câu hỏi kiểm thử số 349?",
+      "Đáp án A 349",
+      "Đáp án B 349",
+      "Đáp án C 349",
+      "Đáp án D 349",
+      "A",
+      "Giải thích cho câu 349."
+    ],
+    [
+      "Câu hỏi kiểm thử số 350?",
+      "Đáp án A 350",
+      "Đáp án B 350",
+      "Đáp án C 350",
+      "Đáp án D 350",
+      "A",
+      "Giải thích cho câu 350."
+    ],
+    [
+      "Câu hỏi kiểm thử số 351?",
+      "Đáp án A 351",
+      "Đáp án B 351",
+      "Đáp án C 351",
+      "Đáp án D 351",
+      "A",
+      "Giải thích cho câu 351."
+    ],
+    [
+      "Câu hỏi kiểm thử số 352?",
+      "Đáp án A 352",
+      "Đáp án B 352",
+      "Đáp án C 352",
+      "Đáp án D 352",
+      "A",
+      "Giải thích cho câu 352."
+    ],
+    [
+      "Câu hỏi kiểm thử số 353?",
+      "Đáp án A 353",
+      "Đáp án B 353",
+      "Đáp án C 353",
+      "Đáp án D 353",
+      "A",
+      "Giải thích cho câu 353."
+    ],
+    [
+      "Câu hỏi kiểm thử số 354?",
+      "Đáp án A 354",
+      "Đáp án B 354",
+      "Đáp án C 354",
+      "Đáp án D 354",
+      "A",
+      "Giải thích cho câu 354."
+    ],
+    [
+      "Câu hỏi kiểm thử số 355?",
+      "Đáp án A 355",
+      "Đáp án B 355",
+      "Đáp án C 355",
+      "Đáp án D 355",
+      "A",
+      "Giải thích cho câu 355."
+    ],
+    [
+      "Câu hỏi kiểm thử số 356?",
+      "Đáp án A 356",
+      "Đáp án B 356",
+      "Đáp án C 356",
+      "Đáp án D 356",
+      "A",
+      "Giải thích cho câu 356."
+    ],
+    [
+      "Câu hỏi kiểm thử số 357?",
+      "Đáp án A 357",
+      "Đáp án B 357",
+      "Đáp án C 357",
+      "Đáp án D 357",
+      "A",
+      "Giải thích cho câu 357."
+    ],
+    [
+      "Câu hỏi kiểm thử số 358?",
+      "Đáp án A 358",
+      "Đáp án B 358",
+      "Đáp án C 358",
+      "Đáp án D 358",
+      "A",
+      "Giải thích cho câu 358."
+    ],
+    [
+      "Câu hỏi kiểm thử số 359?",
+      "Đáp án A 359",
+      "Đáp án B 359",
+      "Đáp án C 359",
+      "Đáp án D 359",
+      "A",
+      "Giải thích cho câu 359."
+    ],
+    [
+      "Câu hỏi kiểm thử số 360?",
+      "Đáp án A 360",
+      "Đáp án B 360",
+      "Đáp án C 360",
+      "Đáp án D 360",
+      "A",
+      "Giải thích cho câu 360."
+    ],
+    [
+      "Câu hỏi kiểm thử số 361?",
+      "Đáp án A 361",
+      "Đáp án B 361",
+      "Đáp án C 361",
+      "Đáp án D 361",
+      "A",
+      "Giải thích cho câu 361."
+    ],
+    [
+      "Câu hỏi kiểm thử số 362?",
+      "Đáp án A 362",
+      "Đáp án B 362",
+      "Đáp án C 362",
+      "Đáp án D 362",
+      "A",
+      "Giải thích cho câu 362."
+    ],
+    [
+      "Câu hỏi kiểm thử số 363?",
+      "Đáp án A 363",
+      "Đáp án B 363",
+      "Đáp án C 363",
+      "Đáp án D 363",
+      "A",
+      "Giải thích cho câu 363."
+    ],
+    [
+      "Câu hỏi kiểm thử số 364?",
+      "Đáp án A 364",
+      "Đáp án B 364",
+      "Đáp án C 364",
+      "Đáp án D 364",
+      "A",
+      "Giải thích cho câu 364."
+    ],
+    [
+      "Câu hỏi kiểm thử số 365?",
+      "Đáp án A 365",
+      "Đáp án B 365",
+      "Đáp án C 365",
+      "Đáp án D 365",
+      "A",
+      "Giải thích cho câu 365."
+    ],
+    [
+      "Câu hỏi kiểm thử số 366?",
+      "Đáp án A 366",
+      "Đáp án B 366",
+      "Đáp án C 366",
+      "Đáp án D 366",
+      "A",
+      "Giải thích cho câu 366."
+    ],
+    [
+      "Câu hỏi kiểm thử số 367?",
+      "Đáp án A 367",
+      "Đáp án B 367",
+      "Đáp án C 367",
+      "Đáp án D 367",
+      "A",
+      "Giải thích cho câu 367."
+    ],
+    [
+      "Câu hỏi kiểm thử số 368?",
+      "Đáp án A 368",
+      "Đáp án B 368",
+      "Đáp án C 368",
+      "Đáp án D 368",
+      "A",
+      "Giải thích cho câu 368."
+    ],
+    [
+      "Câu hỏi kiểm thử số 369?",
+      "Đáp án A 369",
+      "Đáp án B 369",
+      "Đáp án C 369",
+      "Đáp án D 369",
+      "A",
+      "Giải thích cho câu 369."
+    ],
+    [
+      "Câu hỏi kiểm thử số 370?",
+      "Đáp án A 370",
+      "Đáp án B 370",
+      "Đáp án C 370",
+      "Đáp án D 370",
+      "A",
+      "Giải thích cho câu 370."
+    ],
+    [
+      "Câu hỏi kiểm thử số 371?",
+      "Đáp án A 371",
+      "Đáp án B 371",
+      "Đáp án C 371",
+      "Đáp án D 371",
+      "A",
+      "Giải thích cho câu 371."
+    ],
+    [
+      "Câu hỏi kiểm thử số 372?",
+      "Đáp án A 372",
+      "Đáp án B 372",
+      "Đáp án C 372",
+      "Đáp án D 372",
+      "A",
+      "Giải thích cho câu 372."
+    ],
+    [
+      "Câu hỏi kiểm thử số 373?",
+      "Đáp án A 373",
+      "Đáp án B 373",
+      "Đáp án C 373",
+      "Đáp án D 373",
+      "A",
+      "Giải thích cho câu 373."
+    ],
+    [
+      "Câu hỏi kiểm thử số 374?",
+      "Đáp án A 374",
+      "Đáp án B 374",
+      "Đáp án C 374",
+      "Đáp án D 374",
+      "A",
+      "Giải thích cho câu 374."
+    ],
+    [
+      "Câu hỏi kiểm thử số 375?",
+      "Đáp án A 375",
+      "Đáp án B 375",
+      "Đáp án C 375",
+      "Đáp án D 375",
+      "A",
+      "Giải thích cho câu 375."
+    ],
+    [
+      "Câu hỏi kiểm thử số 376?",
+      "Đáp án A 376",
+      "Đáp án B 376",
+      "Đáp án C 376",
+      "Đáp án D 376",
+      "A",
+      "Giải thích cho câu 376."
+    ],
+    [
+      "Câu hỏi kiểm thử số 377?",
+      "Đáp án A 377",
+      "Đáp án B 377",
+      "Đáp án C 377",
+      "Đáp án D 377",
+      "A",
+      "Giải thích cho câu 377."
+    ],
+    [
+      "Câu hỏi kiểm thử số 378?",
+      "Đáp án A 378",
+      "Đáp án B 378",
+      "Đáp án C 378",
+      "Đáp án D 378",
+      "A",
+      "Giải thích cho câu 378."
+    ],
+    [
+      "Câu hỏi kiểm thử số 379?",
+      "Đáp án A 379",
+      "Đáp án B 379",
+      "Đáp án C 379",
+      "Đáp án D 379",
+      "A",
+      "Giải thích cho câu 379."
+    ],
+    [
+      "Câu hỏi kiểm thử số 380?",
+      "Đáp án A 380",
+      "Đáp án B 380",
+      "Đáp án C 380",
+      "Đáp án D 380",
+      "A",
+      "Giải thích cho câu 380."
+    ],
+    [
+      "Câu hỏi kiểm thử số 381?",
+      "Đáp án A 381",
+      "Đáp án B 381",
+      "Đáp án C 381",
+      "Đáp án D 381",
+      "A",
+      "Giải thích cho câu 381."
+    ],
+    [
+      "Câu hỏi kiểm thử số 382?",
+      "Đáp án A 382",
+      "Đáp án B 382",
+      "Đáp án C 382",
+      "Đáp án D 382",
+      "A",
+      "Giải thích cho câu 382."
+    ],
+    [
+      "Câu hỏi kiểm thử số 383?",
+      "Đáp án A 383",
+      "Đáp án B 383",
+      "Đáp án C 383",
+      "Đáp án D 383",
+      "A",
+      "Giải thích cho câu 383."
+    ],
+    [
+      "Câu hỏi kiểm thử số 384?",
+      "Đáp án A 384",
+      "Đáp án B 384",
+      "Đáp án C 384",
+      "Đáp án D 384",
+      "A",
+      "Giải thích cho câu 384."
+    ],
+    [
+      "Câu hỏi kiểm thử số 385?",
+      "Đáp án A 385",
+      "Đáp án B 385",
+      "Đáp án C 385",
+      "Đáp án D 385",
+      "A",
+      "Giải thích cho câu 385."
+    ],
+    [
+      "Câu hỏi kiểm thử số 386?",
+      "Đáp án A 386",
+      "Đáp án B 386",
+      "Đáp án C 386",
+      "Đáp án D 386",
+      "A",
+      "Giải thích cho câu 386."
+    ],
+    [
+      "Câu hỏi kiểm thử số 387?",
+      "Đáp án A 387",
+      "Đáp án B 387",
+      "Đáp án C 387",
+      "Đáp án D 387",
+      "A",
+      "Giải thích cho câu 387."
+    ],
+    [
+      "Câu hỏi kiểm thử số 388?",
+      "Đáp án A 388",
+      "Đáp án B 388",
+      "Đáp án C 388",
+      "Đáp án D 388",
+      "A",
+      "Giải thích cho câu 388."
+    ],
+    [
+      "Câu hỏi kiểm thử số 389?",
+      "Đáp án A 389",
+      "Đáp án B 389",
+      "Đáp án C 389",
+      "Đáp án D 389",
+      "A",
+      "Giải thích cho câu 389."
+    ],
+    [
+      "Câu hỏi kiểm thử số 390?",
+      "Đáp án A 390",
+      "Đáp án B 390",
+      "Đáp án C 390",
+      "Đáp án D 390",
+      "A",
+      "Giải thích cho câu 390."
+    ],
+    [
+      "Câu hỏi kiểm thử số 391?",
+      "Đáp án A 391",
+      "Đáp án B 391",
+      "Đáp án C 391",
+      "Đáp án D 391",
+      "A",
+      "Giải thích cho câu 391."
+    ],
+    [
+      "Câu hỏi kiểm thử số 392?",
+      "Đáp án A 392",
+      "Đáp án B 392",
+      "Đáp án C 392",
+      "Đáp án D 392",
+      "A",
+      "Giải thích cho câu 392."
+    ],
+    [
+      "Câu hỏi kiểm thử số 393?",
+      "Đáp án A 393",
+      "Đáp án B 393",
+      "Đáp án C 393",
+      "Đáp án D 393",
+      "A",
+      "Giải thích cho câu 393."
+    ],
+    [
+      "Câu hỏi kiểm thử số 394?",
+      "Đáp án A 394",
+      "Đáp án B 394",
+      "Đáp án C 394",
+      "Đáp án D 394",
+      "A",
+      "Giải thích cho câu 394."
+    ],
+    [
+      "Câu hỏi kiểm thử số 395?",
+      "Đáp án A 395",
+      "Đáp án B 395",
+      "Đáp án C 395",
+      "Đáp án D 395",
+      "A",
+      "Giải thích cho câu 395."
+    ],
+    [
+      "Câu hỏi kiểm thử số 396?",
+      "Đáp án A 396",
+      "Đáp án B 396",
+      "Đáp án C 396",
+      "Đáp án D 396",
+      "A",
+      "Giải thích cho câu 396."
+    ],
+    [
+      "Câu hỏi kiểm thử số 397?",
+      "Đáp án A 397",
+      "Đáp án B 397",
+      "Đáp án C 397",
+      "Đáp án D 397",
+      "A",
+      "Giải thích cho câu 397."
+    ],
+    [
+      "Câu hỏi kiểm thử số 398?",
+      "Đáp án A 398",
+      "Đáp án B 398",
+      "Đáp án C 398",
+      "Đáp án D 398",
+      "A",
+      "Giải thích cho câu 398."
+    ],
+    [
+      "Câu hỏi kiểm thử số 399?",
+      "Đáp án A 399",
+      "Đáp án B 399",
+      "Đáp án C 399",
+      "Đáp án D 399",
+      "A",
+      "Giải thích cho câu 399."
+    ],
+    [
+      "Câu hỏi kiểm thử số 400?",
+      "Đáp án A 400",
+      "Đáp án B 400",
+      "Đáp án C 400",
+      "Đáp án D 400",
+      "A",
+      "Giải thích cho câu 400."
+    ],
+    [
+      "Câu hỏi kiểm thử số 401?",
+      "Đáp án A 401",
+      "Đáp án B 401",
+      "Đáp án C 401",
+      "Đáp án D 401",
+      "A",
+      "Giải thích cho câu 401."
+    ],
+    [
+      "Câu hỏi kiểm thử số 402?",
+      "Đáp án A 402",
+      "Đáp án B 402",
+      "Đáp án C 402",
+      "Đáp án D 402",
+      "A",
+      "Giải thích cho câu 402."
+    ],
+    [
+      "Câu hỏi kiểm thử số 403?",
+      "Đáp án A 403",
+      "Đáp án B 403",
+      "Đáp án C 403",
+      "Đáp án D 403",
+      "A",
+      "Giải thích cho câu 403."
+    ],
+    [
+      "Câu hỏi kiểm thử số 404?",
+      "Đáp án A 404",
+      "Đáp án B 404",
+      "Đáp án C 404",
+      "Đáp án D 404",
+      "A",
+      "Giải thích cho câu 404."
+    ],
+    [
+      "Câu hỏi kiểm thử số 405?",
+      "Đáp án A 405",
+      "Đáp án B 405",
+      "Đáp án C 405",
+      "Đáp án D 405",
+      "A",
+      "Giải thích cho câu 405."
+    ],
+    [
+      "Câu hỏi kiểm thử số 406?",
+      "Đáp án A 406",
+      "Đáp án B 406",
+      "Đáp án C 406",
+      "Đáp án D 406",
+      "A",
+      "Giải thích cho câu 406."
+    ],
+    [
+      "Câu hỏi kiểm thử số 407?",
+      "Đáp án A 407",
+      "Đáp án B 407",
+      "Đáp án C 407",
+      "Đáp án D 407",
+      "A",
+      "Giải thích cho câu 407."
+    ],
+    [
+      "Câu hỏi kiểm thử số 408?",
+      "Đáp án A 408",
+      "Đáp án B 408",
+      "Đáp án C 408",
+      "Đáp án D 408",
+      "A",
+      "Giải thích cho câu 408."
+    ],
+    [
+      "Câu hỏi kiểm thử số 409?",
+      "Đáp án A 409",
+      "Đáp án B 409",
+      "Đáp án C 409",
+      "Đáp án D 409",
+      "A",
+      "Giải thích cho câu 409."
+    ],
+    [
+      "Câu hỏi kiểm thử số 410?",
+      "Đáp án A 410",
+      "Đáp án B 410",
+      "Đáp án C 410",
+      "Đáp án D 410",
+      "A",
+      "Giải thích cho câu 410."
+    ],
+    [
+      "Câu hỏi kiểm thử số 411?",
+      "Đáp án A 411",
+      "Đáp án B 411",
+      "Đáp án C 411",
+      "Đáp án D 411",
+      "A",
+      "Giải thích cho câu 411."
+    ],
+    [
+      "Câu hỏi kiểm thử số 412?",
+      "Đáp án A 412",
+      "Đáp án B 412",
+      "Đáp án C 412",
+      "Đáp án D 412",
+      "A",
+      "Giải thích cho câu 412."
+    ],
+    [
+      "Câu hỏi kiểm thử số 413?",
+      "Đáp án A 413",
+      "Đáp án B 413",
+      "Đáp án C 413",
+      "Đáp án D 413",
+      "A",
+      "Giải thích cho câu 413."
+    ],
+    [
+      "Câu hỏi kiểm thử số 414?",
+      "Đáp án A 414",
+      "Đáp án B 414",
+      "Đáp án C 414",
+      "Đáp án D 414",
+      "A",
+      "Giải thích cho câu 414."
+    ],
+    [
+      "Câu hỏi kiểm thử số 415?",
+      "Đáp án A 415",
+      "Đáp án B 415",
+      "Đáp án C 415",
+      "Đáp án D 415",
+      "A",
+      "Giải thích cho câu 415."
+    ],
+    [
+      "Câu hỏi kiểm thử số 416?",
+      "Đáp án A 416",
+      "Đáp án B 416",
+      "Đáp án C 416",
+      "Đáp án D 416",
+      "A",
+      "Giải thích cho câu 416."
+    ],
+    [
+      "Câu hỏi kiểm thử số 417?",
+      "Đáp án A 417",
+      "Đáp án B 417",
+      "Đáp án C 417",
+      "Đáp án D 417",
+      "A",
+      "Giải thích cho câu 417."
+    ],
+    [
+      "Câu hỏi kiểm thử số 418?",
+      "Đáp án A 418",
+      "Đáp án B 418",
+      "Đáp án C 418",
+      "Đáp án D 418",
+      "A",
+      "Giải thích cho câu 418."
+    ],
+    [
+      "Câu hỏi kiểm thử số 419?",
+      "Đáp án A 419",
+      "Đáp án B 419",
+      "Đáp án C 419",
+      "Đáp án D 419",
+      "A",
+      "Giải thích cho câu 419."
+    ],
+    [
+      "Câu hỏi kiểm thử số 420?",
+      "Đáp án A 420",
+      "Đáp án B 420",
+      "Đáp án C 420",
+      "Đáp án D 420",
+      "A",
+      "Giải thích cho câu 420."
+    ],
+    [
+      "Câu hỏi kiểm thử số 421?",
+      "Đáp án A 421",
+      "Đáp án B 421",
+      "Đáp án C 421",
+      "Đáp án D 421",
+      "A",
+      "Giải thích cho câu 421."
+    ],
+    [
+      "Câu hỏi kiểm thử số 422?",
+      "Đáp án A 422",
+      "Đáp án B 422",
+      "Đáp án C 422",
+      "Đáp án D 422",
+      "A",
+      "Giải thích cho câu 422."
+    ],
+    [
+      "Câu hỏi kiểm thử số 423?",
+      "Đáp án A 423",
+      "Đáp án B 423",
+      "Đáp án C 423",
+      "Đáp án D 423",
+      "A",
+      "Giải thích cho câu 423."
+    ],
+    [
+      "Câu hỏi kiểm thử số 424?",
+      "Đáp án A 424",
+      "Đáp án B 424",
+      "Đáp án C 424",
+      "Đáp án D 424",
+      "A",
+      "Giải thích cho câu 424."
+    ],
+    [
+      "Câu hỏi kiểm thử số 425?",
+      "Đáp án A 425",
+      "Đáp án B 425",
+      "Đáp án C 425",
+      "Đáp án D 425",
+      "A",
+      "Giải thích cho câu 425."
+    ],
+    [
+      "Câu hỏi kiểm thử số 426?",
+      "Đáp án A 426",
+      "Đáp án B 426",
+      "Đáp án C 426",
+      "Đáp án D 426",
+      "A",
+      "Giải thích cho câu 426."
+    ],
+    [
+      "Câu hỏi kiểm thử số 427?",
+      "Đáp án A 427",
+      "Đáp án B 427",
+      "Đáp án C 427",
+      "Đáp án D 427",
+      "A",
+      "Giải thích cho câu 427."
+    ],
+    [
+      "Câu hỏi kiểm thử số 428?",
+      "Đáp án A 428",
+      "Đáp án B 428",
+      "Đáp án C 428",
+      "Đáp án D 428",
+      "A",
+      "Giải thích cho câu 428."
+    ],
+    [
+      "Câu hỏi kiểm thử số 429?",
+      "Đáp án A 429",
+      "Đáp án B 429",
+      "Đáp án C 429",
+      "Đáp án D 429",
+      "A",
+      "Giải thích cho câu 429."
+    ],
+    [
+      "Câu hỏi kiểm thử số 430?",
+      "Đáp án A 430",
+      "Đáp án B 430",
+      "Đáp án C 430",
+      "Đáp án D 430",
+      "A",
+      "Giải thích cho câu 430."
+    ],
+    [
+      "Câu hỏi kiểm thử số 431?",
+      "Đáp án A 431",
+      "Đáp án B 431",
+      "Đáp án C 431",
+      "Đáp án D 431",
+      "A",
+      "Giải thích cho câu 431."
+    ],
+    [
+      "Câu hỏi kiểm thử số 432?",
+      "Đáp án A 432",
+      "Đáp án B 432",
+      "Đáp án C 432",
+      "Đáp án D 432",
+      "A",
+      "Giải thích cho câu 432."
+    ],
+    [
+      "Câu hỏi kiểm thử số 433?",
+      "Đáp án A 433",
+      "Đáp án B 433",
+      "Đáp án C 433",
+      "Đáp án D 433",
+      "A",
+      "Giải thích cho câu 433."
+    ],
+    [
+      "Câu hỏi kiểm thử số 434?",
+      "Đáp án A 434",
+      "Đáp án B 434",
+      "Đáp án C 434",
+      "Đáp án D 434",
+      "A",
+      "Giải thích cho câu 434."
+    ],
+    [
+      "Câu hỏi kiểm thử số 435?",
+      "Đáp án A 435",
+      "Đáp án B 435",
+      "Đáp án C 435",
+      "Đáp án D 435",
+      "A",
+      "Giải thích cho câu 435."
+    ],
+    [
+      "Câu hỏi kiểm thử số 436?",
+      "Đáp án A 436",
+      "Đáp án B 436",
+      "Đáp án C 436",
+      "Đáp án D 436",
+      "A",
+      "Giải thích cho câu 436."
+    ],
+    [
+      "Câu hỏi kiểm thử số 437?",
+      "Đáp án A 437",
+      "Đáp án B 437",
+      "Đáp án C 437",
+      "Đáp án D 437",
+      "A",
+      "Giải thích cho câu 437."
+    ],
+    [
+      "Câu hỏi kiểm thử số 438?",
+      "Đáp án A 438",
+      "Đáp án B 438",
+      "Đáp án C 438",
+      "Đáp án D 438",
+      "A",
+      "Giải thích cho câu 438."
+    ],
+    [
+      "Câu hỏi kiểm thử số 439?",
+      "Đáp án A 439",
+      "Đáp án B 439",
+      "Đáp án C 439",
+      "Đáp án D 439",
+      "A",
+      "Giải thích cho câu 439."
+    ],
+    [
+      "Câu hỏi kiểm thử số 440?",
+      "Đáp án A 440",
+      "Đáp án B 440",
+      "Đáp án C 440",
+      "Đáp án D 440",
+      "A",
+      "Giải thích cho câu 440."
+    ],
+    [
+      "Câu hỏi kiểm thử số 441?",
+      "Đáp án A 441",
+      "Đáp án B 441",
+      "Đáp án C 441",
+      "Đáp án D 441",
+      "A",
+      "Giải thích cho câu 441."
+    ],
+    [
+      "Câu hỏi kiểm thử số 442?",
+      "Đáp án A 442",
+      "Đáp án B 442",
+      "Đáp án C 442",
+      "Đáp án D 442",
+      "A",
+      "Giải thích cho câu 442."
+    ],
+    [
+      "Câu hỏi kiểm thử số 443?",
+      "Đáp án A 443",
+      "Đáp án B 443",
+      "Đáp án C 443",
+      "Đáp án D 443",
+      "A",
+      "Giải thích cho câu 443."
+    ],
+    [
+      "Câu hỏi kiểm thử số 444?",
+      "Đáp án A 444",
+      "Đáp án B 444",
+      "Đáp án C 444",
+      "Đáp án D 444",
+      "A",
+      "Giải thích cho câu 444."
+    ],
+    [
+      "Câu hỏi kiểm thử số 445?",
+      "Đáp án A 445",
+      "Đáp án B 445",
+      "Đáp án C 445",
+      "Đáp án D 445",
+      "A",
+      "Giải thích cho câu 445."
+    ],
+    [
+      "Câu hỏi kiểm thử số 446?",
+      "Đáp án A 446",
+      "Đáp án B 446",
+      "Đáp án C 446",
+      "Đáp án D 446",
+      "A",
+      "Giải thích cho câu 446."
+    ],
+    [
+      "Câu hỏi kiểm thử số 447?",
+      "Đáp án A 447",
+      "Đáp án B 447",
+      "Đáp án C 447",
+      "Đáp án D 447",
+      "A",
+      "Giải thích cho câu 447."
+    ],
+    [
+      "Câu hỏi kiểm thử số 448?",
+      "Đáp án A 448",
+      "Đáp án B 448",
+      "Đáp án C 448",
+      "Đáp án D 448",
+      "A",
+      "Giải thích cho câu 448."
+    ],
+    [
+      "Câu hỏi kiểm thử số 449?",
+      "Đáp án A 449",
+      "Đáp án B 449",
+      "Đáp án C 449",
+      "Đáp án D 449",
+      "A",
+      "Giải thích cho câu 449."
+    ],
+    [
+      "Câu hỏi kiểm thử số 450?",
+      "Đáp án A 450",
+      "Đáp án B 450",
+      "Đáp án C 450",
+      "Đáp án D 450",
+      "A",
+      "Giải thích cho câu 450."
+    ],
+    [
+      "Câu hỏi kiểm thử số 451?",
+      "Đáp án A 451",
+      "Đáp án B 451",
+      "Đáp án C 451",
+      "Đáp án D 451",
+      "A",
+      "Giải thích cho câu 451."
+    ],
+    [
+      "Câu hỏi kiểm thử số 452?",
+      "Đáp án A 452",
+      "Đáp án B 452",
+      "Đáp án C 452",
+      "Đáp án D 452",
+      "A",
+      "Giải thích cho câu 452."
+    ],
+    [
+      "Câu hỏi kiểm thử số 453?",
+      "Đáp án A 453",
+      "Đáp án B 453",
+      "Đáp án C 453",
+      "Đáp án D 453",
+      "A",
+      "Giải thích cho câu 453."
+    ],
+    [
+      "Câu hỏi kiểm thử số 454?",
+      "Đáp án A 454",
+      "Đáp án B 454",
+      "Đáp án C 454",
+      "Đáp án D 454",
+      "A",
+      "Giải thích cho câu 454."
+    ],
+    [
+      "Câu hỏi kiểm thử số 455?",
+      "Đáp án A 455",
+      "Đáp án B 455",
+      "Đáp án C 455",
+      "Đáp án D 455",
+      "A",
+      "Giải thích cho câu 455."
+    ],
+    [
+      "Câu hỏi kiểm thử số 456?",
+      "Đáp án A 456",
+      "Đáp án B 456",
+      "Đáp án C 456",
+      "Đáp án D 456",
+      "A",
+      "Giải thích cho câu 456."
+    ],
+    [
+      "Câu hỏi kiểm thử số 457?",
+      "Đáp án A 457",
+      "Đáp án B 457",
+      "Đáp án C 457",
+      "Đáp án D 457",
+      "A",
+      "Giải thích cho câu 457."
+    ],
+    [
+      "Câu hỏi kiểm thử số 458?",
+      "Đáp án A 458",
+      "Đáp án B 458",
+      "Đáp án C 458",
+      "Đáp án D 458",
+      "A",
+      "Giải thích cho câu 458."
+    ],
+    [
+      "Câu hỏi kiểm thử số 459?",
+      "Đáp án A 459",
+      "Đáp án B 459",
+      "Đáp án C 459",
+      "Đáp án D 459",
+      "A",
+      "Giải thích cho câu 459."
+    ],
+    [
+      "Câu hỏi kiểm thử số 460?",
+      "Đáp án A 460",
+      "Đáp án B 460",
+      "Đáp án C 460",
+      "Đáp án D 460",
+      "A",
+      "Giải thích cho câu 460."
+    ],
+    [
+      "Câu hỏi kiểm thử số 461?",
+      "Đáp án A 461",
+      "Đáp án B 461",
+      "Đáp án C 461",
+      "Đáp án D 461",
+      "A",
+      "Giải thích cho câu 461."
+    ],
+    [
+      "Câu hỏi kiểm thử số 462?",
+      "Đáp án A 462",
+      "Đáp án B 462",
+      "Đáp án C 462",
+      "Đáp án D 462",
+      "A",
+      "Giải thích cho câu 462."
+    ],
+    [
+      "Câu hỏi kiểm thử số 463?",
+      "Đáp án A 463",
+      "Đáp án B 463",
+      "Đáp án C 463",
+      "Đáp án D 463",
+      "A",
+      "Giải thích cho câu 463."
+    ],
+    [
+      "Câu hỏi kiểm thử số 464?",
+      "Đáp án A 464",
+      "Đáp án B 464",
+      "Đáp án C 464",
+      "Đáp án D 464",
+      "A",
+      "Giải thích cho câu 464."
+    ],
+    [
+      "Câu hỏi kiểm thử số 465?",
+      "Đáp án A 465",
+      "Đáp án B 465",
+      "Đáp án C 465",
+      "Đáp án D 465",
+      "A",
+      "Giải thích cho câu 465."
+    ],
+    [
+      "Câu hỏi kiểm thử số 466?",
+      "Đáp án A 466",
+      "Đáp án B 466",
+      "Đáp án C 466",
+      "Đáp án D 466",
+      "A",
+      "Giải thích cho câu 466."
+    ],
+    [
+      "Câu hỏi kiểm thử số 467?",
+      "Đáp án A 467",
+      "Đáp án B 467",
+      "Đáp án C 467",
+      "Đáp án D 467",
+      "A",
+      "Giải thích cho câu 467."
+    ],
+    [
+      "Câu hỏi kiểm thử số 468?",
+      "Đáp án A 468",
+      "Đáp án B 468",
+      "Đáp án C 468",
+      "Đáp án D 468",
+      "A",
+      "Giải thích cho câu 468."
+    ],
+    [
+      "Câu hỏi kiểm thử số 469?",
+      "Đáp án A 469",
+      "Đáp án B 469",
+      "Đáp án C 469",
+      "Đáp án D 469",
+      "A",
+      "Giải thích cho câu 469."
+    ],
+    [
+      "Câu hỏi kiểm thử số 470?",
+      "Đáp án A 470",
+      "Đáp án B 470",
+      "Đáp án C 470",
+      "Đáp án D 470",
+      "A",
+      "Giải thích cho câu 470."
+    ],
+    [
+      "Câu hỏi kiểm thử số 471?",
+      "Đáp án A 471",
+      "Đáp án B 471",
+      "Đáp án C 471",
+      "Đáp án D 471",
+      "A",
+      "Giải thích cho câu 471."
+    ],
+    [
+      "Câu hỏi kiểm thử số 472?",
+      "Đáp án A 472",
+      "Đáp án B 472",
+      "Đáp án C 472",
+      "Đáp án D 472",
+      "A",
+      "Giải thích cho câu 472."
+    ],
+    [
+      "Câu hỏi kiểm thử số 473?",
+      "Đáp án A 473",
+      "Đáp án B 473",
+      "Đáp án C 473",
+      "Đáp án D 473",
+      "A",
+      "Giải thích cho câu 473."
+    ],
+    [
+      "Câu hỏi kiểm thử số 474?",
+      "Đáp án A 474",
+      "Đáp án B 474",
+      "Đáp án C 474",
+      "Đáp án D 474",
+      "A",
+      "Giải thích cho câu 474."
+    ],
+    [
+      "Câu hỏi kiểm thử số 475?",
+      "Đáp án A 475",
+      "Đáp án B 475",
+      "Đáp án C 475",
+      "Đáp án D 475",
+      "A",
+      "Giải thích cho câu 475."
+    ],
+    [
+      "Câu hỏi kiểm thử số 476?",
+      "Đáp án A 476",
+      "Đáp án B 476",
+      "Đáp án C 476",
+      "Đáp án D 476",
+      "A",
+      "Giải thích cho câu 476."
+    ],
+    [
+      "Câu hỏi kiểm thử số 477?",
+      "Đáp án A 477",
+      "Đáp án B 477",
+      "Đáp án C 477",
+      "Đáp án D 477",
+      "A",
+      "Giải thích cho câu 477."
+    ],
+    [
+      "Câu hỏi kiểm thử số 478?",
+      "Đáp án A 478",
+      "Đáp án B 478",
+      "Đáp án C 478",
+      "Đáp án D 478",
+      "A",
+      "Giải thích cho câu 478."
+    ],
+    [
+      "Câu hỏi kiểm thử số 479?",
+      "Đáp án A 479",
+      "Đáp án B 479",
+      "Đáp án C 479",
+      "Đáp án D 479",
+      "A",
+      "Giải thích cho câu 479."
+    ],
+    [
+      "Câu hỏi kiểm thử số 480?",
+      "Đáp án A 480",
+      "Đáp án B 480",
+      "Đáp án C 480",
+      "Đáp án D 480",
+      "A",
+      "Giải thích cho câu 480."
+    ],
+    [
+      "Câu hỏi kiểm thử số 481?",
+      "Đáp án A 481",
+      "Đáp án B 481",
+      "Đáp án C 481",
+      "Đáp án D 481",
+      "A",
+      "Giải thích cho câu 481."
+    ],
+    [
+      "Câu hỏi kiểm thử số 482?",
+      "Đáp án A 482",
+      "Đáp án B 482",
+      "Đáp án C 482",
+      "Đáp án D 482",
+      "A",
+      "Giải thích cho câu 482."
+    ],
+    [
+      "Câu hỏi kiểm thử số 483?",
+      "Đáp án A 483",
+      "Đáp án B 483",
+      "Đáp án C 483",
+      "Đáp án D 483",
+      "A",
+      "Giải thích cho câu 483."
+    ],
+    [
+      "Câu hỏi kiểm thử số 484?",
+      "Đáp án A 484",
+      "Đáp án B 484",
+      "Đáp án C 484",
+      "Đáp án D 484",
+      "A",
+      "Giải thích cho câu 484."
+    ],
+    [
+      "Câu hỏi kiểm thử số 485?",
+      "Đáp án A 485",
+      "Đáp án B 485",
+      "Đáp án C 485",
+      "Đáp án D 485",
+      "A",
+      "Giải thích cho câu 485."
+    ],
+    [
+      "Câu hỏi kiểm thử số 486?",
+      "Đáp án A 486",
+      "Đáp án B 486",
+      "Đáp án C 486",
+      "Đáp án D 486",
+      "A",
+      "Giải thích cho câu 486."
+    ],
+    [
+      "Câu hỏi kiểm thử số 487?",
+      "Đáp án A 487",
+      "Đáp án B 487",
+      "Đáp án C 487",
+      "Đáp án D 487",
+      "A",
+      "Giải thích cho câu 487."
+    ],
+    [
+      "Câu hỏi kiểm thử số 488?",
+      "Đáp án A 488",
+      "Đáp án B 488",
+      "Đáp án C 488",
+      "Đáp án D 488",
+      "A",
+      "Giải thích cho câu 488."
+    ],
+    [
+      "Câu hỏi kiểm thử số 489?",
+      "Đáp án A 489",
+      "Đáp án B 489",
+      "Đáp án C 489",
+      "Đáp án D 489",
+      "A",
+      "Giải thích cho câu 489."
+    ],
+    [
+      "Câu hỏi kiểm thử số 490?",
+      "Đáp án A 490",
+      "Đáp án B 490",
+      "Đáp án C 490",
+      "Đáp án D 490",
+      "A",
+      "Giải thích cho câu 490."
+    ],
+    [
+      "Câu hỏi kiểm thử số 491?",
+      "Đáp án A 491",
+      "Đáp án B 491",
+      "Đáp án C 491",
+      "Đáp án D 491",
+      "A",
+      "Giải thích cho câu 491."
+    ],
+    [
+      "Câu hỏi kiểm thử số 492?",
+      "Đáp án A 492",
+      "Đáp án B 492",
+      "Đáp án C 492",
+      "Đáp án D 492",
+      "A",
+      "Giải thích cho câu 492."
+    ],
+    [
+      "Câu hỏi kiểm thử số 493?",
+      "Đáp án A 493",
+      "Đáp án B 493",
+      "Đáp án C 493",
+      "Đáp án D 493",
+      "A",
+      "Giải thích cho câu 493."
+    ],
+    [
+      "Câu hỏi kiểm thử số 494?",
+      "Đáp án A 494",
+      "Đáp án B 494",
+      "Đáp án C 494",
+      "Đáp án D 494",
+      "A",
+      "Giải thích cho câu 494."
+    ],
+    [
+      "Câu hỏi kiểm thử số 495?",
+      "Đáp án A 495",
+      "Đáp án B 495",
+      "Đáp án C 495",
+      "Đáp án D 495",
+      "A",
+      "Giải thích cho câu 495."
+    ],
+    [
+      "Câu hỏi kiểm thử số 496?",
+      "Đáp án A 496",
+      "Đáp án B 496",
+      "Đáp án C 496",
+      "Đáp án D 496",
+      "A",
+      "Giải thích cho câu 496."
+    ],
+    [
+      "Câu hỏi kiểm thử số 497?",
+      "Đáp án A 497",
+      "Đáp án B 497",
+      "Đáp án C 497",
+      "Đáp án D 497",
+      "A",
+      "Giải thích cho câu 497."
+    ],
+    [
+      "Câu hỏi kiểm thử số 498?",
+      "Đáp án A 498",
+      "Đáp án B 498",
+      "Đáp án C 498",
+      "Đáp án D 498",
+      "A",
+      "Giải thích cho câu 498."
+    ],
+    [
+      "Câu hỏi kiểm thử số 499?",
+      "Đáp án A 499",
+      "Đáp án B 499",
+      "Đáp án C 499",
+      "Đáp án D 499",
+      "A",
+      "Giải thích cho câu 499."
+    ],
+    [
+      "Câu hỏi kiểm thử số 500?",
+      "Đáp án A 500",
+      "Đáp án B 500",
+      "Đáp án C 500",
+      "Đáp án D 500",
+      "A",
+      "Giải thích cho câu 500."
+    ]
+  ]
+}

@@ -119,6 +119,8 @@ const EMPTY_DATA = {
 let appData = loadJSON(STORAGE_KEY, EMPTY_DATA);
 let preferences = loadJSON(PREF_KEY, {
     sound: true,
+    music: true,
+    musicVolume: 18,
     studyMode: 'quiz',
     shuffleQuestions: true,
     shuffleOptions: true,
@@ -663,10 +665,23 @@ function timeAgo(timestamp) {
     return formatDate(timestamp);
 }
 
+const mathVisibilityObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        mathVisibilityObserver.unobserve(entry.target);
+        window.EdTechLibraries?.typeset?.(entry.target);
+    });
+}, { rootMargin: '320px 0px' }) : null;
+
 function typesetMath(target) {
-    if (!window.MathJax?.typesetPromise) return;
-    const elements = target ? [target] : undefined;
-    window.MathJax.typesetPromise(elements).catch(() => {});
+    if (!target) return;
+    target.querySelectorAll?.('img').forEach(image => {
+        image.loading = image.loading || 'lazy';
+        image.decoding = image.decoding || 'async';
+    });
+    if (!window.EdTechLibraries?.containsMath?.(target.textContent || target.innerHTML || '')) return;
+    if (mathVisibilityObserver && !target.matches?.('.app-screen.active')) mathVisibilityObserver.observe(target);
+    else window.EdTechLibraries?.typeset?.(target);
 }
 
 function showToast(message, type = 'info') {
@@ -720,6 +735,7 @@ function showScreen(screenId, options = {}) {
     document.body.classList.toggle('quiz-screen-active', screenId === 'quiz-app');
     document.body.classList.toggle('quiz-result-active', screenId === 'quiz-result-screen');
     document.body.classList.toggle('study-focus', screenId === 'quiz-app' || screenId === 'flashcard-app');
+    window.EdTechAudio?.setScreen?.(screenId);
     if (screenId !== 'quiz-app') closeMobileQuizNavigator(true);
     if (screenId !== 'quiz-result-screen') closeMobileResultReview(true);
 
@@ -727,9 +743,13 @@ function showScreen(screenId, options = {}) {
         ? 'upload-screen'
         : screenId;
     document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(button => {
-        button.classList.toggle('active', button.dataset.screen === navTarget);
+        const active = button.dataset.screen === navTarget;
+        button.classList.toggle('active', active);
+        if (active) button.setAttribute('aria-current', 'page');
+        else button.removeAttribute('aria-current');
     });
     window.closeQuickSettings?.();
+    setTimeout(() => window.EdTechAccessibility?.focusActiveScreenHeading?.(), 30);
 
     if (screenId === 'dashboard-screen') renderDashboard();
     if (screenId === 'history-screen') renderHistoryTable();
@@ -753,7 +773,7 @@ function renderDashboard() {
     const container = document.getElementById('dashboard-history');
     const latest = [...history].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
     if (!latest.length) {
-        container.innerHTML = '<div class="empty-state"><span><strong>Chưa có hoạt động nào</strong><small>Bắt đầu một bài trắc nghiệm hoặc bộ flashcard để xem tiến độ tại đây.</small></span></div>';
+        container.innerHTML = '<div class="empty-state empty-state--owl"><img src="assets/brand/mascots-vector/idea.svg" alt="" loading="lazy"><span><strong>Chưa có hoạt động nào</strong><small>Bắt đầu một bài trắc nghiệm hoặc bộ flashcard để xem tiến độ tại đây.</small></span></div>';
         return;
     }
 
@@ -803,7 +823,7 @@ function renderHistoryTable() {
             : Array.isArray(item.hardRows) && item.hardRows.length > 1;
         return `<tr>
             <td>${formatDate(item.timestamp)}</td>
-            <td><span class="history-mode-chip ${isQuiz ? 'mode-quiz' : 'mode-flashcard'}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td>
+            <td><span class="history-mode-badge ${isQuiz ? 'mode-quiz' : 'mode-flashcard'}">${isQuiz ? 'Trắc nghiệm' : 'Flashcard'}</span></td>
             <td><strong>${escapeHTML(item.file || 'Không tên')}</strong></td>
             <td>${escapeHTML(result)}</td>
             <td>${formatLongDuration(item.duration || 0)}</td>
@@ -904,7 +924,7 @@ function selectStudyMode(mode, shouldSound = true) {
     document.getElementById('config-fc').hidden = studyMode !== 'flashcard';
     savePreferences();
     updateSetupSummary();
-    if (shouldSound) playSound('select');
+    if (shouldSound) playSound('press');
 }
 
 function updateSetupSummary() {
@@ -922,18 +942,39 @@ function updateSetupSummary() {
 }
 
 
+function analyzeWorkbookRows(rows, mode = 'quiz') {
+    const dataRows = Array.isArray(rows) ? rows.slice(1) : [];
+    const seen = new Map();
+    const duplicates = [];
+    const invalid = [];
+    dataRows.forEach((row, index) => {
+        const cells = Array.isArray(row) ? row.map(value => String(value ?? '').trim()) : [];
+        const meaningful = cells.filter(Boolean);
+        if (!meaningful.length) invalid.push({ index: index + 2, reason: 'Dòng trống' });
+        if (mode === 'quiz' && meaningful.length > 0 && meaningful.length < 5) invalid.push({ index: index + 2, reason: 'Thiếu câu hỏi hoặc đáp án' });
+        if (mode === 'flashcard' && meaningful.length > 0 && meaningful.length < 2) invalid.push({ index: index + 2, reason: 'Thiếu mặt trước hoặc mặt sau' });
+        const key = cells.join(' | ').toLowerCase().replace(/\s+/g, ' ').trim();
+        if (!key) return;
+        if (seen.has(key)) duplicates.push({ index: index + 2, duplicateOf: seen.get(key) });
+        else seen.set(key, index + 2);
+    });
+    return { total: dataRows.length, duplicates, invalid };
+}
+
 async function parseWorkbookInput(file, progressCallback) {
     const name = String(file?.name || '');
     if (/\.(edtech)$/i.test(name)) {
         const payload = JSON.parse(await file.text());
-        const rawRows = Array.isArray(payload?.rows) ? payload.rows : Array.isArray(payload?.data?.rows) ? payload.data.rows : null;
+        const bundleSets = Array.isArray(payload?.sets) ? payload.sets.filter(item => Array.isArray(item?.rows) && item.rows.length >= 2) : [];
+        const rawRows = Array.isArray(payload?.rows) ? payload.rows : Array.isArray(payload?.data?.rows) ? payload.data.rows : bundleSets[0]?.rows || null;
         if (!Array.isArray(rawRows) || rawRows.length < 2) throw new Error('File .edtech không chứa dữ liệu hợp lệ.');
         progressCallback?.({ percent: 100, message: 'Đã đọc file EdTech' });
         return {
             rows: rawRows,
-            detectedName: String(payload?.name || name.replace(/\.(edtech)$/i, '')),
+            bundleSets,
+            detectedName: String(payload?.name || bundleSets[0]?.name || name.replace(/\.(edtech)$/i, '')),
             source: 'edtech',
-            detectedType: payload?.type === 'flashcard' ? 'flashcard' : 'quiz'
+            detectedType: (payload?.type || bundleSets[0]?.type) === 'flashcard' ? 'flashcard' : 'quiz'
         };
     }
     if (!/\.(xlsx|xls)$/i.test(name)) {
@@ -961,6 +1002,26 @@ async function parseWorkbookInput(file, progressCallback) {
     };
 }
 
+function confirmWorkbookImport(report, bundleCount = 0) {
+    if (!report?.duplicates?.length && !report?.invalid?.length && bundleCount <= 1) return Promise.resolve(true);
+    const details = [
+        `${report.total || 0} mục được tìm thấy`,
+        `${report.duplicates?.length || 0} mục trùng hoàn toàn`,
+        `${report.invalid?.length || 0} mục có thể thiếu dữ liệu`,
+        bundleCount > 1 ? `${bundleCount} bộ đề trong gói EdTech` : ''
+    ].filter(Boolean).join(' · ');
+    return new Promise(resolve => {
+        openConfirmModal(
+            'Kiểm tra file trước khi nhập',
+            `${details}. Các mục trùng và mục cần kiểm tra vẫn được giữ để bạn chủ động chỉnh sửa sau khi nhập.`,
+            'Tiếp tục nhập',
+            () => resolve(true),
+            'Hủy nhập',
+            () => resolve(false)
+        );
+    });
+}
+
 async function handleWorkbookFile(file) {
     if (!file) return;
     const dropTitle = document.getElementById('drop-title');
@@ -971,28 +1032,47 @@ async function handleWorkbookFile(file) {
         const parsed = await parseWorkbookInput(file, progress => {
             if (dropSubtitle) dropSubtitle.textContent = `${progress.message || 'Đang xử lý'} ${progress.percent || 0}%`;
         });
+        const report = analyzeWorkbookRows(parsed.rows, parsed.detectedType || studyMode);
+        window.lastImportReport = report;
+        const approved = await confirmWorkbookImport(report, parsed.bundleSets?.length || 0);
+        if (!approved) {
+            selectedWorkbookData = null;
+            currentFileName = '';
+            if (dropTitle) dropTitle.textContent = 'Đã hủy nhập file';
+            if (dropSubtitle) dropSubtitle.textContent = 'Dữ liệu trên thiết bị không thay đổi.';
+            updateSetupSummary();
+            return;
+        }
         selectedWorkbookData = parsed.rows;
         currentFileName = parsed.detectedName;
         if (parsed.detectedType) selectStudyMode(parsed.detectedType, false);
         document.getElementById('selected-file-pill').hidden = false;
         document.getElementById('selected-file-pill').textContent = file.name;
         if (dropTitle) dropTitle.textContent = 'Đã chọn bộ đề';
-        if (dropSubtitle) dropSubtitle.textContent = `${Math.max(0, parsed.rows.length - 1)} dòng dữ liệu được phát hiện`;
+        if (dropSubtitle) dropSubtitle.textContent = `${report.total} mục · ${report.duplicates.length} trùng · ${report.invalid.length} cần kiểm tra`;
         updateSetupSummary();
-        const stored = await window.EdTechDB?.saveQuestionSet({
-            id: `set-${simpleHash(`${currentFileName}|${parsed.rows.length}|${JSON.stringify(parsed.rows.slice(0, 3))}`)}`,
-            name: currentFileName,
-            type: parsed.detectedType || studyMode,
-            rows: clone(parsed.rows),
-            source: parsed.source
-        });
+        let stored;
+        if (parsed.bundleSets?.length) {
+            const savedBundle = await Promise.all(parsed.bundleSets.map(item => window.EdTechDB?.saveQuestionSet({ ...item, source: 'edtech', createdAt: item.createdAt })));
+            stored = savedBundle[0];
+        } else {
+            stored = await window.EdTechDB?.saveQuestionSet({
+                id: `set-${simpleHash(`${currentFileName}|${parsed.rows.length}|${JSON.stringify(parsed.rows.slice(0, 3))}`)}`,
+                name: currentFileName,
+                type: parsed.detectedType || studyMode,
+                rows: clone(parsed.rows),
+                source: parsed.source
+            });
+        }
         if (stored) {
             window.currentStudySetId = stored.id;
             window.renderLocalQuestionSets?.();
             window.renderQuestionLibrary?.();
         }
         playSound('upload');
-        showToast(parsed.source === 'edtech' ? 'Đã nhập file EdTech và lưu trên thiết bị.' : 'Đã đọc và lưu bộ đề trên thiết bị.', 'success');
+        const issueText = report.duplicates.length || report.invalid.length ? ` Cảnh báo: ${report.duplicates.length} mục trùng, ${report.invalid.length} mục cần kiểm tra.` : '';
+        const bundleText = parsed.bundleSets?.length > 1 ? ` Đã thêm ${parsed.bundleSets.length} bộ đề vào Thư viện.` : '';
+        showToast(`${parsed.source === 'edtech' ? 'Đã nhập file EdTech.' : 'Đã đọc và lưu bộ đề.'}${bundleText}${issueText}`, report.invalid.length ? 'info' : 'success');
     } catch (error) {
         selectedWorkbookData = null;
         currentFileName = '';
@@ -1218,7 +1298,7 @@ function selectQuizAnswer(questionIndex, optionIndex) {
     document.querySelectorAll(`input[name="q-${questionIndex}"]`).forEach(input => input.closest('.option-item')?.classList.toggle('selected', Number(input.value) === optionIndex));
     updateQuizProgress();
     persistActiveQuizSession();
-    playSound('select');
+    playSound('press');
 }
 
 function toggleQuizFlag(questionIndex) {
@@ -1971,7 +2051,7 @@ function setCreatorMode(mode) {
     if (filter) filter.value = 'all';
     ensureCreatorItems();
     renderCreator();
-    playSound('select');
+    playSound('press');
 }
 
 function getCurrentCreatorItems() {
@@ -1999,13 +2079,22 @@ function renderCreator() {
 
 function renderCreatorValidationState() {
     const { invalid } = getCreatorValidationSummary();
-    const button = document.getElementById('creator-export-btn');
-    if (!button) return;
-    button.disabled = invalid.length > 0;
+    const excelButton = document.getElementById('creator-export-btn');
+    const edtechButton = document.getElementById('creator-export-edtech-btn');
+    if (!excelButton && !edtechButton) return;
+    const disabled = invalid.length > 0;
+    [excelButton, edtechButton].forEach(button => {
+        if (button) button.disabled = disabled;
+    });
     const noun = creatorMode === 'quiz' ? 'câu' : 'thẻ';
-    button.innerHTML = invalid.length
-        ? `<svg><use href="#i-save"></use></svg><span>Không thể xuất · còn ${invalid.length} ${noun} chưa hoàn chỉnh</span>`
-        : '<svg><use href="#i-save"></use></svg><span>Xuất Excel</span>';
+    if (excelButton) {
+        excelButton.innerHTML = disabled
+            ? `<svg><use href="#i-save"></use></svg><span>Hoàn thiện thêm ${invalid.length} ${noun}</span>`
+            : '<svg><use href="#i-save"></use></svg><span>Xuất Excel</span>';
+    }
+    if (edtechButton) {
+        edtechButton.innerHTML = '<svg><use href="#i-download"></use></svg><span>Xuất .edtech</span>';
+    }
 }
 
 function setCreatorSearch(value) {
@@ -2164,7 +2253,7 @@ function renderCreatorPreview() {
         const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
         preview.innerHTML = `<div class="preview-question">${parseRichText(item.question || 'Nội dung câu hỏi sẽ xuất hiện tại đây.')}</div>${item.options.map((option, index) => `<div class="preview-option ${item.correct !== null && item.correct !== undefined && Number(item.correct) === index ? 'correct' : ''}"><span>${letters[index]}</span><span>${parseRichText(option || `Đáp án ${letters[index]}`)}</span></div>`).join('')}${item.explanation ? `<div class="review-explanation"><small>Giải thích</small>${parseRichText(item.explanation)}</div>` : ''}`;
     } else {
-        preview.innerHTML = `<div class="preview-flashcard"><small>Mặt trước</small><strong>${parseRichText(item.front || 'Nội dung mặt trước')}</strong><span style="color:var(--text-soft);font-size:.65rem">Bấm thẻ khi học để xem mặt sau</span></div><div class="preview-flashcard back-preview"><small>Mặt sau</small><strong>${parseRichText(item.back || 'Nội dung mặt sau')}</strong></div>${item.explanation ? `<div class="review-explanation"><small>Ghi chú</small>${parseRichText(item.explanation)}</div>` : ''}`;
+        preview.innerHTML = `<div class="creator-flashcard-preview"><small>Mặt trước</small><strong>${parseRichText(item.front || 'Nội dung mặt trước')}</strong><span style="color:var(--text-soft);font-size:.65rem">Bấm thẻ khi học để xem mặt sau</span></div><div class="creator-flashcard-preview back-preview"><small>Mặt sau</small><strong>${parseRichText(item.back || 'Nội dung mặt sau')}</strong></div>${item.explanation ? `<div class="review-explanation"><small>Ghi chú</small>${parseRichText(item.explanation)}</div>` : ''}`;
     }
     typesetMath(preview);
 }
@@ -2194,7 +2283,7 @@ function setCreatorCorrect(index) {
     renderCreatorList();
     renderCreatorPreview();
     renderCreatorValidationState();
-    playSound('select');
+    playSound('press');
 }
 
 function addCreatorItem() {
@@ -2310,7 +2399,7 @@ function openCreatorPreview() {
     } else {
         container.innerHTML = items.map((item, index) => {
             const errors = validateCreatorItem(item);
-            return `<article class="full-preview-item ${errors.length ? 'invalid' : ''}"><div class="full-preview-head"><strong>Thẻ ${index + 1}</strong>${errors.length ? `<span>${errors.length} lỗi</span>` : '<span class="valid">Hoàn chỉnh</span>'}</div><div class="preview-flashcard"><small>Mặt trước</small><strong>${parseRichText(item.front || 'Chưa nhập mặt trước')}</strong></div><div class="preview-flashcard back-preview"><small>Mặt sau</small><strong>${parseRichText(item.back || 'Chưa nhập mặt sau')}</strong></div>${item.explanation ? `<div class="review-explanation"><small>Ghi chú</small>${parseRichText(item.explanation)}</div>` : ''}</article>`;
+            return `<article class="full-preview-item ${errors.length ? 'invalid' : ''}"><div class="full-preview-head"><strong>Thẻ ${index + 1}</strong>${errors.length ? `<span>${errors.length} lỗi</span>` : '<span class="valid">Hoàn chỉnh</span>'}</div><div class="creator-flashcard-preview"><small>Mặt trước</small><strong>${parseRichText(item.front || 'Chưa nhập mặt trước')}</strong></div><div class="creator-flashcard-preview back-preview"><small>Mặt sau</small><strong>${parseRichText(item.back || 'Chưa nhập mặt sau')}</strong></div>${item.explanation ? `<div class="review-explanation"><small>Ghi chú</small>${parseRichText(item.explanation)}</div>` : ''}</article>`;
         }).join('');
     }
     document.getElementById('creator-preview-modal').hidden = false;
@@ -2418,6 +2507,67 @@ async function exportCreatorToExcel() {
         showToast('Đã xuất Excel và lưu bộ đề trên thiết bị.', 'success');
     } catch (error) {
         showToast(error.message || 'Không thể xuất file Excel.', 'error');
+    }
+}
+
+async function exportCreatorToEdtech() {
+    const items = getCurrentCreatorItems();
+    const validation = getCreatorValidationSummary();
+    if (validation.invalid.length) {
+        activeCreatorId = validation.invalid[0].item.id;
+        renderCreator();
+        const noun = creatorMode === 'quiz' ? 'câu hỏi' : 'flashcard';
+        showToast(`Không thể xuất: còn ${validation.invalid.length} ${noun} chưa hoàn chỉnh.`, 'error');
+        return;
+    }
+    const creatorName = getCreatorFileName();
+    if (!creatorName) {
+        showToast('Hãy đặt tên bộ đề trước khi xuất.', 'error');
+        document.getElementById('creator-file-name')?.focus();
+        return;
+    }
+    try {
+        const rows = [['Câu hỏi', 'Đáp án 1', 'Đáp án 2', 'Đáp án 3', 'Đáp án 4', 'Đáp án đúng', 'Giải thích', 'Nhãn', 'Độ khó', 'Đảo chiều']];
+        if (creatorMode === 'quiz') {
+            for (const item of items) {
+                const options = [];
+                for (const option of (item.options || []).slice(0, 4)) options.push(await materializeMediaMarkup(option));
+                rows.push([
+                    await materializeMediaMarkup(item.question),
+                    ...options,
+                    ...Array(Math.max(0, 4 - options.length)).fill(''),
+                    Number(item.correct) + 1,
+                    await materializeMediaMarkup(item.explanation || ''),
+                    (item.tags || []).join(', '),
+                    item.difficulty || 'medium',
+                    ''
+                ]);
+            }
+        } else {
+            for (const item of items) rows.push([
+                await materializeMediaMarkup(item.front),
+                await materializeMediaMarkup(item.back), '', '', '', 1,
+                await materializeMediaMarkup(item.explanation || ''),
+                (item.tags || []).join(', '), item.difficulty || 'medium', item.reversible === false ? 'Không' : 'Có'
+            ]);
+        }
+        const safeFileName = creatorName.replace(/[\/:*?"<>|]+/g, '-').replace(/\s+/g, '_').replace(/^\.+|\.+$/g, '').slice(0, 90) || (creatorMode === 'quiz' ? 'EdTech_TracNghiem' : 'EdTech_Flashcard');
+        const blob = new Blob([JSON.stringify({ format: 'EdTechQuestionSet', schemaVersion: 4, app: 'EdTech LMS Pro', name: creatorName, type: creatorMode, source: 'creator', rows }, null, 2)], { type: 'application/json;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${safeFileName}.edtech`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1200);
+        await window.EdTechDB?.saveQuestionSet({ name: creatorName, type: creatorMode, rows: clone(rows), source: 'creator' });
+        saveCreatorDrafts(false);
+        markCreatorDraftComplete();
+        playSound('success');
+        showToast('Đã xuất file EdTech và lưu bộ đề trên thiết bị.', 'success');
+    } catch (error) {
+        showToast(error.message || 'Không thể xuất file EdTech.', 'error');
     }
 }
 
@@ -2741,13 +2891,13 @@ function sweepTone(fromFrequency, toFrequency, duration, volume, type = 'sine', 
 }
 
 function playIntroSequenceSound() {
-    if (introSoundPlayed || !preferences.sound || !soundUnlocked) return false;
+    if (introSoundPlayed || preferences.sound === false || !soundUnlocked) return false;
     introSoundPlayed = true;
     return window.EdTechAudio?.play('intro', { force: true }) || false;
 }
 
 function playSound(name) {
-    if (!preferences.sound || !soundUnlocked) return;
+    if (preferences.sound === false || !soundUnlocked) return;
     if (window.EdTechAudio) {
         window.EdTechAudio.setEnabled(preferences.sound);
         window.EdTechAudio.play(name);
@@ -2756,27 +2906,68 @@ function playSound(name) {
     tone(420, .05, .015, 'sine');
 }
 
-function toggleSound() {
-    preferences.sound = !preferences.sound;
+function persistAudioPreferences() {
     try {
         localStorage.setItem(PREF_KEY, JSON.stringify(preferences));
         window.EdTechDB?.savePreferences(clone(preferences)).catch(() => {});
     } catch (error) {
         console.warn('Không thể lưu tùy chọn âm thanh:', error);
     }
-    updateSoundButton();
-    if (preferences.sound) {
-        unlockAudio();
-        playSound('success');
-        showToast('Đã bật âm thanh.', 'success');
-    } else {
-        showToast('Đã tắt âm thanh.', 'info');
-    }
 }
 
-function updateSoundButton() {
-    document.getElementById('sound-toggle')?.classList.toggle('is-muted', !preferences.sound);
+function toggleEffectsSound() {
+    preferences.sound = preferences.sound === false;
+    persistAudioPreferences();
+    window.EdTechAudio?.setEffectsEnabled?.(preferences.sound);
+    updateAudioControls();
+    if (preferences.sound) {
+        unlockAudio();
+        window.EdTechAudio?.play?.('success', { force: true });
+        showToast('Đã bật hiệu ứng âm thanh.', 'success');
+    } else showToast('Đã tắt hiệu ứng âm thanh.', 'info');
 }
+
+function toggleBackgroundMusic() {
+    preferences.music = preferences.music === false;
+    persistAudioPreferences();
+    window.EdTechAudio?.setMusicEnabled?.(preferences.music);
+    updateAudioControls();
+    if (preferences.music) {
+        unlockAudio();
+        showToast('Đã bật nhạc nền piano.', 'success');
+    } else showToast('Đã tắt nhạc nền.', 'info');
+}
+
+function setMusicVolume(value) {
+    const numeric = Math.max(0, Math.min(100, Number(value) || 0));
+    preferences.musicVolume = numeric;
+    persistAudioPreferences();
+    window.EdTechAudio?.setMusicVolume?.(numeric / 100);
+    updateAudioControls();
+}
+
+function toggleSound() { toggleEffectsSound(); }
+
+function updateAudioControls() {
+    const effectsOn = preferences.sound !== false;
+    const musicOn = preferences.music !== false;
+    const volume = Math.max(0, Math.min(100, Number(preferences.musicVolume ?? 18)));
+    document.getElementById('sound-toggle')?.classList.toggle('is-muted', !effectsOn);
+    document.getElementById('music-toggle')?.classList.toggle('is-muted', !musicOn);
+    const effectsStatus = document.getElementById('effects-sound-status');
+    const musicStatus = document.getElementById('music-status');
+    const slider = document.getElementById('music-volume');
+    const output = document.getElementById('music-volume-value');
+    if (effectsStatus) effectsStatus.textContent = effectsOn ? 'Bật' : 'Tắt';
+    if (musicStatus) musicStatus.textContent = musicOn ? 'Bật' : 'Tắt';
+    if (slider) slider.value = String(volume);
+    if (output) output.textContent = `${volume}%`;
+    window.EdTechAudio?.setEffectsEnabled?.(effectsOn);
+    window.EdTechAudio?.setMusicEnabled?.(musicOn);
+    window.EdTechAudio?.setMusicVolume?.(volume / 100);
+}
+
+function updateSoundButton() { updateAudioControls(); }
 
 function initCustomCursor() {
     // Native owl cursors are used via CSS for smoother desktop performance.
@@ -2847,17 +3038,39 @@ function initBrandIntro() {
     let resolveIntroReady = () => {};
     const introReady = new Promise(resolve => { resolveIntroReady = resolve; });
     window.__edtechIntroDonePromise = introReady;
+
     if (!intro) {
         root.classList.remove('intro-pending');
         resolveIntroReady();
         return introReady;
     }
 
+    if (window.EdTechRecovery?.isSafeMode?.() || new URLSearchParams(location.search).has('visualTest')) {
+        intro.hidden = true;
+        root.classList.remove('intro-pending');
+        resolveIntroReady();
+        return introReady;
+    }
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const INTRO_DURATION = reduceMotion ? 5200 : 6200;
     let finished = false;
     let readyToClose = false;
     const timers = [];
     const clearTimers = () => timers.splice(0).forEach(timer => clearTimeout(timer));
+
+    // Always restart the timeline from frame 0 on every reload/navigation boot.
+    intro.hidden = false;
+    intro.classList.remove('is-playing', 'is-ready-to-close', 'is-leaving');
+    void intro.offsetWidth;
+
+    const startTimeline = () => {
+        if (finished) return;
+        intro.classList.add('is-playing');
+        intro.setAttribute('data-intro-state', 'playing');
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(startTimeline));
 
     const tryIntroSound = () => {
         if (introSoundPlayed || !preferences.sound) return;
@@ -2877,24 +3090,43 @@ function initBrandIntro() {
         if (finished || readyToClose) return;
         readyToClose = true;
         intro.classList.add('is-ready-to-close');
-        intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro. Chạm vào vùng trống để tiếp tục.');
+        intro.setAttribute('data-intro-state', 'ready');
+        intro.setAttribute('aria-label', 'Giới thiệu EdTech LMS Pro đã hoàn tất. Chạm vào vùng trống để tiếp tục.');
     };
 
     const finish = ({ instant = false } = {}) => {
         if (finished) return;
         finished = true;
         clearTimers();
-        root.classList.remove('intro-pending');
         intro.removeEventListener('pointerdown', tryIntroSound);
         intro.removeEventListener('pointerup', handleIntroTap);
         document.removeEventListener('keydown', handleIntroKey);
+        intro.classList.remove('is-playing');
         intro.classList.add('is-leaving');
-        resolveIntroReady();
-        if (instant || reduceMotion) intro.hidden = true;
-        else window.setTimeout(() => { intro.hidden = true; }, 320);
+        intro.setAttribute('data-intro-state', 'leaving');
+
+        const revealApp = () => {
+            root.classList.remove('intro-pending');
+            resolveIntroReady();
+        };
+
+        // Reveal the app only after the exit transition begins, preventing one-frame flashes.
+        if (instant) {
+            intro.hidden = true;
+            revealApp();
+            window.EdTechAudio?.syncMusic?.();
+            return;
+        }
+
+        window.setTimeout(revealApp, 180);
+        window.setTimeout(() => {
+            intro.hidden = true;
+            window.EdTechAudio?.syncMusic?.();
+        }, 820);
     };
 
     const handleIntroTap = event => {
+        // During the cinematic phase taps only unlock sound; they never skip the animation.
         if (!readyToClose || event.target.closest('button, a')) return;
         finish();
     };
@@ -2910,9 +3142,9 @@ function initBrandIntro() {
     intro.addEventListener('pointerdown', tryIntroSound, { passive: true });
     intro.addEventListener('pointerup', handleIntroTap);
     document.addEventListener('keydown', handleIntroKey);
-    tryIntroSound();
 
-    timers.push(window.setTimeout(allowClose, reduceMotion ? 120 : 1120));
+    // Never auto-close. The full cinematic timeline always completes first.
+    timers.push(window.setTimeout(allowClose, INTRO_DURATION));
     return introReady;
 }
 
@@ -3014,8 +3246,10 @@ function setRandomFocusMotivation() {
 
 async function initApp() {
     const introReady = initBrandIntro();
+    let migrationResult = null;
     try {
         const persisted = await window.EdTechDB?.bootstrap({ learningKey: STORAGE_KEY, creatorKey: CREATOR_KEY, preferenceKey: PREF_KEY, recoveryKey: CREATOR_RECOVERY_KEY });
+        migrationResult = persisted?.migration || null;
         if (persisted?.learning && typeof persisted.learning === 'object') appData = { ...clone(EMPTY_DATA), ...persisted.learning };
         if (persisted?.preferences && typeof persisted.preferences === 'object') preferences = { ...preferences, ...persisted.preferences };
         if (persisted?.creatorDrafts && typeof persisted.creatorDrafts === 'object') {
@@ -3023,6 +3257,8 @@ async function initApp() {
         }
     } catch (error) {
         console.warn('IndexedDB bootstrap fallback:', error);
+        window.EdTechRecovery?.recordError?.(error, 'database.bootstrap');
+        window.EdTechRecovery?.openRecovery?.('Không thể đọc dữ liệu trên thiết bị.', error.message);
     }
     const prepareCreatorMedia = async () => {
         try {
@@ -3043,6 +3279,11 @@ async function initApp() {
     if (!Number.isFinite(Number(appData.xp))) appData.xp = 0;
     if (!Number.isFinite(Number(appData.reviewedCards))) appData.reviewedCards = 0;
 
+    if (typeof preferences.music !== 'boolean') preferences.music = true;
+    if (!Number.isFinite(Number(preferences.musicVolume))) preferences.musicVolume = 18;
+    window.EdTechAudio?.setEffectsEnabled?.(preferences.sound !== false);
+    window.EdTechAudio?.setMusicEnabled?.(preferences.music !== false);
+    window.EdTechAudio?.setMusicVolume?.(Number(preferences.musicVolume) / 100);
     initCustomCursor();
     initFileDropzone();
     initPreferenceInputs();
@@ -3055,7 +3296,7 @@ async function initApp() {
     document.addEventListener('keydown', handleGlobalKeyboard);
     document.addEventListener('pointerdown', event => {
         unlockAudio();
-        if (event.target.closest('button') && !event.target.closest('.flashcard, .rating')) playSound('select');
+        if (event.target.closest('button') && !event.target.closest('.study-flashcard-card, .rating')) playSound('press');
     }, { passive: true });
     // Cho phép chọn/copy văn bản tự nhiên trên desktop và mobile.
 
@@ -3099,6 +3340,7 @@ async function initApp() {
     window.EdTechTheme?.init();
     window.renderLocalQuestionSets?.();
     await introReady;
+    if (migrationResult?.migrated) showToast(`Đã nâng cấp dữ liệu an toàn lên schema ${migrationResult.version}.`, 'success');
     await window.offerRestoreActiveSession?.();
     window.EdTechRouter?.applyRoute();
     document.documentElement.classList.add('app-ready');

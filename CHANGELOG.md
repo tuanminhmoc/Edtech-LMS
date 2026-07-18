@@ -1,15 +1,60 @@
 # Changelog
 
-## 1.3.4
+## 1.4.6
+- Chia nhạc nền thành 4 segment WebM nhỏ, mỗi file dưới 7 MB; phát nối tiếp và loop như một playlist duy nhất để tương thích giới hạn upload GitHub 25 MB/file.
+- Giảm bitrate nhạc nền hợp lý để giảm kích thước repo mà vẫn giữ chất lượng piano nền.
+- Làm lại cụm hành động card Thư viện: nút tải bộ đề thành thanh ngang riêng, màu phân cấp rõ và hỗ trợ chọn Excel / EdTech.
+- Thu nhỏ cursor cú vector nhẹ để cân đối hơn trên desktop.
+- Dọn asset showcase/duplicate không còn được tham chiếu để repo và ZIP gọn hơn.
 
-- Rà soát toàn bộ giao diện ở các mốc 320, 390, 430, 768 và 1440 px.
-- Sửa thanh tiến độ bị nổi sai vị trí trong chế độ làm bài và học Flashcard.
-- Sửa hướng dẫn lật thẻ bị lệch, cắt chữ và tràn khỏi thẻ trên mobile.
-- Cân lại Flashcard mobile, toolbar, trạng thái, nút đánh giá, điều hướng và kết quả.
-- Sửa cụm nút trình soạn bị tràn ở tablet và chuẩn hóa bố cục lịch sử.
-- Cân lại hero Thư viện, nút nhập file, modal, toast và vùng an toàn trên mobile.
-- Tăng khả năng hiển thị nội dung dài, ảnh, công thức và trường nhập trên iOS/Android.
-- Cập nhật hướng dẫn nhập để phản ánh cả Excel và định dạng EdTech.
+- Sửa tận gốc intro bị chớp/nhảy vị trí: timeline chỉ khởi chạy sau khi JS đồng bộ frame đầu, giữ nguyên đủ khoảng 6.2 giây trước khi cho phép đóng.
+- Sửa lỗi wordmark EdTech bị lệch sang phải do animation ghi đè translateX(-50%).
+- Intro dùng SVG mascot nội tuyến và nền gradient/CSS, không dùng PNG mascot.
+- Performance Lite không còn tắt animation mascot; Reduced Motion dùng timeline fade nhẹ 5.2 giây thay vì chớp bỏ qua.
+- Loại bỏ thư mục mascot PNG legacy và chuyển toàn bộ tham chiếu mascot sang SVG vector.
+
+## 1.4.4
+
+- Làm lại intro cinematic 5–7 giây với chuyển động nhiều lớp, sweep ánh sáng và bố cục tối ưu cho mobile/desktop.
+- Tạo bộ mascot cú vector mới và cursor cú SVG độ nét cao, không vỡ khi phóng lớn.
+- Thêm nhạc nền piano có loop, điều chỉnh âm lượng, tắt riêng nhạc nền hoặc hiệu ứng; nhạc tạm dừng khi làm bài và tiếp tục đúng vị trí sau khi hoàn thành.
+- Tăng lực nhấn nút bằng motion ngắn và âm thanh trầm hơn.
+- Cân lại scale card Thư viện, ảnh mascot, metadata và vùng hành động.
+
+## 1.4.3
+- Rà lại toàn bộ UI/UX desktop, tablet và mobile sau nhánh kiến trúc v1.4.x.
+- Tách nền mascot/cursor cú mèo và làm lại cách đặt mascot trong card thư viện để không còn ô ảnh trắng lệch tông.
+- Khôi phục custom cursor trên desktop và giữ fallback chuẩn trên thiết bị cảm ứng.
+- Đồng bộ logo theo light/dark theme bằng cùng một logo brand nhưng đổi palette theo theme.
+- Làm gọn Flashcard: giảm chiều cao card, explanation/rating/controls gần nhau hơn và cố định bề mặt học trên mobile để hạn chế phải cuộn.
+- Tăng tương phản chữ/HUD trong dark theme, đặc biệt vòng điểm, phím tắt và bốn nút Again/Hard/Good/Easy.
+- Rút gọn tiêu đề dài bằng ellipsis ở topbar, kết quả, lịch sử và card thư viện.
+- Bổ sung nút tải bộ đề trực tiếp với hộp chọn Excel `.xlsx` hoặc EdTech `.edtech`.
+- Bổ sung xuất `.edtech` ngay trong trình Soạn đề, song song với Excel.
+- Tinh chỉnh typography và độ nổi của nút theo hướng vui, rõ thao tác nhưng không sao chép bố cục Duolingo.
+- Giữ nguyên toàn bộ intro, tăng safe-area, tránh crop trên màn thấp/mobile và làm fade/transition mượt hơn.
+
+## 1.4.1
+- Đồng bộ bộ nhận diện brand cú mèo vào dự án: icon ứng dụng, cursor, mascot, cover thư viện và empty state.
+- Chuẩn hóa các action icon trong thư viện / deck picker để bỏ emoji lệch tông và dùng icon đồng bộ hơn.
+- Cố định lại layout mobile cho màn làm trắc nghiệm và flashcard để card hiển thị ổn định, không còn khung to nhỏ thất thường.
+
+## 1.4.0
+
+- Tách CSS thành 11 module: tokens, base, components, dashboard, practice, flashcard, creator, library, history, mobile và themes.
+- Chuẩn hóa namespace cho Flashcard học tập, lịch sử, preview trình soạn và bộ đề cục bộ; loại bỏ class chung `.flashcard`, `.panel` và `.quiz`.
+- Tập trung màu, spacing, radius, shadow, control height và motion vào design token duy nhất.
+- Thêm visual regression harness cho 5 viewport và 10 màn hình, kèm GitHub Actions so sánh nhánh hiện tại với nhánh gốc.
+- Thêm bộ stress fixture 1/4/50/100/500 câu, Flashcard dài, LaTeX, tên tiếng Việt đặc biệt và ảnh lớn.
+- Nâng IndexedDB engine lên v5 với data schema v4, snapshot trước migration, normalization và khả năng khôi phục snapshot.
+- Thêm Recovery Mode, Safe Mode, backup khẩn cấp, sửa cache và nhật ký lỗi cục bộ.
+- Quản lý cập nhật PWA chủ động, lưu phiên học trước cập nhật và tự khôi phục sau reload.
+- Phân trang Thư viện, DocumentFragment, lazy MathJax/media và content-visibility cho danh sách lớn.
+- Bổ sung focus ring, skip link, aria-current, auto-label và hỗ trợ reduced motion.
+- Thêm chọn nhiều bộ đề, ghim/yêu thích/lưu trữ hàng loạt, nhân bản, gộp, xuất nhiều bộ đề và xóa có hoàn tác 10 giây.
+- Kiểm tra file nhập, cảnh báo dòng lỗi/câu trùng và hỗ trợ bundle `.edtech`.
+- Thêm bảng chẩn đoán cục bộ và nút copy báo cáo không chứa nội dung học tập.
+- Xác nhận không còn chặn F12, chuột phải, copy hoặc DevTools.
 
 ## 1.2.5
 

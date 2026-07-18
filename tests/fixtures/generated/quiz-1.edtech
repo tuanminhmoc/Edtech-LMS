@@ -1,0 +1,26 @@
+{
+  "format": "EdTechQuestionSet",
+  "schemaVersion": 4,
+  "name": "Một câu",
+  "type": "quiz",
+  "rows": [
+    [
+      "Câu hỏi",
+      "Đáp án A",
+      "Đáp án B",
+      "Đáp án C",
+      "Đáp án D",
+      "Đáp án đúng",
+      "Giải thích"
+    ],
+    [
+      "Câu hỏi kiểm thử số 1?",
+      "Đáp án A 1",
+      "Đáp án B 1",
+      "Đáp án C 1",
+      "Đáp án D 1",
+      "A",
+      "Giải thích cho câu 1."
+    ]
+  ]
+}

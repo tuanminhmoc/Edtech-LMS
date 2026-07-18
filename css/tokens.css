@@ -1,0 +1,92 @@
+:root {
+    --bg: #f4f7f2;
+    --bg-warm: #faf8f2;
+    --surface: rgba(255, 255, 255, .92);
+    --surface-solid: #ffffff;
+    --surface-soft: #f8faf7;
+    --surface-blue: #edf3f7;
+    --surface-green: #edf4ef;
+    --surface-gold: #fff5df;
+    --surface-coral: #fff0eb;
+    --text: #233647;
+    --text-soft: #667684;
+    --text-faint: #8e9ba5;
+    --primary: #436b8c;
+    --primary-dark: #31546f;
+    --primary-light: #dce8f1;
+    --on-primary: #ffffff;
+    --green: #70927e;
+    --green-dark: #527160;
+    --gold: #e6ad51;
+    --coral: #e98776;
+    --danger: #c85b58;
+    --danger-soft: #fff0ef;
+    --border: #dfe6e2;
+    --border-strong: #ccd8d2;
+    --owl-body-a: #668aa3;
+    --owl-body-b: #345873;
+    --owl-book-a: #88a392;
+    --owl-book-b: #557765;
+    --owl-shadow: #dfe7df;
+    --owl-moon: #f8efd9;
+    --owl-face: #fffaf0;
+    --owl-gold: #d8a85c;
+    --owl-ink: #34546c;
+    --owl-beak: #e3aa55;
+    --owl-feather: #d9c7a7;
+    --owl-page: #f4ead7;
+    --owl-star: #f2c56c;
+    --owl-leaf: #8ca58e;
+
+    --space-0: 0;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+    --space-9: 48px;
+
+    --radius-xs: 8px;
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-pill: 999px;
+
+    --control-height-sm: 36px;
+    --control-height-md: 44px;
+    --control-height-lg: 52px;
+    --touch-target: 44px;
+
+    --font-size-xs: .68rem;
+    --font-size-sm: .78rem;
+    --font-size-md: .92rem;
+    --font-size-lg: 1.08rem;
+    --font-size-xl: 1.35rem;
+
+    --shadow-1: 0 6px 18px rgba(32, 38, 55, .07);
+    --shadow-2: 0 14px 36px rgba(32, 38, 55, .11);
+    --shadow-3: 0 24px 64px rgba(32, 38, 55, .15);
+
+    --motion-fast: 140ms;
+    --motion-normal: 220ms;
+    --motion-slow: 420ms;
+    --ease-standard: cubic-bezier(.22, .61, .36, 1);
+
+    --status-quiz-fg: var(--primary-dark);
+    --status-quiz-bg: var(--surface-blue);
+    --status-flashcard-fg: var(--green-dark);
+    --status-flashcard-bg: var(--surface-green);
+    --focus-ring: color-mix(in srgb, var(--primary) 42%, transparent);
+    --content-max: 1500px;
+    --cursor-default: url("../assets/cursors/owl-cursor-v2.svg") 6 5, auto;
+    --cursor-pointer: url("../assets/cursors/owl-pointer-v2.svg") 16 7, pointer;
+    --brand-logo-a: #9bd4f2;
+    --brand-logo-b: #6d9dcc;
+    --brand-logo-c: #405f8b;
+    --brand-logo-ink: #315477;
+    --brand-logo-star: #e7b24f;
+}

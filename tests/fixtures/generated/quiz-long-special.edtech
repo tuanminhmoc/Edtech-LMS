@@ -1,0 +1,89 @@
+{
+  "format": "EdTechQuestionSet",
+  "schemaVersion": 4,
+  "name": "Ôn tập: Tiếng Việt / Toán <Đặc biệt> 2026 ✨",
+  "type": "quiz",
+  "rows": [
+    [
+      "Câu hỏi",
+      "Đáp án A",
+      "Đáp án B",
+      "Đáp án C",
+      "Đáp án D",
+      "Đáp án đúng",
+      "Giải thích"
+    ],
+    [
+      "Câu 1: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 1",
+      "Đáp án B 1",
+      "Đáp án C 1",
+      "Đáp án D 1",
+      "A",
+      "Giải thích cho câu 1."
+    ],
+    [
+      "Câu 2: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 2",
+      "Đáp án B 2",
+      "Đáp án C 2",
+      "Đáp án D 2",
+      "A",
+      "Giải thích cho câu 2."
+    ],
+    [
+      "Câu 3: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 3",
+      "Đáp án B 3",
+      "Đáp án C 3",
+      "Đáp án D 3",
+      "A",
+      "Giải thích cho câu 3."
+    ],
+    [
+      "Câu 4: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 4",
+      "Đáp án B 4",
+      "Đáp án C 4",
+      "Đáp án D 4",
+      "A",
+      "Giải thích cho câu 4."
+    ],
+    [
+      "Câu 5: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 5",
+      "Đáp án B 5",
+      "Đáp án C 5",
+      "Đáp án D 5",
+      "A",
+      "Giải thích cho câu 5."
+    ],
+    [
+      "Câu 6: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 6",
+      "Đáp án B 6",
+      "Đáp án C 6",
+      "Đáp án D 6",
+      "A",
+      "Giải thích cho câu 6."
+    ],
+    [
+      "Câu 7: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 7",
+      "Đáp án B 7",
+      "Đáp án C 7",
+      "Đáp án D 7",
+      "A",
+      "Giải thích cho câu 7."
+    ],
+    [
+      "Câu 8: Đây là câu hỏi kiểm thử rất dài nhằm kiểm tra khả năng xuống dòng, thay đổi cỡ chữ hệ thống 150%, công thức $E = mc^2$, ký tự tiếng Việt và bố cục trên màn hình hẹp. Nội dung được lặp lại để tạo áp lực layout mà không gây mất ý nghĩa.",
+      "Đáp án A 8",
+      "Đáp án B 8",
+      "Đáp án C 8",
+      "Đáp án D 8",
+      "A",
+      "Giải thích cho câu 8."
+    ]
+  ]
+}
