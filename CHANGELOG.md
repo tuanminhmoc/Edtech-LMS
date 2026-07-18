@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.8
+- Thu gọn card Thư viện trên desktop/mobile để hiển thị nhiều bộ đề hơn nhưng vẫn giữ đầy đủ metadata và nút tải.
+- Làm lại Flashcard trên iPhone: header/tab/toolbar compact, card cố định 282–300px, nội dung dài cuộn bên trong thẻ, controls Hoàn tác · Thẻ · Bỏ qua nằm cùng một hàng.
+- Ẩn panel tiến độ phụ trên điện thoại vì trạng thái chính đã có ở header và tab, giảm đáng kể chiều dài trang và thao tác cuộn.
+- Thu gọn khu đánh giá Again/Hard/Good/Easy sau khi lật thẻ để phần học chính nằm gần nhau hơn.
+
 ## 1.4.7
 - iPhone/mobile polish: bỏ vùng cuộn nội bộ của đáp án trắc nghiệm, làm nổi tiến độ và tối ưu màn xem lại bài dark theme.
 - Sửa audio unlock trên iOS để nhạc nền có thể bắt đầu sau thao tác người dùng/intro.

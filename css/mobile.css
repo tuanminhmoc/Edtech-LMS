@@ -454,3 +454,232 @@
     #quiz-app .option-item{ min-height: 56px !important; padding-block: 10px !important; }
     #quiz-app .question-text{ margin-block: 14px 13px !important; }
 }
+
+/* ===== v1.4.8 iPhone flashcard compact redesign ===== */
+@media (max-width: 680px){
+    #flashcard-app{
+        padding-bottom: calc(22px + env(safe-area-inset-bottom)) !important;
+    }
+
+    #flashcard-app .quiz-topline{
+        padding: 10px 10px 11px !important;
+        gap: 8px !important;
+        border-radius: 20px !important;
+    }
+
+    #flashcard-app .quiz-file-title small{
+        font-size: .58rem !important;
+    }
+
+    #flashcard-app .quiz-file-title strong{
+        font-size: .82rem !important;
+        line-height: 1.25 !important;
+    }
+
+    #flashcard-app .quiz-top-stats{
+        gap: 6px !important;
+    }
+
+    #flashcard-app .quiz-top-stats > span,
+    #flashcard-app .quiz-top-stats > button{
+        min-height: 40px !important;
+        border-radius: 13px !important;
+        padding: 6px 7px !important;
+    }
+
+    #flashcard-app .progress-track{
+        margin: 7px 3px 8px !important;
+        height: 5px !important;
+    }
+
+    #flashcard-app .study-flashcard-layout{
+        margin-top: 0 !important;
+        gap: 8px !important;
+        min-height: 0 !important;
+    }
+
+    #flashcard-app .study-flashcard-stage{
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        min-height: 0 !important;
+        padding: 10px !important;
+        border-radius: 20px !important;
+    }
+
+    #flashcard-app .fc-tabs{
+        display: grid !important;
+        grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    #flashcard-app .fc-tabs > span{
+        min-width: 0 !important;
+        min-height: 34px !important;
+        padding: 7px 5px !important;
+        font-size: .58rem !important;
+        line-height: 1.15 !important;
+        border-radius: 12px !important;
+    }
+
+    #flashcard-app .fc-mode-toolbar{
+        display: grid !important;
+        grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    #flashcard-app .fc-mode-toolbar button{
+        min-width: 0 !important;
+        min-height: 42px !important;
+        padding: 6px 4px !important;
+        gap: 3px !important;
+        border-radius: 12px !important;
+        font-size: .57rem !important;
+        line-height: 1.12 !important;
+    }
+
+    #flashcard-app .fc-mode-toolbar button svg{
+        width: 15px !important;
+        height: 15px !important;
+    }
+
+    #flashcard-app .study-flashcard-card{
+        width: 100% !important;
+        min-height: 300px !important;
+        height: 300px !important;
+        max-height: 300px !important;
+        margin: 0 !important;
+        padding: 42px 16px 44px !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+    }
+
+    #flashcard-app .study-flashcard-card.is-flipped{
+        min-height: 280px !important;
+        height: 280px !important;
+        max-height: 280px !important;
+    }
+
+    #flashcard-app .study-flashcard-content{
+        width: 100% !important;
+        max-height: 190px !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        padding: 3px 2px !important;
+        font-size: clamp(1rem, 5vw, 1.24rem) !important;
+        line-height: 1.42 !important;
+        scrollbar-width: none !important;
+    }
+    #flashcard-app .study-flashcard-content::-webkit-scrollbar{display:none !important;}
+
+    #flashcard-app .card-corner{
+        top: 12px !important;
+        left: 12px !important;
+        padding: 6px 9px !important;
+        font-size: .61rem !important;
+    }
+
+    #flashcard-app .card-spark{
+        top: 12px !important;
+        right: 12px !important;
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    #flashcard-app .tap-hint{
+        bottom: 7px !important;
+        min-height: 30px !important;
+        padding: 6px 8px !important;
+        font-size: .56rem !important;
+    }
+
+    #flashcard-app .fc-explanation,
+    #flashcard-app .fc-type-answer,
+    #flashcard-app .fc-rating-wrap{
+        margin-top: 0 !important;
+        padding: 10px !important;
+        border-radius: 14px !important;
+    }
+
+    #flashcard-app .fc-rating-wrap p{
+        margin: 0 0 7px !important;
+        font-size: .72rem !important;
+    }
+
+    #flashcard-app .fc-rating-grid{
+        display: grid !important;
+        grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+        gap: 6px !important;
+    }
+
+    #flashcard-app .rating{
+        min-height: 52px !important;
+        padding: 7px 6px !important;
+        border-radius: 12px !important;
+    }
+
+    #flashcard-app .rating strong{font-size:.62rem !important;}
+    #flashcard-app .rating small{font-size:.52rem !important; margin-top:2px !important;}
+
+    #flashcard-app .fc-controls{
+        display: grid !important;
+        grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) !important;
+        gap: 6px !important;
+        margin-top: 0 !important;
+        align-items: center !important;
+    }
+
+    #flashcard-app #fc-session-position{
+        grid-column: auto !important;
+        order: 0 !important;
+        min-width: 62px !important;
+        min-height: 40px !important;
+        padding: 6px 8px !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: color-mix(in srgb,var(--surface-soft) 90%,transparent) !important;
+        font-size: .58rem !important;
+        white-space: nowrap !important;
+    }
+
+    #flashcard-app .fc-controls .btn{
+        min-width: 0 !important;
+        min-height: 40px !important;
+        padding: 7px 8px !important;
+        border-radius: 12px !important;
+        font-size: .58rem !important;
+        white-space: nowrap !important;
+    }
+
+    #flashcard-app .fc-controls .btn svg{
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    /* Progress detail is redundant on phones: header + tabs already expose the key state. */
+    #flashcard-app .fc-progress-panel{
+        display: none !important;
+    }
+}
+
+@media (max-width: 390px){
+    #flashcard-app .study-flashcard-card{
+        min-height: 282px !important;
+        height: 282px !important;
+        max-height: 282px !important;
+    }
+    #flashcard-app .study-flashcard-card.is-flipped{
+        min-height: 264px !important;
+        height: 264px !important;
+        max-height: 264px !important;
+    }
+    #flashcard-app .study-flashcard-content{
+        max-height: 174px !important;
+    }
+}
