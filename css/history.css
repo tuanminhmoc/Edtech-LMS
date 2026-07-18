@@ -536,3 +536,9 @@
 /* ===== v1.4.3 final history text stability ===== */
 .history-table td:nth-child(3){min-width:0;}
 .history-table td:nth-child(3)>*{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* v1.4.7: keep desktop history layout unchanged; expose destructive bulk action only in compact mobile UI. */
+.history-clear-btn{ display: none; }
+@media (max-width: 680px){
+    #history-screen .history-clear-btn{ display: inline-flex !important; }
+}

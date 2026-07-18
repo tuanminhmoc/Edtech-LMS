@@ -891,6 +891,27 @@ function deleteHistoryItem(id) {
     });
 }
 
+function requestClearHistoryOnly() {
+    const count = Array.isArray(appData.history) ? appData.history.length : 0;
+    if (!count) {
+        showToast('Lịch sử hiện đang trống.', 'info');
+        return;
+    }
+    openConfirmModal(
+        'Xóa toàn bộ lịch sử?',
+        `Sẽ xóa ${count} phiên trong lịch sử. Điểm XP, bộ đề và tiến độ flashcard vẫn được giữ nguyên.`,
+        'Xóa lịch sử',
+        () => {
+            appData.history = [];
+            saveLearningData();
+            renderHistoryTable();
+            renderDashboard();
+            playSound('delete');
+            showToast('Đã xóa toàn bộ lịch sử.', 'success');
+        }
+    );
+}
+
 function requestClearLearningData() {
     openConfirmModal(
         'Xóa dữ liệu học tập?',
@@ -3104,6 +3125,7 @@ function initBrandIntro() {
         intro.classList.remove('is-playing');
         intro.classList.add('is-leaving');
         intro.setAttribute('data-intro-state', 'leaving');
+        window.EdTechAudio?.unlockFromGesture?.();
 
         const revealApp = () => {
             root.classList.remove('intro-pending');
@@ -3294,10 +3316,13 @@ async function initApp() {
     window.addEventListener('pagehide', () => creatorMediaURLs.forEach(url => URL.revokeObjectURL(url)), { once: true });
 
     document.addEventListener('keydown', handleGlobalKeyboard);
-    document.addEventListener('pointerdown', event => {
+    const unlockAudioFromUserGesture = event => {
+        window.EdTechAudio?.unlockFromGesture?.();
         unlockAudio();
-        if (event.target.closest('button') && !event.target.closest('.study-flashcard-card, .rating')) playSound('press');
-    }, { passive: true });
+        if (event?.target?.closest?.('button') && !event.target.closest('.study-flashcard-card, .rating')) playSound('press');
+    };
+    document.addEventListener('pointerdown', unlockAudioFromUserGesture, { passive: true });
+    document.addEventListener('touchend', event => window.EdTechAudio?.unlockFromGesture?.(), { passive: true });
     // Cho phép chọn/copy văn bản tự nhiên trên desktop và mobile.
 
     document.getElementById('prompt-modal').addEventListener('click', event => {

@@ -18,7 +18,9 @@
     ];
     let musicTrackIndex = 0;
     const music = new Audio(musicTracks[musicTrackIndex]);
-    music.preload = 'metadata';
+    music.preload = 'auto';
+    music.setAttribute('playsinline', '');
+    music.setAttribute('webkit-playsinline', '');
     music.volume = musicVolume;
     music.playsInline = true;
 
@@ -69,6 +71,19 @@
         } catch (_) {
             return false;
         }
+    }
+
+    function unlockFromGesture() {
+        const ctx = init();
+        try { ctx?.resume?.(); } catch (_) {}
+        unlocked = true;
+        music.volume = Math.max(0, Math.min(1, musicVolume));
+        const canPlay = musicEnabled && !document.hidden && !isStudyScreen() && !introOpen();
+        if (canPlay) {
+            const attempt = music.play();
+            attempt?.catch?.(() => {});
+        }
+        return true;
     }
 
     async function unlock() {
@@ -163,6 +178,7 @@
     window.EdTechAudio = {
         init,
         unlock,
+        unlockFromGesture,
         play,
         syncMusic,
         setScreen,

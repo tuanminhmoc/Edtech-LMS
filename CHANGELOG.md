@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.7
+- iPhone/mobile polish: bỏ vùng cuộn nội bộ của đáp án trắc nghiệm, làm nổi tiến độ và tối ưu màn xem lại bài dark theme.
+- Sửa audio unlock trên iOS để nhạc nền có thể bắt đầu sau thao tác người dùng/intro.
+- Thu gọn card Lịch sử trên iPhone và thêm nút xóa toàn bộ lịch sử nhưng giữ XP/bộ đề.
+- Cân lại Thư viện, tên bộ đề trong Soạn đề và Tóm tắt luyện tập trên màn hình iPhone.
+
 ## 1.4.6
 - Chia nhạc nền thành 4 segment WebM nhỏ, mỗi file dưới 7 MB; phát nối tiếp và loop như một playlist duy nhất để tương thích giới hạn upload GitHub 25 MB/file.
 - Giảm bitrate nhạc nền hợp lý để giảm kích thước repo mà vẫn giữ chất lượng piano nền.

@@ -933,3 +933,120 @@ html[data-theme="dark"] .quick-settings-btn small{
 html[data-theme="dark"] .quick-settings-btn.is-muted small{
     color: #9b8faf;
 }
+
+/* ===== v1.4.7 iPhone dark-theme contrast polish ===== */
+@media (max-width: 680px) {
+    html[data-theme="dark"] .quiz-mobile-progress-dock > button{
+        color: #f3edff !important;
+        border-color: rgba(174, 143, 255, .34) !important;
+        background: linear-gradient(180deg, rgba(54, 39, 87, .97), rgba(40, 29, 66, .97)) !important;
+        box-shadow: 0 18px 42px rgba(4, 1, 14, .46), inset 0 1px 0 rgba(255,255,255,.05) !important;
+    }
+
+    html[data-theme="dark"] .quiz-mobile-progress-dock small{
+        color: #d6caef !important;
+    }
+
+    html[data-theme="dark"] .quiz-mobile-progress-dock strong{
+        color: #bda8ff !important;
+    }
+
+    html[data-theme="dark"] .quiz-mobile-progress-ring i{
+        background: conic-gradient(#8dddc9 var(--quiz-mobile-progress), rgba(255,255,255,.12) 0) !important;
+    }
+
+    html[data-theme="dark"] .quiz-mobile-progress-ring i::after{
+        background: #2c2048 !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-panel,
+    html[data-theme="dark"] #result-review-panel{
+        color: #f6f0ff !important;
+        border-color: rgba(158, 126, 242, .35) !important;
+        background: linear-gradient(180deg, rgba(31, 21, 52, .995), rgba(24, 17, 41, .995)) !important;
+        box-shadow: 0 28px 80px rgba(0,0,0,.5) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-panel .surface-panel-heading{
+        border-color: rgba(183, 158, 245, .18) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-filter{
+        border-color: rgba(158, 126, 242, .24) !important;
+        background: rgba(52, 38, 83, .9) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-filter button{
+        color: #cfc3e9 !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-filter button.active{
+        color: #ffffff !important;
+        background: #5d43a0 !important;
+        box-shadow: none !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-item{
+        color: #f7f2ff !important;
+        border-color: rgba(173, 147, 239, .22) !important;
+        background: linear-gradient(180deg, rgba(55, 39, 86, .94), rgba(45, 32, 72, .94)) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-item-header strong{
+        color: #ffffff !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-answer-row > div{
+        color: #eee7fa !important;
+        border: 1px solid rgba(180, 155, 239, .13) !important;
+        background: rgba(26, 18, 44, .62) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-answer-row > div:last-child{
+        color: #d5fff1 !important;
+        border-color: rgba(122, 214, 179, .25) !important;
+        background: rgba(34, 79, 64, .42) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-answer-row small,
+    html[data-theme="dark"] #quiz-result-screen .review-explanation small{
+        color: #bfb1dc !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .review-explanation{
+        color: #f4dca4 !important;
+        border: 1px solid rgba(236, 195, 96, .18) !important;
+        background: rgba(84, 60, 20, .36) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .status-chip.correct{
+        color: #caffed !important;
+        background: rgba(40, 106, 82, .65) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .status-chip.wrong{
+        color: #ffd3dc !important;
+        background: rgba(121, 49, 70, .7) !important;
+    }
+
+    html[data-theme="dark"] #quiz-result-screen .status-chip.empty{
+        color: #e3ddef !important;
+        background: rgba(92, 79, 112, .72) !important;
+    }
+
+    html[data-theme="dark"] #history-screen .history-session-card{
+        border-color: rgba(157, 126, 238, .2) !important;
+        background: linear-gradient(180deg, rgba(45, 32, 72, .94), rgba(38, 27, 62, .94)) !important;
+    }
+
+    html[data-theme="dark"] #history-screen .history-col-file strong,
+    html[data-theme="dark"] #history-screen .history-col-result strong{
+        color: #f7f2ff !important;
+    }
+
+    html[data-theme="dark"] #history-screen .history-clear-btn{
+        color: #ffc5d1 !important;
+        border-color: rgba(255, 151, 173, .22) !important;
+        background: rgba(91, 42, 58, .55) !important;
+    }
+}
